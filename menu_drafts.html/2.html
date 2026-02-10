@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Visual Study Simulation</title>
+<style>
+      @font-face {
+            font-family: 'ArcadeClassic';
+            src: url('fonts/ARCADECLASSIC.TTF') format('truetype');
+        }
+        @font-face {
+            font-family: 'ArcadeClassic';
+            src: url('fonts/ARCADECLASSIC.ttf') format('truetype');
+        }
+    body {
+        margin: 0;
+        background: #c0c0c0;
+        font-family: "ARCADECLASSIC", monospace;
+        image-rendering: pixelated;
+        z-index: inherit;
+    }
+
+    /* Top blue bar */
+    .title-bar {
+        background: #0b5ed7;
+        color: black;
+        padding: 10px;
+        font-weight: bold;
+        border-bottom: 4px solid black;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .window-controls button {
+        width: 30px;
+        height: 25px;
+        margin-left: 5px;
+        border: 2px solid black;
+        background: #dcdcdc;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    /* Main window */
+    .window {
+        border: 4px solid black;
+        margin: 20px;
+        background: white;
+        height: 80vh;
+        position: relative;
+        text-align: center;
+    }
+
+    h1 {
+        margin-top: 80px;
+        font-size: 42px;
+        letter-spacing: 3px;
+    }
+
+    .coc1-btn {
+        position: absolute;
+        top: 125px;
+        left: 150px;
+        margin-top: 60px; /* Space between buttons */
+        padding: 15px 100px;
+        font-style: "ARCADECLASSIC";
+        font-size: 18px;
+        border: 4px solid black;
+        background: #e0e0e0;
+        cursor: pointer;
+        box-shadow: 4px 4px black;
+        transition: 0.3s;
+        color: #000; /* Black text */
+        font-family: 'ArcadeClassic', monospace;
+        font-size: 30px; /* Font size between 30*/
+    }
+    .coc2-btn {
+        position: absolute;
+        bottom: 125px;
+        left: 150px;
+        margin-top: 60px; /* Space between buttons */
+        padding: 15px 128px;
+        font-style: "ARCADECLASSIC";
+        font-size: 18px;
+        border: 4px solid black;
+        background: #e0e0e0;
+        cursor: pointer;
+        box-shadow: 4px 4px black;
+        transition: 0.4s;
+        color: #000; /* Black text */
+        font-family: 'ArcadeClassic', monospace;
+        font-size: 30px; /* Font size between 30*/
+    }
+    .coc3-btn {
+        position: absolute;
+        top: 125px;
+        right: 150px;
+        margin-top: 60px; /* Space between buttons */
+        padding: 15px 128px;
+        font-style: "ARCADECLASSIC";
+        font-size: 18px;
+        border: 4px solid black;
+        background: #e0e0e0;
+        cursor: pointer;
+        box-shadow: 4px 4px black;
+        transition: 0.4s;
+        color: #000; /* Black text */
+        font-family: 'ArcadeClassic', monospace;
+        font-size: 30px; /* Font size between 30*/
+    }
+    .coc4-btn {
+        position: absolute;
+        right: 150px;
+        bottom: 125px;
+        margin-top: 60px; /* Space between buttons */
+        padding: 15px 60px;
+        font-style: "ARCADECLASSIC";
+        font-size: 18px;
+        justify-content: center;
+        align-items: center;
+        border: 4px solid black;
+        background: #e0e0e0;
+        cursor: pointer;
+        box-shadow: 4px 4px black;
+        transition: 0.4s;
+        color: #000; /* Black text */
+        font-family: 'ArcadeClassic', monospace;
+        font-size: 30px; /* Font size between 30*/
+    }
+    .coc1-btn:active {
+        box-shadow: none;
+        transform: translate(4px, 4px);
+    }
+    .coc2-btn:active {
+        box-shadow: none;
+        transform: translate(4px, 4px);
+    }
+    .coc3-btn:active {
+        box-shadow: none;
+        transform: translate(4px, 4px);
+    }
+
+    .coc4-btn:active {
+        box-shadow: none;
+        transform: translate(4px, 4px);
+    }
+
+    /* Pixel computer icon */
+    .computer {
+        position: absolute;
+        right: 40px;
+        top: 80px;
+        width: 120px;
+        image-rendering: pixelated;
+    }
+    /* Bottom arrows */
+    .footer {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        background: #bfbfbf;
+        border-top: 4px solid black;
+        padding: 10px 0;
+    }
+
+    .arrow {
+        width: 50px;
+        height: 40px;
+        background: #dcdcdc;
+        border: 3px solid black;
+        font-size: 20px;
+        cursor: pointer;
+    }
+     .img {
+        position: absolute;
+        top: -30px;
+        left: 5px;
+
+    }
+</style>
+</head>
+
+<body>
+
+<div class="title-bar">
+    <div>SimuStation</div>
+    <div class="window-controls">
+        <button>—</button>
+        <button>□</button>
+        <button>X</button>
+    </div>
+</div>
+
+<div class="window">
+    <h1>CHOOSE YOUR STATIONS</h1>
+
+        <button class="coc1-btn" onclick="startGame()">COC1: Install and config</p>computer systems</button><!-- CLICK To start the game -->
+        <button class="coc2-btn" onclick="startGame()">COC2: Set up computer </p> networks</button>
+        <button class="coc3-btn" onclick="startGame()">COC3: Set up computer </p> servers</button>
+        <button class="coc4-btn" onclick="startGame()">COC4: Maintain and repair </p> computer systems  and networks</button>
+
+        <img src="c:\Users\prits\Downloads\ecdfc6bc-b70b-41e3-a88a-a0f34f3bfd8c-removebg-preview.png"  height="150" class="img" alt="pixel computer">
+
+    <div class="footer">
+        <button class="arrow">◀</button>
+        <button class="arrow">▶</button>    
+    <script>
+        function startGame() {
+            window.location.href = "3.html"
+        }
+    </script>
