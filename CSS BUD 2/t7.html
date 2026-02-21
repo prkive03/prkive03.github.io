@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>🌸 Cozy Ghibli Study Website</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+font-family:Poppins,sans-serif;
+margin:0;
+background:linear-gradient(180deg,#cfe9d8,#a8dadc,#b7e4c7);
+color:#2f3e46;
+transition:0.5s;
+}
+
+.page{
+display:none;
+padding:20px;
+}
+
+.center{
+max-width:500px;
+margin:auto;
+background:white;
+padding:25px;
+border-radius:20px;
+box-shadow:0 10px 20px rgba(0,0,0,0.2);
+text-align:center;
+}
+
+h1{
+color:#344e41;
+}
+
+button{
+background:#74c69d;
+border:none;
+padding:12px;
+margin:5px;
+border-radius:15px;
+cursor:pointer;
+font-size:16px;
+}
+
+button:hover{
+background:#52b788;
+transform:scale(1.05);
+}
+
+input{
+padding:10px;
+margin:5px;
+border-radius:10px;
+border:1px solid gray;
+}
+
+.topbar{
+background:#588157;
+color:white;
+padding:10px;
+}
+
+.left{
+float:left;
+}
+
+.right{
+float:right;
+}
+
+.timer{
+font-size:40px;
+margin:20px;
+}
+
+.funny{
+background:#ffb703;
+}
+
+.searchBox{
+width:80%;
+}
+
+</style>
+
+</head>
+<body>
+
+<!-- LOGIN PAGE -->
+<div id="loginPage" class="page">
+
+<div class="center">
+
+<h1>🌸 Cozy Study Login</h1>
+
+<input id="username" placeholder="Enter username"><br>
+<input id="password" type="password" placeholder="Enter password"><br>
+
+<button onclick="login()">Login 🌿</button>
+
+<p>Welcome computer system servicing student ✨</p>
+
+</div>
+
+</div>
+
+<!-- MENU PAGE -->
+<div id="menuPage" class="page">
+
+<div class="topbar">
+
+<button class="left" onclick="showPage('settingsPage')">⚙ Settings</button>
+
+<button class="right" onclick="logout()">Logout</button>
+
+<center><h3 id="welcomeText"></h3></center>
+
+</div>
+
+<div class="center">
+
+<h1>🌿 Main Menu</h1>
+
+<button onclick="showPage('reviewerPage')">📚 Reviewer</button><br>
+
+<button onclick="showPage('quizPage')">⏱ Quiz</button><br>
+
+<button onclick="showPage('funfactsPage')">💡 Fun Facts</button><br>
+
+<button onclick="showPage('gamesPage')">🎮 Mini Games</button><br>
+
+<button onclick="funny()">😂 Funny Button</button><br>
+
+<button onclick="showPage('researchPage')">🔎 Smart Research</button>
+
+</div>
+
+</div>
+
+<!-- SETTINGS -->
+<div id="settingsPage" class="page">
+
+<div class="center">
+
+<h1>⚙ Settings</h1>
+
+<p>Customize theme color 🌸</p>
+
+<input type="color" id="themeColor">
+
+<button onclick="changeTheme()">Apply Theme</button>
+
+<button onclick="showPage('menuPage')">Back</button>
+
+</div>
+
+</div>
+
+<!-- REVIEWER -->
+<div id="reviewerPage" class="page">
+
+<div class="center">
+
+<h1>📚 Reviewer</h1>
+
+<h3>COC 1 Installing and Configuring Computer Systems</h3>
+
+<p>
+• Assemble computer hardware properly<br>
+• Install Operating System like Windows or Linux<br>
+• Install drivers (graphics, network, sound)<br>
+• Configure BIOS settings<br>
+• Install software applications<br>
+</p>
+
+<h3>COC 2 Setting up Computer Networks</h3>
+
+<p>
+• Connect LAN cables properly<br>
+• Configure IP address<br>
+• Setup router and switch<br>
+• Test internet connection<br>
+• Configure network sharing<br>
+</p>
+
+<h3>COC 3 Setting up Computer Servers</h3>
+
+<p>
+• Install server OS<br>
+• Configure users and permissions<br>
+• Setup file sharing server<br>
+• Configure network services<br>
+• Maintain server security<br>
+</p>
+
+<button onclick="showPage('menuPage')">Back</button>
+
+</div>
+
+</div>
+
+<!-- QUIZ -->
+<div id="quizPage" class="page">
+
+<div class="center">
+
+<h1>⏱ Quiz Timer</h1>
+
+<input id="minutes" placeholder="Enter minutes">
+
+<button onclick="setTimer()">Set Timer</button>
+
+<div id="timer" class="timer">0:00</div>
+
+<button onclick="startTimer()">Start</button>
+<button onclick="pauseTimer()">Pause</button>
+<button onclick="resumeTimer()">Resume</button>
+<button onclick="resetTimer()">Reset</button>
+
+<br><br>
+
+<button onclick="showPage('menuPage')">Back</button>
+
+</div>
+
+</div>
+
+<!-- FUN FACTS -->
+<div id="funfactsPage" class="page">
+
+<div class="center">
+
+<h1>💡 Fun Facts</h1>
+
+<p>The first computer weighed over 27 tons.</p>
+
+<p>The first mouse was made of wood.</p>
+
+<p>The first virus was created in 1983.</p>
+
+<p>More than 90% of world data is digital.</p>
+
+<button onclick="showPage('menuPage')">Back</button>
+
+</div>
+
+</div>
+
+<!-- MINI GAMES -->
+<div id="gamesPage" class="page">
+
+<div class="center">
+
+<h1>🎮 Mini Game</h1>
+
+<p>Click to gain knowledge 🌸</p>
+
+<button onclick="gainKnowledge()">Gain Knowledge</button>
+
+<p id="points">Knowledge: 0</p>
+
+<button onclick="showPage('menuPage')">Back</button>
+
+</div>
+
+</div>
+
+<!-- RESEARCH -->
+<div id="researchPage" class="page">
+
+<div class="center">
+
+<h1>🔎 Smart Research</h1>
+
+<input id="searchInput" class="searchBox" placeholder="Search computer topic">
+
+<button onclick="search()">Search</button>
+
+<p id="searchResult"></p>
+
+<button onclick="showPage('menuPage')">Back</button>
+
+</div>
+
+</div>
+
+<script>
+
+let knowledge=0;
+
+function showPage(page){
+
+document.querySelectorAll(".page").forEach(p=>p.style.display="none");
+
+document.getElementById(page).style.display="block";
+
+}
+
+function login(){
+
+let user=document.getElementById("username").value;
+
+if(user){
+
+localStorage.setItem("user",user);
+
+document.getElementById("welcomeText").innerText="Welcome "+user+" 🌸";
+
+showPage("menuPage");
+
+}
+
+else{
+
+alert("Enter username");
+
+}
+
+}
+
+function logout(){
+
+localStorage.removeItem("user");
+
+showPage("loginPage");
+
+}
+
+function changeTheme(){
+
+let color=document.getElementById("themeColor").value;
+
+document.body.style.background=color;
+
+localStorage.setItem("theme",color);
+
+}
+
+function funny(){
+
+alert("Your brain is growing 🌿 +10 intelligence");
+
+}
+
+function gainKnowledge(){
+
+knowledge+=10;
+
+document.getElementById("points").innerText="Knowledge: "+knowledge;
+
+}
+
+function search(){
+
+let input=document.getElementById("searchInput").value;
+
+document.getElementById("searchResult").innerText=
+
+"Result about "+input+": This is important in computer system servicing.";
+
+}
+
+let time=0;
+let timerInterval;
+let paused=false;
+
+function setTimer(){
+
+time=document.getElementById("minutes").value*60;
+
+updateTimer();
+
+}
+
+function startTimer(){
+
+timerInterval=setInterval(()=>{
+
+if(time>0){
+
+time--;
+
+updateTimer();
+
+}
+
+},1000);
+
+}
+
+function pauseTimer(){
+
+clearInterval(timerInterval);
+paused=true;
+
+}
+
+function resumeTimer(){
+
+if(paused){
+
+startTimer();
+
+paused=false;
+
+}
+
+}
+
+function resetTimer(){
+
+clearInterval(timerInterval);
+time=0;
+updateTimer();
+
+}
+
+function updateTimer(){
+
+let m=Math.floor(time/60);
+let s=time%60;
+
+document.getElementById("timer").innerText=m+":"+(s<10?"0":"")+s;
+
+}
+
+window.onload=function(){
+
+let user=localStorage.getItem("user");
+
+let theme=localStorage.getItem("theme");
+
+if(theme) document.body.style.background=theme;
+
+if(user){
+
+document.getElementById("welcomeText").innerText="Welcome "+user+" 🌸";
+
+showPage("menuPage");
+
+}
+
+else{
+
+showPage("loginPage");
+
+}
+
+};
+
+</script>
+
+</body>
+</html>

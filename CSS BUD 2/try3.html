@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cozy CSS Cat Study Hub</title>
+
+<style>
+
+:root{
+--bg:#e6d8b8;
+--box:#d8c8a8;
+--card:#efe4c9;
+--accent:#6f7f4f;
+--accent2:#4e5c35;
+--text:#3e3a2f;
+}
+
+*{
+box-sizing:border-box;
+}
+
+body{
+margin:0;
+font-family:"Trebuchet MS", cursive;
+background:var(--bg);
+color:var(--text);
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.container{
+width:100vw;
+height:100vh;
+background:var(--bg);
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.window{
+width:95%;
+height:95%;
+background:var(--box);
+border-radius:25px;
+padding:20px;
+position:relative;
+box-shadow:0 0 30px rgba(0,0,0,0.3);
+overflow:auto;
+}
+
+header{
+text-align:center;
+font-size:40px;
+font-weight:bold;
+margin-bottom:10px;
+}
+
+.settings{
+position:absolute;
+top:20px;
+left:20px;
+font-size:25px;
+cursor:pointer;
+}
+
+.center{
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+}
+
+.menu{
+display:flex;
+justify-content:center;
+flex-wrap:wrap;
+}
+
+button{
+background:var(--accent);
+border:none;
+margin:10px;
+padding:15px 35px;
+border-radius:30px;
+font-size:18px;
+cursor:pointer;
+color:white;
+transition:0.3s;
+}
+
+button:hover{
+background:var(--accent2);
+transform:scale(1.1);
+}
+
+button:active{
+transform:scale(0.9);
+}
+
+input{
+padding:10px;
+border-radius:20px;
+border:none;
+margin:10px;
+width:200px;
+}
+
+.page{
+display:none;
+}
+
+.active{
+display:block;
+}
+
+.card{
+background:var(--card);
+padding:20px;
+border-radius:20px;
+margin:15px;
+max-width:700px;
+}
+
+.timer{
+font-size:40px;
+margin:20px;
+}
+
+.theme{
+width:40px;
+height:40px;
+border-radius:50%;
+display:inline-block;
+cursor:pointer;
+margin:5px;
+}
+
+.cat{
+position:absolute;
+bottom:0;
+right:20px;
+font-size:100px;
+opacity:0.2;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<div class="window">
+
+<div class="settings" onclick="openPage('settings')">⚙️</div>
+
+<header>🐱 Cozy CSS Cat Study Hub</header>
+
+<div class="cat">🐈</div>
+
+<!-- LOGIN -->
+<div id="login" class="page active center">
+
+<h2>Login Account</h2>
+
+<input id="name" placeholder="Enter your name">
+
+<button onclick="login()">Enter Study Room 📚</button>
+
+</div>
+
+<!-- MENU -->
+<div id="menu" class="page center">
+
+<h2 id="welcome"></h2>
+
+<div class="menu">
+
+<button onclick="openPage('reviewMenu')">Reviewer 📖</button>
+
+<button onclick="openPage('quiz')">Quiz ⏱</button>
+
+<button onclick="openPage('facts')">Fun Facts 💡</button>
+
+<button onclick="openPage('games')">Mini Games 🎮</button>
+
+</div>
+
+<button onclick="logout()">Logout</button>
+
+</div>
+
+<!-- REVIEW MENU -->
+<div id="reviewMenu" class="page center">
+
+<button onclick="openPage('menu')">⬅ Back</button>
+
+<button onclick="openPage('install')">Installing Computer Systems</button>
+
+<button onclick="openPage('network')">Setting up Networks</button>
+
+<button onclick="openPage('server')">Setting up Servers</button>
+
+</div>
+
+<!-- INSTALL PAGE -->
+<div id="install" class="page center">
+
+<button onclick="openPage('reviewMenu')">⬅ Back</button>
+
+<div class="card">
+
+<h3>Installing and Configuring Computer Systems</h3>
+
+<p>
+Steps:
+
+Install OS
+
+Install drivers
+
+Configure BIOS
+
+Install applications
+
+Update system
+
+</p>
+
+</div>
+
+</div>
+
+<!-- NETWORK PAGE -->
+<div id="network" class="page center">
+
+<button onclick="openPage('reviewMenu')">⬅ Back</button>
+
+<div class="card">
+
+<h3>Setting up Computer Networks</h3>
+
+<p>
+
+Connect cables
+
+Assign IP
+
+Configure router
+
+Test connection
+
+</p>
+
+</div>
+
+</div>
+
+<!-- SERVER PAGE -->
+<div id="server" class="page center">
+
+<button onclick="openPage('reviewMenu')">⬅ Back</button>
+
+<div class="card">
+
+<h3>Setting up Computer Servers</h3>
+
+<p>
+
+Install server OS
+
+Create users
+
+File sharing
+
+Network services
+
+</p>
+
+</div>
+
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="page center">
+
+<button onclick="openPage('menu')">⬅ Back</button>
+
+<input id="time" placeholder="seconds">
+
+<div class="timer" id="timer">0</div>
+
+<button onclick="startTimer()">Start</button>
+
+<button onclick="stopTimer()">Stop</button>
+
+<button onclick="resumeTimer()">Resume</button>
+
+</div>
+
+<!-- FACTS -->
+<div id="facts" class="page center">
+
+<button onclick="openPage('menu')">⬅ Back</button>
+
+<div class="card">First computer mouse was wood 🪵</div>
+
+<div class="card">First virus was Creeper 🦠</div>
+
+</div>
+
+<!-- GAME -->
+<div id="games" class="page center">
+
+<button onclick="openPage('menu')">⬅ Back</button>
+
+<button onclick="score++ ; updateScore()">Click the RAM!</button>
+
+<div id="score">Score:0</div>
+
+</div>
+
+<!-- SETTINGS -->
+<div id="settings" class="page center">
+
+<button onclick="openPage('menu')">⬅ Back</button>
+
+<div class="theme" style="background:#e6d8b8" onclick="theme('#e6d8b8')"></div>
+
+<div class="theme" style="background:#d8e6c1" onclick="theme('#d8e6c1')"></div>
+
+<div class="theme" style="background:#c1dbe6" onclick="theme('#c1dbe6')"></div>
+
+<div class="theme" style="background:#f0c1d1" onclick="theme('#f0c1d1')"></div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+let score=0;
+
+function updateScore(){
+document.getElementById("score").innerHTML="Score:"+score;
+}
+
+let timer;
+let t=0;
+
+function startTimer(){
+
+t=document.getElementById("time").value;
+
+clearInterval(timer);
+
+timer=setInterval(()=>{
+t--;
+document.getElementById("timer").innerHTML=t;
+if(t<=0) clearInterval(timer);
+},1000);
+
+}
+
+function stopTimer(){
+clearInterval(timer);
+}
+
+function resumeTimer(){
+startTimer();
+}
+
+function login(){
+
+let n=document.getElementById("name").value;
+
+localStorage.setItem("user",n);
+
+showUser();
+
+openPage("menu");
+
+}
+
+function logout(){
+
+localStorage.removeItem("user");
+
+openPage("login");
+
+}
+
+function showUser(){
+
+let n=localStorage.getItem("user");
+
+document.getElementById("welcome").innerHTML="Welcome "+n+" ☕";
+
+}
+
+function openPage(id){
+
+document.querySelectorAll(".page")
+.forEach(p=>p.classList.remove("active"));
+
+document.getElementById(id).classList.add("active");
+
+if(id=="menu") showUser();
+
+}
+
+function theme(color){
+
+document.documentElement.style.setProperty('--bg',color);
+
+}
+
+</script>
+
+</body>
+</html>

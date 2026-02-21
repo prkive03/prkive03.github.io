@@ -1,0 +1,120 @@
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family: "Courier New", monospace;
+}
+
+body{
+
+background: linear-gradient(to bottom,#8ec5fc,#e0c3fc);
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+
+}
+
+/* WINDOW STYLE */
+
+.window{
+
+background:white;
+width:90%;
+height:90%;
+border:4px solid #2c3e50;
+border-radius:15px;
+box-shadow:10px 10px 0px black;
+padding:20px;
+position:relative;
+text-align:center;
+
+}
+
+/* TOP BAR */
+
+.topbar{
+
+background: #2d1cb4;
+color:white;
+padding:10px;
+border-radius:10px;
+margin-bottom:20px;
+font-size:25px;
+
+}
+
+/* BUTTONS */
+
+button{
+
+padding:15px 30px;
+margin:10px;
+font-size:18px;
+border:none;
+border-radius:10px;
+background:#2d1cb4;
+color:white;
+cursor:pointer;
+box-shadow:5px 5px 0px black;
+
+}
+
+button:hover{
+
+background:#c0ea27;
+transform:scale(1.1);
+
+}
+
+/* CENTER BUTTONS */
+
+.center{
+
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+align-items:center;
+height:70%;
+
+}
+
+/* INPUT */
+
+input{
+
+padding:10px;
+font-size:18px;
+margin:10px;
+border-radius:10px;
+
+}
+
+/* SETTINGS BUTTON */
+
+.settings{
+
+position:absolute;
+left:10px;
+top:10px;
+
+}
+
+/* FUNNY BUTTON */
+
+.funny{
+
+background:orange;
+
+}
+
+/* TEXT BOX */
+
+.box{
+
+background:#ecf0f1;
+padding:20px;
+border-radius:10px;
+margin:10px;
+
+}

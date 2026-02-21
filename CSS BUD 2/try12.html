@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Ghibli Cozy Study Cafe</title>
+
+<style>
+
+/* ========================= */
+/* GHIBLI COZY THEME */
+/* ========================= */
+
+:root{
+
+--bg1:#cfe8d5;
+--bg2:#f6f1e7;
+--button:#7aa874;
+--buttonHover:#5e8c61;
+--text:#2b2b2b;
+--card:#ffffffd9;
+
+}
+
+body{
+
+margin:0;
+font-family: "Segoe UI", sans-serif;
+
+background:
+linear-gradient(rgba(0,0,0,0.2),rgba(0,0,0,0.2)),
+url("https://images.unsplash.com/photo-1498654896293-37aacf113fd9");
+
+background-size:cover;
+background-position:center;
+
+height:100vh;
+
+}
+
+
+/* PAGE SYSTEM */
+
+.page{
+
+display:none;
+
+height:100vh;
+
+justify-content:center;
+align-items:center;
+flex-direction:column;
+
+}
+
+.active{
+
+display:flex;
+
+}
+
+
+/* CARD */
+
+.card{
+
+background:var(--card);
+
+padding:40px;
+
+border-radius:20px;
+
+box-shadow:0 10px 30px rgba(0,0,0,0.3);
+
+text-align:center;
+
+}
+
+
+/* BIG CENTER BUTTON */
+
+button{
+
+width:300px;
+
+font-size:20px;
+
+padding:15px;
+
+margin:10px;
+
+border:none;
+
+border-radius:12px;
+
+background:var(--button);
+
+color:white;
+
+cursor:pointer;
+
+}
+
+button:hover{
+
+background:var(--buttonHover);
+
+}
+
+
+/* SETTINGS */
+
+.settings{
+
+position:absolute;
+
+top:15px;
+left:15px;
+
+}
+
+
+/* INPUT */
+
+input{
+
+padding:10px;
+
+margin:10px;
+
+width:200px;
+
+font-size:16px;
+
+}
+
+
+/* QUIZ TIMER */
+
+.timer{
+
+font-size:25px;
+
+margin:15px;
+
+}
+
+
+/* FUN FACT CARD */
+
+.flash{
+
+width:350px;
+height:200px;
+
+background:white;
+
+border-radius:20px;
+
+display:flex;
+
+justify-content:center;
+align-items:center;
+
+font-size:20px;
+
+cursor:pointer;
+
+}
+
+
+/* MINI GAME */
+
+.color{
+
+width:70px;
+height:70px;
+
+display:inline-block;
+
+margin:5px;
+
+border-radius:10px;
+
+cursor:pointer;
+
+border:2px solid black;
+
+}
+
+</style>
+</head>
+<body>
+
+
+<!-- LOGIN -->
+
+<div id="login" class="page active">
+
+<div class="card">
+
+<h1>☕ Ghibli Study Cafe</h1>
+
+<input placeholder="Username">
+
+<br>
+
+<input type="password" placeholder="Password">
+
+<br>
+
+<button onclick="openPage('menu')">ENTER</button>
+
+</div>
+
+</div>
+
+
+
+<!-- MENU -->
+
+<div id="menu" class="page">
+
+<div class="settings">
+
+<button onclick="changeColor()">⚙</button>
+
+</div>
+
+<div class="card">
+
+<h1>Main Menu</h1>
+
+<button onclick="openPage('review')">Reviewer</button>
+
+<button onclick="openPage('quiz')">Quiz</button>
+
+<button onclick="openPage('facts')">Fun Facts</button>
+
+<button onclick="openPage('game')">Mini Game</button>
+
+</div>
+
+</div>
+
+
+
+<!-- REVIEW -->
+
+<div id="review" class="page">
+
+<div class="card">
+
+<h2>Reviewer</h2>
+
+<button onclick="coc(1)">COC 1</button>
+
+<button onclick="coc(2)">COC 2</button>
+
+<button onclick="coc(3)">COC 3</button>
+
+<p id="reviewText"></p>
+
+<button onclick="openPage('menu')">Back</button>
+
+</div>
+
+</div>
+
+
+
+<!-- QUIZ -->
+
+<div id="quiz" class="page">
+
+<div class="card">
+
+<h2>Quiz</h2>
+
+<p id="question"></p>
+
+<button onclick="answer('A')">A</button>
+
+<button onclick="answer('B')">B</button>
+
+<button onclick="answer('C')">C</button>
+
+<button onclick="answer('D')">D</button>
+
+<div class="timer" id="timer">60</div>
+
+<button onclick="pause()">Pause</button>
+
+<button onclick="resume()">Resume</button>
+
+<button onclick="setTimer()">Set Time</button>
+
+<button onclick="openPage('menu')">Back</button>
+
+</div>
+
+</div>
+
+
+
+<!-- FUN FACT -->
+
+<div id="facts" class="page">
+
+<div class="card">
+
+<h2>Fun Facts</h2>
+
+<div class="flash" onclick="fact()" id="fact">
+
+Click to Generate
+
+</div>
+
+<button onclick="openPage('menu')">Back</button>
+
+</div>
+
+</div>
+
+
+
+<!-- MINI GAME -->
+
+<div id="game" class="page">
+
+<div class="card">
+
+<h2>RJ45 Wiring</h2>
+
+<p>Click colors to simulate wiring</p>
+
+<div id="gameArea"></div>
+
+<button onclick="openPage('menu')">Back</button>
+
+</div>
+
+</div>
+
+
+
+<script>
+
+
+/* PAGE */
+
+function openPage(page){
+
+document.querySelectorAll(".page")
+
+.forEach(p=>p.classList.remove("active"))
+
+document.getElementById(page)
+
+.classList.add("active")
+
+}
+
+
+/* SETTINGS */
+
+function changeColor(){
+
+let color=prompt("Enter color")
+
+document.documentElement
+
+.style.setProperty("--button",color)
+
+}
+
+
+/* REVIEW */
+
+function coc(num){
+
+let text=""
+
+if(num==1)
+
+text="COC1 Installing Computer System\nParts: CPU RAM HDD PSU"
+
+if(num==2)
+
+text="COC2 Setup Network\nLAN Cable Router RJ45"
+
+if(num==3)
+
+text="COC3 Maintenance\nCleaning Troubleshooting"
+
+document.getElementById("reviewText").innerHTML=text
+
+}
+
+
+/* QUIZ */
+
+let questions=[
+
+"Brain of computer?",
+
+"Temporary memory?"
+
+]
+
+let current=0
+
+document.getElementById("question")
+
+.innerHTML=questions[current]
+
+
+function answer(a){
+
+alert("Answer: "+a)
+
+}
+
+
+let time=60
+
+let timer
+
+function start(){
+
+timer=setInterval(()=>{
+
+time--
+
+document.getElementById("timer").innerHTML=time
+
+},1000)
+
+}
+
+start()
+
+function pause(){
+
+clearInterval(timer)
+
+}
+
+function resume(){
+
+start()
+
+}
+
+function setTimer(){
+
+time=prompt("seconds")
+
+}
+
+
+
+/* FACT */
+
+let facts=[
+
+"CPU brain",
+
+"RAM memory",
+
+"Internet biggest network",
+
+"Binary 0 and 1"
+
+]
+
+function fact(){
+
+document.getElementById("fact")
+
+.innerHTML=
+
+facts[Math.floor(Math.random()*facts.length)]
+
+}
+
+
+/* MINI GAME */
+
+let colors=[
+
+"orange","orange","green","blue",
+
+"blue","green","brown","brown"
+
+]
+
+colors.forEach(color=>{
+
+let div=document.createElement("div")
+
+div.className="color"
+
+div.style.background=color
+
+document.getElementById("gameArea")
+
+.appendChild(div)
+
+})
+
+
+
+</script>
+
+
+</body>
+</html>

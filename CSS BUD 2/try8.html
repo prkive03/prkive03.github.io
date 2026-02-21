@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>🌸 Cozy Ghibli CSS Study Website</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+font-family:Poppins,sans-serif;
+margin:0;
+background:linear-gradient(180deg,#cfe9d8,#b7e4c7,#95d5b2);
+transition:0.5s;
+color:#2f3e46;
+}
+
+.page{
+display:none;
+padding:20px;
+}
+
+.card{
+background:white;
+padding:25px;
+max-width:700px;
+margin:auto;
+border-radius:20px;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+text-align:center;
+}
+
+.topbar{
+background:#588157;
+color:white;
+padding:12px;
+}
+
+.left{float:left;}
+.right{float:right;}
+
+button{
+background:#74c69d;
+border:none;
+padding:12px;
+margin:5px;
+border-radius:15px;
+cursor:pointer;
+font-size:16px;
+}
+
+button:hover{
+background:#52b788;
+transform:scale(1.05);
+}
+
+input,select{
+padding:10px;
+margin:5px;
+border-radius:10px;
+border:1px solid gray;
+}
+
+.timer{
+font-size:40px;
+margin:20px;
+}
+
+.quizQ{
+text-align:left;
+margin:15px;
+}
+
+.points{
+font-size:20px;
+}
+
+</style>
+</head>
+<body>
+
+<!-- LOGIN PAGE -->
+<div id="loginPage" class="page">
+<div class="card">
+
+<h1>🌸 Cozy CSS Study Login</h1>
+
+<input id="username" placeholder="Username"><br>
+
+<button onclick="login()">Login 🌿</button>
+
+<p>Your peaceful computer study world ✨</p>
+
+</div>
+</div>
+
+
+<!-- MENU -->
+<div id="menuPage" class="page">
+
+<div class="topbar">
+
+<button class="left" onclick="showPage('settingsPage')">⚙ Settings</button>
+
+<button class="right" onclick="logout()">Logout</button>
+
+<center><h3 id="welcome"></h3></center>
+
+</div>
+
+<div class="card">
+
+<h1>🌿 Main Menu</h1>
+
+<button onclick="showPage('reviewerPage')">📚 Reviewer</button>
+
+<button onclick="showPage('quizPage')">📝 Quiz</button>
+
+<button onclick="showPage('funPage')">💡 Fun Facts</button>
+
+<button onclick="showPage('gamePage')">🎮 Mini Game</button>
+
+<button onclick="showPage('searchPage')">🔎 Smart Search</button>
+
+<button onclick="showPage('translatePage')">🌐 Translate</button>
+
+</div>
+
+</div>
+
+
+<!-- SETTINGS -->
+<div id="settingsPage" class="page">
+<div class="card">
+
+<h1>⚙ Theme Settings</h1>
+
+<input type="color" id="themePicker">
+
+<button onclick="setTheme()">Apply Theme</button>
+
+<button onclick="showPage('menuPage')">Back</button>
+
+</div>
+</div>
+
+
+<!-- REVIEWER -->
+<div id="reviewerPage" class="page">
+<div class="card">
+
+<h1>📚 CSS Reviewer</h1>
+
+<h3>COC 1 Installing and Configuring Computer Systems</h3>
+
+<p>
+This includes assembling hardware components such as motherboard, CPU, RAM, power supply, storage devices, and peripherals.
+You must install operating systems like Windows or Linux, install drivers, configure BIOS settings, and ensure system stability.
+Proper installation ensures system performance, compatibility, and reliability.
+</p>
+
+<h3>COC 2 Setting up Computer Networks</h3>
+
+<p>
+This includes connecting LAN cables, configuring IP address, subnet mask, gateway, and DNS.
+Network devices include routers, switches, and access points.
+You must test connectivity using ping command and configure file sharing.
+Networking allows computers to communicate and share resources.
+</p>
+
+<h3>COC 3 Setting up Computer Servers</h3>
+
+<p>
+This includes installing server OS such as Windows Server or Linux Server.
+Configure user accounts, permissions, file sharing, and network services.
+Servers provide centralized management, security, and services for clients.
+Server maintenance ensures stability and security.
+</p>
+
+<button onclick="showPage('menuPage')">Back</button>
+
+</div>
+</div>
+
+
+<!-- QUIZ -->
+<div id="quizPage" class="page">
+<div class="card">
+
+<h1>📝 CSS Quiz</h1>
+
+<input id="minutes" placeholder="Enter minutes">
+
+<button onclick="setTimer()">Set Timer</button>
+
+<div class="timer" id="timer">0:00</div>
+
+<button onclick="startTimer()">Start</button>
+<button onclick="pauseTimer()">Pause</button>
+<button onclick="resumeTimer()">Resume</button>
+<button onclick="resetTimer()">Reset</button>
+
+<div class="quizQ">
+<p>1. What connects computer to network?</p>
+<select id="q1">
+<option>CPU</option>
+<option>Router</option>
+<option>RAM</option>
+</select>
+
+<p>2. What stores files permanently?</p>
+<select id="q2">
+<option>RAM</option>
+<option>Hard Drive</option>
+<option>CPU</option>
+</select>
+
+<p>3. What manages network services?</p>
+<select id="q3">
+<option>Server</option>
+<option>Mouse</option>
+<option>Keyboard</option>
+</select>
+
+<button onclick="submitQuiz()">Submit Quiz</button>
+
+<p id="score"></p>
+
+</div>
+
+<button onclick="showPage('menuPage')">Back</button>
+
+</div>
+</div>
+
+
+<!-- FUN FACTS -->
+<div id="funPage" class="page">
+<div class="card">
+
+<h1>💡 Fun Facts</h1>
+
+<p>First computer weighed 27 tons.</p>
+<p>First virus created in 1983.</p>
+<p>Email invented before web.</p>
+<p>RAM loses data when power off.</p>
+
+<button onclick="showPage('menuPage')">Back</button>
+
+</div>
+</div>
+
+
+<!-- GAME -->
+<div id="gamePage" class="page">
+<div class="card">
+
+<h1>🎮 Knowledge Click Game</h1>
+
+<p class="points">Knowledge: <span id="points">0</span></p>
+
+<button onclick="gain()">Gain Knowledge 🌸</button>
+
+<button onclick="showPage('menuPage')">Back</button>
+
+</div>
+</div>
+
+
+<!-- SEARCH -->
+<div id="searchPage" class="page">
+<div class="card">
+
+<h1>🔎 Smart Search</h1>
+
+<input id="searchInput" placeholder="Search CSS topic">
+
+<button onclick="search()">Search</button>
+
+<p id="searchResult"></p>
+
+<button onclick="showPage('menuPage')">Back</button>
+
+</div>
+</div>
+
+
+<!-- TRANSLATE -->
+<div id="translatePage" class="page">
+<div class="card">
+
+<h1>🌐 Translate</h1>
+
+<select id="lang">
+<option value="en">English</option>
+<option value="fil">Filipino</option>
+<option value="es">Spanish</option>
+<option value="jp">Japanese</option>
+</select>
+
+<button onclick="translate()">Translate Welcome</button>
+
+<p id="translated"></p>
+
+<button onclick="showPage('menuPage')">Back</button>
+
+</div>
+</div>
+
+
+<script>
+
+let points=0;
+
+function showPage(id){
+
+document.querySelectorAll(".page").forEach(p=>p.style.display="none");
+
+document.getElementById(id).style.display="block";
+
+}
+
+function login(){
+
+let user=username.value;
+
+if(user){
+
+localStorage.user=user;
+
+welcome.innerText="Welcome "+user+" 🌸";
+
+showPage("menuPage");
+
+}
+
+}
+
+function logout(){
+
+localStorage.removeItem("user");
+
+showPage("loginPage");
+
+}
+
+function setTheme(){
+
+let color=themePicker.value;
+
+document.body.style.background=color;
+
+localStorage.theme=color;
+
+}
+
+window.onload=function(){
+
+if(localStorage.theme)
+document.body.style.background=localStorage.theme;
+
+if(localStorage.user){
+
+welcome.innerText="Welcome "+localStorage.user+" 🌸";
+
+showPage("menuPage");
+
+}else{
+
+showPage("loginPage");
+
+}
+
+}
+
+
+let time=0;
+let interval;
+let paused=false;
+
+function setTimer(){
+
+time=minutes.value*60;
+updateTimer();
+
+}
+
+function startTimer(){
+
+interval=setInterval(()=>{
+if(time>0){time--;updateTimer();}
+},1000);
+
+}
+
+function pauseTimer(){
+
+clearInterval(interval);
+paused=true;
+
+}
+
+function resumeTimer(){
+
+if(paused)startTimer();
+
+}
+
+function resetTimer(){
+
+clearInterval(interval);
+time=0;
+updateTimer();
+
+}
+
+function updateTimer(){
+
+let m=Math.floor(time/60);
+let s=time%60;
+
+timer.innerText=m+":"+(s<10?"0":"")+s;
+
+}
+
+function submitQuiz(){
+
+let score=0;
+
+if(q1.value=="Router")score++;
+if(q2.value=="Hard Drive")score++;
+if(q3.value=="Server")score++;
+
+document.getElementById("score").innerText="Score: "+score+"/3";
+
+}
+
+function gain(){
+
+points+=10;
+document.getElementById("points").innerText=points;
+
+}
+
+function search(){
+
+let q=searchInput.value;
+
+searchResult.innerText="Result: "+q+" is important in computer system servicing.";
+
+}
+
+function translate(){
+
+let lang=document.getElementById("lang").value;
+
+let text="Welcome to your cozy study website";
+
+if(lang=="fil") text="Maligayang pagdating sa iyong study website";
+if(lang=="es") text="Bienvenido a tu sitio de estudio";
+if(lang=="jp") text="あなたの勉強サイトへようこそ";
+
+translated.innerText=text;
+
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Pixel Tech Study Arcade</title>
+
+<style>
+:root{
+--bg:#1e1e2f;
+--panel:#2c2c44;
+--accent:#ff4da6;
+--highlight:#00f7ff;
+--text:#ffffff;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Courier New', monospace;
+}
+
+body{
+background:linear-gradient(180deg,#3b2f6b,#1e1e2f);
+color:var(--text);
+height:100vh;
+overflow:hidden;
+}
+
+/* FULL SCREEN SECTIONS */
+.section{
+display:none;
+height:100vh;
+width:100%;
+padding:30px;
+overflow:auto;
+}
+
+.active{
+display:block;
+}
+
+/* PIXEL PANEL */
+.panel{
+background:var(--panel);
+border:4px solid var(--accent);
+border-radius:15px;
+padding:25px;
+box-shadow:0 0 20px var(--highlight);
+margin-bottom:20px;
+}
+
+/* SETTINGS */
+.settings{
+position:fixed;
+top:10px;
+left:10px;
+z-index:999;
+}
+
+.settings select{
+padding:5px;
+background:black;
+color:white;
+border:2px solid var(--accent);
+}
+
+/* ARCADE BUTTONS */
+button{
+background:var(--accent);
+border:none;
+padding:12px 20px;
+margin:8px;
+border-radius:8px;
+color:white;
+font-weight:bold;
+cursor:pointer;
+transition:0.2s;
+}
+
+button:hover{
+transform:translateY(-5px);
+background:var(--highlight);
+color:black;
+}
+
+/* BOUNCE BUTTONS */
+.fun-btn{
+animation:bounce 1.2s infinite;
+}
+
+@keyframes bounce{
+0%,100%{transform:translateY(0);}
+50%{transform:translateY(-6px);}
+}
+
+/* LOGIN */
+.login-box{
+max-width:400px;
+margin:auto;
+margin-top:150px;
+text-align:center;
+}
+
+input{
+width:100%;
+padding:10px;
+margin:10px 0;
+border-radius:5px;
+border:2px solid var(--accent);
+background:black;
+color:white;
+}
+
+/* MENU GRID */
+.grid{
+display:flex;
+flex-wrap:wrap;
+gap:15px;
+}
+
+/* TIMER */
+.timer{
+font-size:28px;
+margin:15px 0;
+color:var(--highlight);
+}
+
+.search-bar{
+width:100%;
+padding:8px;
+margin-bottom:10px;
+}
+
+</style>
+</head>
+<body>
+
+<!-- SETTINGS -->
+<div class="settings">
+<select onchange="changeTheme(this.value)">
+<option value="default">Arcade Purple</option>
+<option value="dark">Dark Mode</option>
+<option value="green">Matrix Green</option>
+<option value="blue">Cyber Blue</option>
+</select>
+</div>
+
+<!-- LOGIN PAGE -->
+<div id="login" class="section active">
+<div class="panel login-box">
+<h1>🎮 PIXEL TECH STUDY HUB</h1>
+<p>Login to Continue</p>
+<input type="text" id="username" placeholder="Enter Username">
+<input type="password" placeholder="Password">
+<button onclick="login()">START GAME</button>
+</div>
+</div>
+
+<!-- MENU PAGE -->
+<div id="menu" class="section">
+<div class="panel">
+<h1 id="welcomeText">Welcome Player!</h1>
+<p>Select your mission 🕹</p>
+</div>
+
+<div class="grid">
+<button class="fun-btn" onclick="showPage('reviewer')">📚 Reviewer</button>
+<button onclick="showPage('quiz')">🧠 Quiz Arena</button>
+<button onclick="showPage('funfacts')">💡 Fun Facts</button>
+<button onclick="showPage('minigame')">🎲 Mini Game</button>
+<button onclick="showPage('research')">🔎 Smart Research</button>
+</div>
+</div>
+
+<!-- REVIEWER PAGE -->
+<div id="reviewer" class="section">
+<div class="panel">
+<h2>📚 Choose COC</h2>
+<input type="text" class="search-bar" placeholder="Search topic..." onkeyup="searchTopic(this.value)">
+<button onclick="showPage('coc1')">COC 1</button>
+<button onclick="showPage('coc2')">COC 2</button>
+<button onclick="showPage('coc3')">COC 3</button>
+<button onclick="showPage('menu')">⬅ Back</button>
+</div>
+</div>
+
+<!-- COC 1 -->
+<div id="coc1" class="section">
+<div class="panel">
+<h2>COC 1: Installing & Configuring Computer Systems</h2>
+<p>• Identify hardware components (CPU, RAM, HDD, PSU)</p>
+<p>• Assemble and disassemble system unit safely</p>
+<p>• Install Windows / Linux OS</p>
+<p>• Configure BIOS/UEFI</p>
+<p>• Install drivers & updates</p>
+<p>• Perform system testing & troubleshooting</p>
+<button onclick="showPage('reviewer')">⬅ Back</button>
+</div>
+</div>
+
+<!-- COC 2 -->
+<div id="coc2" class="section">
+<div class="panel">
+<h2>COC 2: Setting Up Computer Networks</h2>
+<p>• Types of Network (LAN, WAN, MAN)</p>
+<p>• IP Addressing & Subnetting</p>
+<p>• Router & Switch Configuration</p>
+<p>• Crimping RJ45 (T568A/B)</p>
+<p>• Wireless Network Setup</p>
+<p>• Network Troubleshooting Tools</p>
+<button onclick="showPage('reviewer')">⬅ Back</button>
+</div>
+</div>
+
+<!-- COC 3 -->
+<div id="coc3" class="section">
+<div class="panel">
+<h2>COC 3: Setting Up Computer Servers</h2>
+<p>• Install Windows Server / Linux Server</p>
+<p>• Configure DNS & DHCP</p>
+<p>• Create Active Directory Users</p>
+<p>• File & Print Services</p>
+<p>• Backup and Recovery</p>
+<p>• Server Security & Firewall</p>
+<button onclick="showPage('reviewer')">⬅ Back</button>
+</div>
+</div>
+
+<!-- QUIZ PAGE -->
+<div id="quiz" class="section">
+<div class="panel">
+<h2>🧠 Quiz Arena</h2>
+<input type="number" id="setTime" placeholder="Set timer in seconds">
+<div class="timer" id="timer">0</div>
+<button onclick="startTimer()">Start</button>
+<button onclick="pauseTimer()">Pause</button>
+<button onclick="resumeTimer()">Resume</button>
+
+<p>What does RAM stand for?</p>
+<button onclick="alert('Correct!')">Random Access Memory</button>
+<button onclick="alert('Wrong!')">Read Access Mode</button>
+<button onclick="alert('Wrong!')">Run Active Memory</button>
+
+<button onclick="showPage('menu')">⬅ Back</button>
+</div>
+</div>
+
+<!-- FUN FACTS -->
+<div id="funfacts" class="section">
+<div class="panel">
+<h2>💡 Fun Facts About Computers</h2>
+<p>• First computer bug was an actual insect 🐛</p>
+<p>• The first 1GB hard drive cost $40,000</p>
+<p>• Over 90% of world currency exists digitally</p>
+<p>• Email existed before the World Wide Web</p>
+<button onclick="showPage('menu')">⬅ Back</button>
+</div>
+</div>
+
+<!-- MINI GAME -->
+<div id="minigame" class="section">
+<div class="panel">
+<h2>🎲 Guess the Component</h2>
+<p>I process instructions and calculations. Who am I?</p>
+<button onclick="alert('Correct! CPU!')">CPU</button>
+<button onclick="alert('Try Again!')">Monitor</button>
+<button onclick="alert('Try Again!')">Keyboard</button>
+<button onclick="showPage('menu')">⬅ Back</button>
+</div>
+</div>
+
+<!-- SMART RESEARCH -->
+<div id="research" class="section">
+<div class="panel">
+<h2>🔎 Smart Research Assistant</h2>
+<input type="text" id="researchInput" placeholder="Type topic (e.g DHCP)">
+<button onclick="research()">Search</button>
+<p id="researchResult"></p>
+<button onclick="showPage('menu')">⬅ Back</button>
+</div>
+</div>
+
+<script>
+let current="login";
+let timer;
+let timeLeft=0;
+let paused=false;
+
+function login(){
+let user=document.getElementById("username").value;
+if(user!=""){
+document.getElementById("welcomeText").innerText="Welcome, "+user+"!";
+showPage("menu");
+}
+}
+
+function showPage(id){
+document.getElementById(current).classList.remove("active");
+document.getElementById(id).classList.add("active");
+current=id;
+}
+
+function startTimer(){
+timeLeft=document.getElementById("setTime").value;
+paused=false;
+timer=setInterval(()=>{
+if(timeLeft>0 && !paused){
+timeLeft--;
+document.getElementById("timer").innerText="Time Left: "+timeLeft;
+}
+},1000);
+}
+
+function pauseTimer(){paused=true;}
+function resumeTimer(){paused=false;}
+
+function research(){
+let topic=document.getElementById("researchInput").value;
+document.getElementById("researchResult").innerText=
+"Research Result: "+topic+" is an important concept in Computer System Servicing related to networking or server configuration.";
+}
+
+function searchTopic(value){
+console.log("Searching for:",value);
+}
+
+function changeTheme(theme){
+if(theme=="dark"){
+document.documentElement.style.setProperty('--bg','#111');
+document.documentElement.style.setProperty('--panel','#222');
+}
+if(theme=="green"){
+document.documentElement.style.setProperty('--accent','#00ff99');
+document.documentElement.style.setProperty('--highlight','#00ff00');
+}
+if(theme=="blue"){
+document.documentElement.style.setProperty('--accent','#00ccff');
+document.documentElement.style.setProperty('--highlight','#0099ff');
+}
+}
+</script>
+
+</body>
+</html>

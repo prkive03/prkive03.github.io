@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CSS Buddy</title>
+<link rel="stylesheet" href="try6.css">
+</style>
+</head>
+
+<body>
+
+<div class="settings">
+<select onchange="changeTheme(this.value)">
+<option value="default">🌸 Default</option>
+<option value="sunset">🌅 Sunset</option>
+<option value="forest">🌲 Forest</option>
+<option value="night">🌙 Night</option>
+</select>
+</div>
+
+<!-- LOGIN -->
+<div id="login" class="section active">
+<div class="card" style="max-width:400px;margin:auto;margin-top:150px;text-align:center;">
+<h1> CoSSy </h1>
+<p>Great Day! CSS Students </p>
+<input type="text" id="username" placeholder="Enter your name">
+<input type="password" placeholder="Password">
+<button onclick="login()">Enter Study World </button>
+</div>
+</div>
+
+<!-- MENU -->
+<div id="menu" class="section">
+<div class="card">
+<h1 id="welcomeText">Welcome 🌿</h1>
+<p>Select your cozy learning path:</p>
+</div>
+
+<div class="grid">
+<button class="funny" onclick="showPage('reviewer')"> Reviewer</button>
+<button onclick="showPage('quiz')"> Quiz</button>
+<button onclick="showPage('funfacts')"> Fun Facts</button>
+<button onclick="showPage('minigame')"> Mini Game</button>
+<button onclick="showPage('research')"> Search </button>
+</div>
+</div>
+
+<!-- REVIEWER -->
+<div id="reviewer" class="section">
+<div class="card">
+<h2> Choose Your COC</h2>
+<input placeholder="Search topic..." onkeyup="searchTopic(this.value)">
+<button onclick="showPage('coc1')">COC 1 </button>
+<button onclick="showPage('coc2')">COC 2 </button>
+<button onclick="showPage('coc3')">COC 3 </button>
+<button onclick="showPage('menu')">⬅ Back</button>
+</div>
+</div>
+
+<!-- COC 1 -->
+<div id="coc1" class="section">
+<div class="card">
+<h2>Installing & Configuring Computer Systems</h2>
+<ul>
+<li>Identify hardware components (CPU, RAM, PSU, HDD/SSD)</li>
+<li>Safety procedures before assembling</li>
+<li>Install Windows/Linux OS</li>
+<li>BIOS/UEFI configuration</li>
+<li>Driver installation</li>
+<li>System testing & troubleshooting</li>
+</ul>
+<button onclick="showPage('reviewer')">⬅ Back</button>
+</div>
+</div>
+
+<!-- COC 2 -->
+<div id="coc2" class="section">
+<div class="card">
+<h2>Setting Up Computer Networks</h2>
+<ul>
+<li>LAN, WAN, MAN</li>
+<li>IP Addressing & Subnet</li>
+<li>Router & Switch configuration</li>
+<li>Crimping RJ45 (T568A & B)</li>
+<li>Network troubleshooting</li>
+<li>Wireless security setup</li>
+</ul>
+<button onclick="showPage('reviewer')">⬅ Back</button>
+</div>
+</div>
+
+<!-- COC 3 -->
+<div id="coc3" class="section">
+<div class="card">
+<h2>Setting Up Computer Servers</h2>
+<ul>
+<li>Install Windows/Linux Server</li>
+<li>DNS & DHCP configuration</li>
+<li>User account management</li>
+<li>File & Print services</li>
+<li>Backup and restore</li>
+<li>Firewall & security</li>
+</ul>
+<button onclick="showPage('reviewer')">⬅ Back</button>
+</div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="section">
+<div class="card">
+<h2>🧠 Cozy Quiz Time</h2>
+<input type="number" id="setTime" placeholder="Set timer in seconds">
+<div class="timer" id="timer">0</div>
+<button onclick="startTimer()">Start</button>
+<button onclick="pauseTimer()">Pause</button>
+<button onclick="resumeTimer()">Resume</button>
+
+<p>What does CPU stand for?</p>
+<button onclick="alert('Correct 🌸')">Central Processing Unit</button>
+<button onclick="alert('Try again 🌿')">Computer Power Unit</button>
+
+<button onclick="showPage('menu')">⬅ Back</button>
+</div>
+</div>
+
+<!-- FUN FACTS -->
+<div id="funfacts" class="section">
+<div class="card">
+<h2>💡 Fun Computer Facts</h2>
+<p>🐛 First computer bug was a real insect.</p>
+<p>💾 First hard drive weighed over 1 ton.</p>
+<p>🌐 First website is still online today.</p>
+<p>⌨ QWERTY keyboard was designed to slow typists!</p>
+<button onclick="showPage('menu')">⬅ Back</button>
+</div>
+</div>
+
+<!-- MINI GAME -->
+<div id="minigame" class="section">
+<div class="card">
+<h2>🎮 Guess the Component</h2>
+<p>I temporarily store data for fast access.</p>
+<button onclick="alert('Correct! RAM 🌸')">RAM</button>
+<button onclick="alert('Oops 🌿')">Hard Drive</button>
+<button onclick="showPage('menu')">⬅ Back</button>
+</div>
+</div>
+
+<!-- RESEARCH -->
+<div id="research" class="section">
+<div class="card">
+<h2>🔎 Smart Research Helper</h2>
+<input type="text" id="researchInput" placeholder="Type topic (example: DHCP)">
+<button onclick="research()">Search</button>
+<p id="researchResult"></p>
+<button onclick="showPage('menu')">⬅ Back</button>
+</div>
+</div>
+
+<script>
+let current="login";
+let timer;
+let timeLeft=0;
+let paused=false;
+
+</script>
+<script src="try6.js"></script>
+</body>
+</html>

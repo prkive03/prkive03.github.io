@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CoSSy</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Amatic+SC&family=Comic+Neue:wght@700&display=swap');
+
+body {
+  margin: 0; padding: 0;
+  background: #f2e7d5;
+  font-family: 'Amatic SC', cursive;
+  color: #5a4631;
+  user-select: none;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Container to mimic rustic wood panel */
+.container {
+  background: #a97c50;
+  border-radius: 20px;
+  width: 90vw;
+  max-width: 720px;
+  box-shadow: inset 5px 5px 10px #7a5a33, inset -5px -5px 10px #c9a775;
+  padding: 1rem 2rem 2rem;
+  margin: 2rem 0;
+  box-sizing: border-box;
+  border: 5px solid #7a5a33;
+  position: relative;
+}
+
+/* Header bar with "Fig Ficus" style */
+.header-bar {
+  background: #cdb79e;
+  border-radius: 20px 20px 0 0;
+  padding: 1rem 1.5rem;
+  text-align: center;
+  font-family: 'Comic Neue', cursive;
+  font-weight: 700;
+  font-size: 2.5rem;
+  color: #6a513a;
+  box-shadow: inset 2px 2px 3px #d6b98d, inset -2px -2px 3px #a47951;
+  user-select: none;
+  margin: -1rem -2rem 1rem -2rem;
+}
+
+/* Nav buttons - horizontally centered with spacing */
+.nav-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.nav-buttons button {
+  background: #d7b78f;
+  border: 2px solid #7a5a33;
+  border-radius: 15px;
+  padding: 0.6rem 1.2rem;
+  cursor: pointer;
+  font-family: 'Amatic SC', cursive;
+  font-size: 1.2rem;
+  color: #5a4631;
+  box-shadow: 2px 2px 5px #7a5a33;
+  transition: all 0.3s ease;
+  user-select: none;
+  text-shadow: 0 1px 0 #fff6e1;
+  letter-spacing: 0.05em;
+}
+
+.nav-buttons button:hover {
+  background: #7a5a33;
+  color: #f4e9d8;
+  transform: scale(1.05) rotate(-2deg);
+  box-shadow: 4px 4px 8px #5a4631;
+}
+
+/* Top-left settings gear */
+.settings-btn {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 2rem;
+  color: #7a5a33;
+  user-select: none;
+  transition: transform 0.3s ease;
+}
+.settings-btn:hover {
+  transform: rotate(20deg);
+}
+
+/* Page styling */
+.page {
+  display: none;
+  background: #f7f1e1;
+  border-radius: 15px;
+  padding: 1.5rem;
+  box-shadow: inset 3px 3px 8px #d1c4a3, inset -3px -3px 8px #fffbea;
+  min-height: 350px;
+  max-height: 600px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.page.active {
+  display: block;
+}
+
+/* Login page input */
+#loginPage input[type=text] {
+  font-family: 'Amatic SC', cursive;
+  font-size: 1.5rem;
+  padding: 0.4rem 0.8rem;
+  border: 2px solid #7a5a33;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 300px;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* Buttons inside pages */
+.page button {
+  margin: 0.6rem;
+  padding: 0.6rem 1.4rem;
+  border-radius: 15px;
+  background: #d7b78f;
+  border: 2px solid #7a5a33;
+  font-family: 'Amatic SC', cursive;
+  font-size: 1.2rem;
+  color: #5a4631;
+  cursor: pointer;
+  box-shadow: 2px 2px 5px #7a5a33;
+  transition: all 0.3s ease;
+  user-select: none;
+  text-shadow: 0 1px 0 #fff6e1;
+}
+
+.page button:hover {
+  background: #7a5a33;
+  color: #f4e9d8;
+  transform: scale(1.05) rotate(3deg);
+  box-shadow: 4px 4px 8px #5a4631;
+}
+
+/* Reviewer content */
+.reviewer-list {
+  text-align: left;
+  line-height: 1.5;
+  max-width: 600px;
+  margin: 1rem auto;
+  font-size: 1.2rem;
+}
+
+.reviewer-list h3 {
+  margin-bottom: 0.25rem;
+  color: #6a513a;
+  text-decoration: underline dotted #a17c49;
+}
+
+/* Quiz area */
+#question {
+  font-size: 1.4rem;
+  margin-bottom: 0.8rem;
+  font-weight: bold;
+}
+#options button {
+  display: block;
+  width: 90%;
+  max-width: 400px;
+  margin: 0.3rem auto;
+  font-size: 1.1rem;
+}
+
+/* Timer styling */
+#timer {
+  font-weight: bold;
+  font-size: 1.3rem;
+  color: #6a513a;
+}
+
+/* Fun fact text */
+#fact {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.4;
+  font-style: italic;
+  color: #5a4631cc;
+}
+
+/* Mini game grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 1rem;
+  max-width: 600px;
+  margin: 0 auto 1rem;
+}
+
+.block {
+  background: #d7b78f;
+  border: 2px solid #7a5a33;
+  border-radius: 15px;
+  height: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Amatic SC', cursive;
+  font-size: 1.3rem;
+  cursor: pointer;
+  box-shadow: 2px 2px 5px #7a5a33;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  user-select: none;
+  text-shadow: 0 1px 0 #fff6e1;
+}
+
+.block:hover {
+  background-color: #7a5a33;
+  color: #f4e9d8;
+  transform: scale(1.1);
+  box-shadow: 4px 4px 8px #5a4631;
+}
+
+/* Smart research input */
+#search {
+  width: 70%;
+  max-width: 350px;
+  font-family: 'Amatic SC', cursive;
+  font-size: 5rem;
+  padding: 0.4rem 0.8rem;
+  border: 2px solid #7a5a33;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* Scrollbar style for reviewer and content */
+.page::-webkit-scrollbar {
+  width: 8px;
+}
+.page::-webkit-scrollbar-track {
+  background: #f2e7d5;
+}
+.page::-webkit-scrollbar-thumb {
+  background: #a97c50;
+  border-radius: 4px;
+}
+
+/* Responsive tweaks */
+@media(max-width: 480px) {
+  .nav-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  #search {
+    width: 90%;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="header-bar">CoSSy</div>
+  
+  <button class="settings-btn" title="Customize Theme" onclick="showPage('themePage')">⚙️</button>
+
+  <!-- LOGIN PAGE -->
+  <div id="loginPage" class="page active">
+    <h2>Login</h2>
+    <input type="text" id="username" placeholder="Enter your name" />
+    <br />
+    <button onclick="login()">Log In</button>
+  </div>
+
+  <!-- MENU PAGE -->
+  <div id="menuPage" class="page">
+    <h2 id="welcomeUser">Welcome!</h2>
+    <div class="nav-buttons">
+      <button onclick="showPage('reviewerPage')">📚 Reviewer & Smart Research</button>
+      <button onclick="showPage('quizPage')">⏱ Quick Quiz</button>
+      <button onclick="showPage('factPage')">💡 Fun Facts</button>
+      <button onclick="showPage('gamePage')">🎮 Mini-Games</button>
+      <button onclick="showPage('researchPage')">🔍 Smart Research</button>
+    </div>
+  </div>
+
+  <!-- THEME PAGE -->
+  <div id="themePage" class="page">
+    <h2>Customize Theme</h2>
+    <label>Background: <input type="color" id="bgColor" value="#f2e7d5" /></label>
+    <br />
+    <label>Text: <input type="color" id="textColor" value="#5a4631" /></label>
+    <br />
+    <label>Buttons: <input type="color" id="btnColor" value="#d7b78f" /></label>
+    <br /><br />
+    <button onclick="applyTheme()">Apply Theme</button>
+    <button onclick="showPage('menuPage')">⬅ Back</button>
+  </div>
+
+  <!-- REVIEWER PAGE -->
+  <div id="reviewerPage" class="page">
+    <h2>Reviewer & Smart Research</h2>
+    <div class="reviewer-list">
+      <h3>1) Installing and Configuring Computer Systems</h3>
+      <ul>
+        <li>Identify and assemble PC components (CPU, RAM, HDD, Motherboard)</li>
+        <li>Install operating system and essential drivers</li>
+        <li>Configure BIOS, system updates, and utilities</li>
+      </ul>
+      <h3>2) Setting up Computer Networks</h3>
+      <ul>
+        <li>Connect devices using LAN/Wi-Fi</li>
+        <li>Assign IP addresses, subnet masks, and gateways</li>
+        <li>Configure switches, routers, DHCP, and firewall rules</li>
+      </ul>
+      <h3>3) Setting up Computer Servers</h3>
+      <ul>
+        <li>Install server OS (Windows/Linux)</li>
+        <li>Manage users, groups, and permissions</li>
+        <li>Setup file sharing, DHCP, DNS, and network services</li>
+      </ul>
+    </div>
+    <button onclick="showPage('menuPage')">⬅ Back</button>
+  </div>
+
+  <!-- QUIZ PAGE -->
+  <div id="quizPage" class="page">
+    <h2>Quick Quiz ⏱️</h2>
+    <label>Set Timer (seconds): <input type="number" id="customTimer" value="30" min="5" max="300" /></label>
+    <br /><br />
+    <p id="question">Loading question...</p>
+    <div id="options"></div>
+    <p>Time left: <span id="timer">30</span>s</p>
+    <button onclick="pauseTimer()">⏸ Pause</button>
+    <button onclick="resumeTimer()">▶ Resume</button>
+    <button onclick="nextQuestion()">Next</button>
+    <button onclick="showPage('menuPage')">⬅ Back</button>
+  </div>
+
+  <!-- FUN FACTS PAGE -->
+  <div id="factPage" class="page">
+    <h2>Fun Facts 💡</h2>
+    <p id="fact">Computers once used punch cards!</p>
+    <button onclick="newFact()">Another Fact</button>
+    <button onclick="showPage('menuPage')">⬅ Back</button>
+  </div>
+
+  <!-- MINI-GAMES PAGE -->
+  <div id="gamePage" class="page">
+    <h2>Mini-Games 🎮</h2>
+    <p>Click system units to assemble them!</p>
+    <div class="grid" id="unitGame"></div>
+    <button onclick="showPage('menuPage')">⬅ Back</button>
+  </div>
+
+  <!-- SMART RESEARCH PAGE -->
+  <div id="researchPage" class="page">
+    <h2>Smart Research 🔍</h2>
+    <input type="text" id="search" placeholder="Search computer terms..." />
+    <button onclick="smartSearch()">Search</button>
+    <p id="searchResult"></p>
+    <button onclick="showPage('menuPage')">⬅ Back</button>
+  </div>
+
+</div>
+
+<script>
+  // Page navigation
+  function showPage(pageId) {
+    document.querySelectorAll('.page').forEach((p) => p.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+  }
+
+  // Login
+  function login() {
+    const user = document.getElementById('username').value.trim();
+    if (user) {
+      document.getElementById('welcomeUser').textContent = `Welcome, ${user}!`;
+      showPage('menuPage');
+    } else {
+      alert('Please enter your name!');
+    }
+  }
+
+  // Theme customization
+  function applyTheme() {
+    const bg = document.getElementById('bgColor').value;
+    const text = document.getElementById('textColor').value;
+    const btn = document.getElementById('btnColor').value;
+    document.body.style.backgroundColor = bg;
+    document.body.style.color = text;
+    document.querySelectorAll('button').forEach((btnEl) => {
+      btnEl.style.backgroundColor = btn;
+      btnEl.style.color = text;
+      btnEl.style.borderColor = darkenColor(btn, 0.3);
+      btnEl.style.textShadow = '0 1px 0 #fff6e1';
+    });
+  }
+
+  // Helper to darken hex color
+  function darkenColor(hex, factor) {
+    const f = parseInt(hex.slice(1), 16);
+    const r = Math.floor((f >> 16) * (1 - factor));
+    const g = Math.floor(((f >> 8) & 0x00ff) * (1 - factor));
+    const b = Math.floor((f & 0x0000ff) * (1 - factor));
+    return `rgb(${r},${g},${b})`;
+  }
+
+  // Fun Facts
+  const facts = [
+    'The first computer mouse was made of wood!',
+    'The first 1GB hard drive weighed over 500 pounds.',
+    'QWERTY keyboards were designed to slow typing down.',
+    'RJ45 connectors are used for Ethernet networking.',
+  ];
+  function newFact() {
+    const fact = facts[Math.floor(Math.random() * facts.length)];
+    document.getElementById('fact').textContent = fact;
+  }
+
+  // Quiz Data and Logic
+  const quizQuestions = [
+    {
+      q: 'CPU stands for?',
+      a: ['Central Processing Unit', 'Computer Personal Unit', 'Central Print Unit'],
+      correct: 0,
+    },
+    {
+      q: 'RAM is?',
+      a: ['Random Access Memory', 'Readily Available Memory', 'Rapid Application Module'],
+      correct: 0,
+    },
+    {
+      q: 'DHCP assigns?',
+      a: ['IP addresses', 'MAC addresses', 'Domain names'],
+      correct: 0,
+    },
+  ];
+  let currentQ = 0;
+  let timer = 30;
+  let timerInterval;
+  let paused = false;
+
+  function loadQuestion() {
+    if (currentQ >= quizQuestions.length) {
+      alert('Quiz over!');
+      return;
+    }
+    const q = quizQuestions[currentQ];
+    document.getElementById('question').textContent = q.q;
+    const optionsDiv = document.getElementById('options');
+    optionsDiv.innerHTML = '';
+    q.a.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.textContent = opt;
+      btn.onclick = () => alert(i === q.correct ? '✅ Correct!' : '❌ Wrong!');
+      optionsDiv.appendChild(btn);
+    });
+    timer = parseInt(document.getElementById('customTimer').value) || 30;
+    document.getElementById('timer').textContent = timer;
+    clearInterval(timerInterval);
+    paused = false;
+    timerInterval = setInterval(() => {
+      if (!paused) {
+        timer--;
+        document.getElementById('timer').textContent = timer;
+        if (timer <= 0) {
+          clearInterval(timerInterval);
+          alert("Time's up! ⏰");
+        }
+      }
+    }, 1000);
+  }
+  function nextQuestion() {
+    currentQ++;
+    loadQuestion();
+  }
+  function pauseTimer() {
+    paused = true;
+  }
+  function resumeTimer() {
+    paused = false;
+  }
+  loadQuestion();
+
+  // Mini Game - clickable system units
+  function createUnitGame() {
+    const units = ['CPU', 'RAM', 'HDD', 'Motherboard', 'Power Supply', 'GPU'];
+    const grid = document.getElementById('unitGame');
+    grid.innerHTML = '';
+    units.sort(() => Math.random() - 0.5).forEach((unit) => {
+      const div = document.createElement('div');
+      div.className = 'block';
+      div.textContent = unit;
+      div.onclick = () => {
+        div.style.backgroundColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
+        alert(`You clicked ${unit}!`);
+      };
+      grid.appendChild(div);
+    });
+  }
+  createUnitGame();
+
+  // Smart Research Dictionary
+  function smartSearch() {
+    const term = document.getElementById('search').value.trim().toLowerCase();
+    const dict = {
+      cpu: 'CPU = Central Processing Unit, the brain of the computer.',
+      ram: 'RAM = Random Access Memory, temporary memory for running programs.',
+      motherboard: 'Motherboard = Main circuit board connecting all components.',
+      rj45: 'RJ45 = Connector for UTP Ethernet cables.',
+      dhcp: 'DHCP = Dynamic Host Configuration Protocol, assigns IP addresses.',
+    };
+    document.getElementById('searchResult').textContent = dict[term] || 'Term not found. Try another!';
+  }
+</script>
+</body>
+</html>

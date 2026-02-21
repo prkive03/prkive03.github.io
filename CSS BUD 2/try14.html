@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoSSy</title>
+
+<style>
+:root{
+    --bg: linear-gradient(to bottom right, #d7f0e8, #f6e7d7);
+    --card: rgba(255,255,255,0.8);
+    --primary: #5c8d89;
+    --accent: #f2a154;
+    --text: #2f3e46;
+}
+
+body{
+    margin:0;
+    font-family: "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:0.5s;
+}
+
+.page{
+    display:none;
+    width:100%;
+    height:100%;
+    padding:40px;
+    box-sizing:border-box;
+}
+
+.active{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+}
+
+h1{
+    font-size:40px;
+    margin-bottom:20px;
+}
+
+button{
+    padding:15px 40px;
+    margin:10px;
+    font-size:18px;
+    border:none;
+    border-radius:15px;
+    background:var(--primary);
+    color:white;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+button:hover{
+    background:var(--accent);
+    transform:scale(1.05);
+}
+
+.card{
+    background:var(--card);
+    padding:25px;
+    border-radius:20px;
+    max-width:700px;
+    text-align:center;
+    box-shadow:0 10px 30px rgba(0,0,0,0.1);
+}
+
+input, select{
+    padding:8px;
+    margin:5px;
+    border-radius:10px;
+    border:1px solid #ccc;
+}
+
+.settings{
+    position:absolute;
+    top:20px;
+    left:20px;
+}
+
+.flash{
+    animation:flash 1s infinite alternate;
+}
+
+@keyframes flash{
+    from{opacity:1;}
+    to{opacity:0.6;}
+}
+
+.timer{
+    font-size:24px;
+    margin:15px;
+}
+
+.color-box{
+    width:60px;
+    height:30px;
+    display:inline-block;
+    margin:5px;
+    cursor:pointer;
+    border-radius:8px;
+}
+
+.cable{
+    display:flex;
+    margin-top:20px;
+}
+
+.wire{
+    width:40px;
+    height:150px;
+    margin:5px;
+    cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN PAGE -->
+<div class="page active" id="loginPage">
+    <div class="card">
+        <h1>🌿 CoSSy</h1>
+        <input type="text" id="username" placeholder="Enter your name"><br>
+        <button onclick="login()">Login</button>
+    </div>
+</div>
+
+<!-- MAIN MENU -->
+<div class="page" id="menuPage">
+    <div class="settings">
+        ⚙ Settings<br>
+        <div class="color-box" style="background:#d7f0e8" onclick="setTheme('#d7f0e8','#f6e7d7')"></div>
+        <div class="color-box" style="background:#ffe0ac" onclick="setTheme('#ffe0ac','#ffc3a0')"></div>
+        <div class="color-box" style="background:#c3bef0" onclick="setTheme('#c3bef0','#cca8e9')"></div>
+    </div>
+
+    <h1 id="welcome"></h1>
+    <button onclick="showPage('reviewPage')"> Reviewer</button>
+    <button onclick="showPage('quizPage')"> Quiz</button>
+    <button onclick="showPage('factsPage')"> Fun Facts</button>
+    <button onclick="showPage('gamePage')"> Mini Games</button>
+</div>
+
+<!-- REVIEW PAGE -->
+<div class="page" id="reviewPage">
+    <div class="card">
+        <h1>📚 COC Reviewer</h1>
+        <button onclick="showCOC(1)">COC 1</button>
+        <button onclick="showCOC(2)">COC 2</button>
+        <button onclick="showCOC(3)">COC 3</button>
+        <p id="cocContent"></p>
+        <button onclick="backMenu()">Back</button>
+    </div>
+</div>
+
+<!-- QUIZ PAGE -->
+<div class="page" id="quizPage">
+    <div class="card">
+        <h1>📝 Quiz</h1>
+        <div>
+            Set Time:
+            <input type="number" id="minutes" placeholder="Min" value="1">
+            <input type="number" id="seconds" placeholder="Sec" value="0">
+            <button onclick="startTimer()">Start</button>
+            <button onclick="pauseTimer()">Pause</button>
+        </div>
+        <div class="timer" id="timerDisplay">01:00</div>
+        <p id="question"></p>
+        <div id="choices"></div>
+        <button onclick="backMenu()">Back</button>
+    </div>
+</div>
+
+<!-- FUN FACTS -->
+<div class="page" id="factsPage">
+    <div class="card">
+        <h1>💡 Computer Fun Facts</h1>
+        <button onclick="generateFact()">Generate Fun Fact</button>
+        <p id="fact" class="flash"></p>
+        <button onclick="backMenu()">Back</button>
+    </div>
+</div>
+
+<!-- MINI GAME -->
+<div class="page" id="gamePage">
+    <div class="card">
+        <h1>🎮 RJ45 Wiring Game</h1>
+        <p>Click wires in correct T568B order:</p>
+        <div class="cable" id="cableGame"></div>
+        <p id="gameMessage"></p>
+        <button onclick="setupGame()">Restart</button>
+        <button onclick="backMenu()">Back</button>
+    </div>
+</div>
+
+<script>
+function showPage(id){
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+
+function login(){
+    let name=document.getElementById('username').value;
+    if(name==="") return alert("Enter name");
+    document.getElementById('welcome').innerText="Welcome, "+name+" 🌸";
+    showPage('menuPage');
+}
+
+function backMenu(){ showPage('menuPage'); }
+
+function setTheme(c1,c2){
+    document.body.style.background="linear-gradient(to bottom right,"+c1+","+c2+")";
+}
+
+function showCOC(num){
+    let content={
+        1:"COC 1: Install and configure computer systems. Topics: PC Assembly, BIOS setup, OS installation.",
+        2:"COC 2: Set up computer networks. Topics: IP addressing, LAN setup, RJ45 crimping, network troubleshooting.",
+        3:"COC 3: Maintain and repair systems. Topics: Preventive maintenance, virus removal, hardware diagnostics."
+    };
+    document.getElementById('cocContent').innerText=content[num];
+}
+
+let questions=[
+    {q:"What does BIOS stand for?",a:["Basic Input Output System","Binary Input Operating Setup","Boot Internal OS System"],c:0},
+    {q:"Which cable is used for LAN?",a:["HDMI","RJ45","VGA"],c:1}
+];
+
+let currentQ=0;
+function loadQuestion(){
+    let q=questions[currentQ];
+    document.getElementById('question').innerText=q.q;
+    let choicesHTML="";
+    q.a.forEach((choice,i)=>{
+        choicesHTML+=`<button onclick="checkAnswer(${i})">${choice}</button>`;
+    });
+    document.getElementById('choices').innerHTML=choicesHTML;
+}
+loadQuestion();
+
+function checkAnswer(i){
+    if(i===questions[currentQ].c) alert("Correct 🌸");
+    else alert("Wrong 🌧");
+    currentQ=(currentQ+1)%questions.length;
+    loadQuestion();
+}
+
+let timer;
+let totalSeconds;
+
+function startTimer(){
+    let min=parseInt(document.getElementById('minutes').value)||0;
+    let sec=parseInt(document.getElementById('seconds').value)||0;
+    totalSeconds=min*60+sec;
+    clearInterval(timer);
+    timer=setInterval(()=>{
+        if(totalSeconds<=0){ clearInterval(timer); alert("Time's up!"); }
+        else{
+            totalSeconds--;
+            let m=Math.floor(totalSeconds/60);
+            let s=totalSeconds%60;
+            document.getElementById('timerDisplay').innerText=
+            String(m).padStart(2,'0')+":"+String(s).padStart(2,'0');
+        }
+    },1000);
+}
+
+function pauseTimer(){ clearInterval(timer); }
+
+function generateFact(){
+    let facts=[
+        "The first computer virus was created in 1983.",
+        "The first 1GB hard drive weighed over 500 pounds.",
+        "Email existed before the World Wide Web."
+    ];
+    document.getElementById('fact').innerText=
+    facts[Math.floor(Math.random()*facts.length)];
+}
+
+let correctOrder=["white-orange","orange","white-green","blue","white-blue","green","white-brown","brown"];
+let selected=[];
+
+function setupGame(){
+    let colors=[...correctOrder].sort(()=>Math.random()-0.5);
+    selected=[];
+    document.getElementById('gameMessage').innerText="";
+    let html="";
+    colors.forEach(color=>{
+        html+=`<div class="wire" style="background:${color.replace('white-','')}" onclick="selectWire('${color}')"></div>`;
+    });
+    document.getElementById('cableGame').innerHTML=html;
+}
+setupGame();
+
+function selectWire(color){
+    selected.push(color);
+    if(selected.length===8){
+        if(JSON.stringify(selected)===JSON.stringify(correctOrder)){
+            document.getElementById('gameMessage').innerText="Correct Wiring! 🎉";
+        }else{
+            document.getElementById('gameMessage').innerText="Wrong Order! Try Again.";
+        }
+    }
+}
+</script>
+
+</body>
+</html>

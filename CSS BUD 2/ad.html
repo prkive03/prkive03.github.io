@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS Budd </title>
+<style>
+  :root {
+    --bg-color: #f0f8ff;
+    --text-color: #333;
+    --button-color: #ffb347;
+  }
+  body {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.5s, color 0.5s;
+    text-align: center;
+    padding: 1em;
+  }
+  header { margin-bottom: 1em; }
+  .fun-btn {
+    padding: 0.5em 1em;
+    border-radius: 15px;
+    border: none;
+    background-color: var(--button-color);
+    cursor: pointer;
+    font-weight: bold;
+    transition: transform 0.2s;
+  }
+  .fun-btn:hover { transform: rotate(10deg) scale(1.1); }
+  .section { border: 1px solid #ccc; border-radius: 15px; margin: 1em auto; max-width: 500px; padding: 1em; background: #fff; }
+  input[type=color] { cursor: pointer; }
+  input[type=text] { padding: 0.5em; width: 60%; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1> CSS Budd </h1>
+</header>
+
+<div class="section">
+  <h2>Login</h2>
+  <input type="text" id="username" placeholder="Enter your name"><br><br>
+  <button class="fun-btn" onclick="login()">Log In</button>
+</div>
+
+<div class="section">
+  <h2>Customize Theme</h2>
+  <label>Background: <input type="color" id="bgColor" value="#f0f8ff"></label><br><br>
+  <label>Text: <input type="color" id="textColor" value="#333333"></label><br><br>
+  <label>Buttons: <input type="color" id="btnColor" value="#ffb347"></label><br><br>
+  <button class="fun-btn" onclick="applyTheme()">Apply Theme</button>
+</div>
+
+<div class="section">
+  <h2>Quick Quiz </h2>
+  <p id="question">Loading question...</p>
+  <div id="options"></div>
+  <p>Time left: <span id="timer">30</span>s</p>
+  <button class="fun-btn" onclick="nextQuestion()">Next</button>
+</div>
+
+<div class="section">
+  <h2>Fun Fact </h2>
+  <p id="fact">Computers once used punch cards!</p>
+  <button class="fun-btn" onclick="newFact()">Another Fact</button>
+</div>
+
+<div class="section">
+  <h2>Mini-Game 🎮</h2>
+  <p>Click the correct computer component!</p>
+  <button class="fun-btn" onclick="alert('You clicked CPU! Correct!')">CPU</button>
+  <button class="fun-btn" onclick="alert('Oops! Try again!')">Mouse</button>
+</div>
+
+<div class="section">
+  <h2>Smart Research 🔍</h2>
+  <input type="text" id="search" placeholder="Search computer terms...">
+  <button class="fun-btn" onclick="smartSearch()">Search</button>
+  <p id="searchResult"></p>
+</div>
+
+<script>
+  // Theme customization
+  function applyTheme() {
+    document.documentElement.style.setProperty('--bg-color', document.getElementById('bgColor').value);
+    document.documentElement.style.setProperty('--text-color', document.getElementById('textColor').value);
+    document.documentElement.style.setProperty('--button-color', document.getElementById('btnColor').value);
+  }
+
+  // Login
+  function login() {
+    const user = document.getElementById('username').value;
+    if(user) alert(`Welcome, ${user}! Ready to study? 🌟`);
+    else alert("Please enter your name!");
+  }
+
+  // Fun facts
+  const facts = [
+    "The first computer mouse was made of wood!",
+    "The first 1GB hard drive weighed over 500 pounds.",
+    "QWERTY keyboards were designed to slow typing down."
+  ];
+  function newFact() {
+    document.getElementById('fact').innerText = facts[Math.floor(Math.random() * facts.length)];
+  }
+
+  // Quiz
+  const quizQuestions = [
+    { q: "CPU stands for?", a: ["Central Processing Unit", "Computer Personal Unit", "Central Print Unit"], correct: 0 },
+    { q: "RAM is?", a: ["Random Access Memory", "Readily Available Memory", "Rapid Application Module"], correct: 0 }
+  ];
+  let currentQ = 0;
+  let timer = 30;
+  let timerInterval;
+
+  function loadQuestion() {
+    if(currentQ >= quizQuestions.length) { alert("Quiz over!"); return; }
+    const q = quizQuestions[currentQ];
+    document.getElementById('question').innerText = q.q;
+    const optionsDiv = document.getElementById('options');
+    optionsDiv.innerHTML = '';
+    q.a.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = "fun-btn";
+      btn.innerText = opt;
+      btn.onclick = () => alert(i === q.correct ? "✅ Correct!" : "❌ Wrong!");
+      optionsDiv.appendChild(btn);
+    });
+    timer = 30;
+    document.getElementById('timer').innerText = timer;
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      timer--;
+      document.getElementById('timer').innerText = timer;
+      if(timer <= 0) { clearInterval(timerInterval); alert("Time's up! ⏰"); }
+    }, 1000);
+  }
+
+  function nextQuestion() { currentQ++; loadQuestion(); }
+  loadQuestion();
+
+  // Smart research
+  function smartSearch() {
+    const term = document.getElementById('search').value.toLowerCase();
+    const dict = {
+      cpu: "CPU = Central Processing Unit, the brain of the computer.",
+      ram: "RAM = Random Access Memory, temporary memory for running programs.",
+      motherboard: "Motherboard = The main circuit board connecting all components."
+    };
+    document.getElementById('searchResult').innerText = dict[term] || "Term not found. Try another!";
+  }
+</script>
+
+</body>
+</html>

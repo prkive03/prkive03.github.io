@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CoSSy</title>
+
+<style>
+
+/* ===================== */
+/* GHIBLI WOOD THEME */
+/* ===================== */
+
+:root{
+
+--wood:#5c3b24;
+--woodLight:#7a5134;
+
+--leaf:#6f9b6e;
+--leafHover:#4f7a4f;
+
+--paper:#fffdf6;
+
+}
+
+
+/* BODY */
+
+body{
+
+margin:0;
+
+font-family: "Segoe UI", sans-serif;
+
+background:
+
+linear-gradient(rgba(0,0,0,0.2),rgba(0,0,0,0.2)),
+
+url("https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb");
+
+background-size:cover;
+
+height:100vh;
+
+}
+
+
+/* ===================== */
+/* WOOD HEADER */
+/* ===================== */
+
+header{
+
+background:
+
+linear-gradient(var(--woodLight),var(--wood));
+
+height:70px;
+
+display:flex;
+
+align-items:center;
+
+padding-left:20px;
+
+box-shadow:0 4px 10px black;
+
+}
+
+
+/* FIG FICUS BUTTON */
+
+.woodBtn{
+
+background:linear-gradient(#8b5e3c,#5c3b24);
+
+border:none;
+
+color:white;
+
+font-size:18px;
+
+padding:10px 20px;
+
+margin-right:10px;
+
+border-radius:20px;
+
+cursor:pointer;
+
+box-shadow:0 4px 5px black;
+
+}
+
+.woodBtn:hover{
+
+background:linear-gradient(#6f9b6e,#4f7a4f);
+
+}
+
+
+/* ===================== */
+/* PAGE SYSTEM */
+/* ===================== */
+
+.page{
+
+display:none;
+
+height:calc(100vh - 70px);
+
+justify-content:center;
+
+align-items:center;
+
+flex-direction:column;
+
+}
+
+.active{
+
+display:flex;
+
+}
+
+
+/* ===================== */
+/* CAFE CARD */
+/* ===================== */
+
+.card{
+
+background:var(--paper);
+
+padding:40px;
+
+border-radius:20px;
+
+box-shadow:0 10px 30px black;
+
+text-align:center;
+
+}
+
+
+/* ===================== */
+/* BIG BUTTON */
+/* ===================== */
+
+.bigBtn{
+
+width:320px;
+
+font-size:22px;
+
+padding:15px;
+
+margin:10px;
+
+background:var(--leaf);
+
+color:white;
+
+border:none;
+
+border-radius:15px;
+
+cursor:pointer;
+
+}
+
+.bigBtn:hover{
+
+background:var(--leafHover);
+
+}
+
+
+/* ===================== */
+/* SETTINGS */
+/* ===================== */
+
+.settings{
+
+position:absolute;
+
+top:80px;
+
+left:10px;
+
+}
+
+
+/* ===================== */
+/* FLASH CARD */
+/* ===================== */
+
+.flash{
+
+width:350px;
+
+height:200px;
+
+background:white;
+
+border-radius:20px;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+font-size:20px;
+
+cursor:pointer;
+
+}
+
+
+/* ===================== */
+/* MINI GAME */
+/* ===================== */
+
+.color{
+
+width:70px;
+
+height:70px;
+
+display:inline-block;
+
+margin:5px;
+
+border-radius:10px;
+
+border:2px solid black;
+
+cursor:pointer;
+
+}
+
+</style>
+</head>
+<body>
+
+
+<!-- HEADER -->
+
+<header>
+
+<button class="woodBtn">🍃 Fig Ficus</button>
+
+<button class="woodBtn" onclick="translate()"> Translate</button>
+
+<button class="woodBtn" onclick="changeColor()">🎨 Theme</button>
+
+</header>
+
+
+
+<!-- LOGIN -->
+
+<div id="login" class="page active">
+
+<div class="card">
+
+<h1>Welcome to CoSSy!</h1>
+
+<input placeholder="Username">
+
+<br><br>
+
+<input placeholder="Password" type="password">
+
+<br><br>
+
+<button class="bigBtn" onclick="openPage('menu')">
+
+Enter to Learncss
+
+</button>
+
+</div>
+
+</div>
+
+
+
+<!-- MENU -->
+
+<div id="menu" class="page">
+
+<div class="card">
+
+<h1>Main Menu</h1>
+
+<button class="bigBtn" onclick="openPage('review')">
+
+Reviewer
+
+</button>
+
+<button class="bigBtn" onclick="openPage('quiz')">
+
+Quiz
+
+</button>
+
+<button class="bigBtn" onclick="openPage('facts')">
+
+Fun Facts
+
+</button>
+
+<button class="bigBtn" onclick="openPage('game')">
+
+Mini Game
+
+</button>
+
+</div>
+
+</div>
+
+
+
+<!-- REVIEW -->
+
+<div id="review" class="page">
+
+<div class="card">
+
+<h2>Computer Reviewer</h2>
+
+<button class="bigBtn" onclick="review(1)">COC 1</button>
+
+<button class="bigBtn" onclick="review(2)">COC 2</button>
+
+<button class="bigBtn" onclick="review(3)">COC 3</button>
+
+<p id="reviewText"></p>
+
+<button class="bigBtn" onclick="openPage('menu')">Back</button>
+
+</div>
+
+</div>
+
+
+
+<!-- QUIZ -->
+
+<div id="quiz" class="page">
+
+<div class="card">
+
+<h2>Quiz</h2>
+
+<p id="question"></p>
+
+<button class="bigBtn" onclick="answer('A')">A</button>
+
+<button class="bigBtn" onclick="answer('B')">B</button>
+
+<button class="bigBtn" onclick="answer('C')">C</button>
+
+<button class="bigBtn" onclick="answer('D')">D</button>
+
+<h2 id="time">60</h2>
+
+<button class="bigBtn" onclick="pause()">Pause</button>
+
+<button class="bigBtn" onclick="resume()">Resume</button>
+
+<button class="bigBtn" onclick="setTime()">Set Time</button>
+
+<button class="bigBtn" onclick="openPage('menu')">Back</button>
+
+</div>
+
+</div>
+
+
+
+<!-- FUN FACT -->
+
+<div id="facts" class="page">
+
+<div class="card">
+
+<h2>Fun Facts</h2>
+
+<div class="flash" onclick="fact()" id="fact">
+
+Click Me
+
+</div>
+
+<button class="bigBtn" onclick="openPage('menu')">
+
+Back
+
+</button>
+
+</div>
+
+</div>
+
+
+
+<!-- GAME -->
+
+<div id="game" class="page">
+
+<div class="card">
+
+<h2>RJ45 Wiring Simulator</h2>
+
+<div id="gameArea"></div>
+
+<button class="bigBtn" onclick="openPage('menu')">
+
+Back
+
+</button>
+
+</div>
+
+</div>
+
+
+
+<script>
+
+
+/* PAGE */
+
+function openPage(page){
+
+document.querySelectorAll(".page")
+
+.forEach(p=>p.classList.remove("active"))
+
+document.getElementById(page)
+
+.classList.add("active")
+
+}
+
+
+/* CHANGE COLOR */
+
+function changeColor(){
+
+let color=prompt("Enter new color")
+
+document.documentElement
+
+.style.setProperty("--leaf",color)
+
+}
+
+
+/* TRANSLATE */
+
+function translate(){
+
+alert("Ready for language translation")
+
+}
+
+
+/* REVIEW */
+
+function review(num){
+
+let text=""
+
+if(num==1)
+
+text="Installing Computer Systems"
+
+if(num==2)
+
+text="Setup Network and Cable"
+
+if(num==3)
+
+text="Maintenance and Repair"
+
+document.getElementById("reviewText").innerHTML=text
+
+}
+
+
+/* QUIZ */
+
+let time=60
+
+let timer=setInterval(()=>{
+
+time--
+
+document.getElementById("time").innerHTML=time
+
+},1000)
+
+function pause(){
+
+clearInterval(timer)
+
+}
+
+function resume(){
+
+timer=setInterval(()=>{
+
+time--
+
+document.getElementById("time").innerHTML=time
+
+},1000)
+
+}
+
+function setTime(){
+
+time=prompt("Seconds")
+
+}
+
+function answer(a){
+
+alert("Answer: "+a)
+
+}
+
+
+/* FACT */
+
+let facts=[
+
+"CPU is brain",
+
+"RAM is memory",
+
+"Binary 0 and 1",
+
+"Internet global network"
+
+]
+
+function fact(){
+
+document.getElementById("fact")
+
+.innerHTML=
+
+facts[Math.floor(Math.random()*facts.length)]
+
+}
+
+
+/* GAME */
+
+let colors=[
+
+"orange","orange","green","blue",
+
+"blue","green","brown","brown"
+
+]
+
+colors.forEach(c=>{
+
+let d=document.createElement("div")
+
+d.className="color"
+
+d.style.background=c
+
+document.getElementById("gameArea")
+
+.appendChild(d)
+
+})
+
+</script>
+
+
+</body>
+</html>

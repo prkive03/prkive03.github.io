@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>🌸 Cozy Ghibli CSS Study Website</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+font-family:Poppins,sans-serif;
+margin:0;
+background:linear-gradient(180deg,#cfe9d8,#b7e4c7,#95d5b2);
+transition:0.5s;
+color:#2f3e46;
+}
+
+.page{
+display:none;
+padding:20px;
+}
+
+.card{
+background:white;
+padding:25px;
+max-width:800px;
+margin:auto;
+border-radius:20px;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+text-align:center;
+}
+
+.topbar{
+background:#588157;
+color:white;
+padding:12px;
+}
+
+.left{float:left;}
+.right{float:right;}
+
+button{
+background:#74c69d;
+border:none;
+padding:12px;
+margin:6px;
+border-radius:15px;
+cursor:pointer;
+font-size:16px;
+}
+
+button:hover{
+background:#52b788;
+transform:scale(1.05);
+}
+
+input,select{
+padding:10px;
+margin:6px;
+border-radius:10px;
+border:1px solid gray;
+}
+
+.timer{
+font-size:40px;
+margin:15px;
+}
+
+.text-left{
+text-align:left;
+}
+
+.wire{
+padding:8px;
+margin:4px;
+border-radius:10px;
+color:white;
+}
+
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginPage" class="page">
+<div class="card">
+
+<h1>🌸 Cozy CSS Study Login</h1>
+
+<input id="username" placeholder="Enter Username">
+
+<br>
+
+<button onclick="login()">Login 🌿</button>
+
+<p>Welcome to your peaceful study world</p>
+
+</div>
+</div>
+
+<!-- MENU -->
+<div id="menuPage" class="page">
+
+<div class="topbar">
+
+<button class="left" onclick="showPage('settingsPage')">⚙ Settings</button>
+
+<button class="right" onclick="logout()">Logout</button>
+
+<center><h3 id="welcomeText"></h3></center>
+
+</div>
+
+<div class="card">
+
+<h1>🌿 Main Menu</h1>
+
+<button onclick="showPage('reviewerMenu')">📚 Reviewer</button>
+
+<button onclick="showPage('quizPage')">📝 Quiz</button>
+
+<button onclick="showPage('funfactsPage')">💡 Fun Facts</button>
+
+<button onclick="showPage('gamePage')">🎮 Mini Game</button>
+
+<button onclick="showPage('utpPage')">🔌 RJ45 / UTP Learning</button>
+
+<button onclick="showPage('searchPage')">🔎 Smart Search</button>
+
+<button onclick="showPage('translatePage')">🌐 Translate</button>
+
+</div>
+</div>
+
+<!-- SETTINGS -->
+<div id="settingsPage" class="page">
+<div class="card">
+
+<h2>⚙ Theme Settings</h2>
+
+<input type="color" id="themePicker">
+
+<button onclick="applyTheme()">Apply Theme</button>
+
+<br>
+
+<button onclick="showPage('menuPage')">Back</button>
+
+</div>
+</div>
+
+<!-- REVIEWER MENU -->
+<div id="reviewerMenu" class="page">
+<div class="card">
+
+<h2>📚 Reviewer Topics</h2>
+
+<button onclick="showPage('coc1Page')">COC 1 Installing & Configuring</button>
+
+<button onclick="showPage('coc2Page')">COC 2 Computer Networks</button>
+
+<button onclick="showPage('coc3Page')">COC 3 Computer Servers</button>
+
+<br>
+
+<button onclick="showPage('menuPage')">Back</button>
+
+</div>
+</div>
+
+<!-- COC 1 -->
+<div id="coc1Page" class="page">
+<div class="card text-left">
+
+<h2>COC 1 Installing and Configuring Computer Systems</h2>
+
+<p>
+This includes assembling hardware components such as motherboard, CPU, RAM, HDD/SSD, PSU.
+Install operating systems like Windows or Linux.
+Install drivers, configure BIOS, and ensure system stability.
+</p>
+
+<button onclick="showPage('reviewerMenu')">Back</button>
+
+</div>
+</div>
+
+<!-- COC 2 -->
+<div id="coc2Page" class="page">
+<div class="card text-left">
+
+<h2>COC 2 Setting up Computer Networks</h2>
+
+<p>
+Includes configuring IP address, routers, switches, and network connectivity.
+Allows communication between computers.
+</p>
+
+<button onclick="showPage('reviewerMenu')">Back</button>
+
+</div>
+</div>
+
+<!-- COC 3 -->
+<div id="coc3Page" class="page">
+<div class="card text-left">
+
+<h2>COC 3 Setting up Computer Servers</h2>
+
+<p>
+Servers provide services such as file sharing, authentication, and network management.
+Includes installing server OS and managing users.
+</p>
+
+<button onclick="showPage('reviewerMenu')">Back</button>
+
+</div>
+</div>
+
+<!-- QUIZ -->
+<div id="quizPage" class="page">
+<div class="card">
+
+<h2>📝 Quiz</h2>
+
+<input id="minutes" placeholder="Enter minutes">
+
+<button onclick="setTimer()">Set Timer</button>
+
+<div class="timer" id="timer">0:00</div>
+
+<button onclick="startTimer()">Start</button>
+<button onclick="pauseTimer()">Pause</button>
+<button onclick="resumeTimer()">Resume</button>
+<button onclick="resetTimer()">Reset</button>
+
+<p>What connects network?</p>
+<select id="q1">
+<option>CPU</option>
+<option>Router</option>
+<option>Monitor</option>
+</select>
+
+<p>What stores files?</p>
+<select id="q2">
+<option>RAM</option>
+<option>Hard Drive</option>
+<option>GPU</option>
+</select>
+
+<button onclick="submitQuiz()">Submit</button>
+
+<p id="score"></p>
+
+<button onclick="showPage('menuPage')">Back</button>
+
+</div>
+</div>
+
+<!-- FUN FACTS -->
+<div id="funfactsPage" class="page">
+<div class="card">
+
+<h2>💡 Fun Facts</h2>
+
+<p id="fact"></p>
+
+<button onclick="generateFact()">Generate Fact</button>
+
+<br>
+
+<button onclick="showPage('menuPage')">Back</button>
+
+</div>
+</div>
+
+<!-- MINI GAME -->
+<div id="gamePage" class="page">
+<div class="card">
+
+<h2>🎮 Knowledge Game</h2>
+
+<p>Knowledge: <span id="points">0</span></p>
+
+<button onclick="gainKnowledge()">Gain Knowledge</button>
+
+<button onclick="showPage('menuPage')">Back</button>
+
+</div>
+</div>
+
+<!-- UTP -->
+<div id="utpPage" class="page">
+<div class="card">
+
+<h2>RJ45 T568B Color Order</h2>
+
+<div class="wire" style="background:orange">1 White-Orange</div>
+<div class="wire" style="background:orange">2 Orange</div>
+<div class="wire" style="background:green">3 White-Green</div>
+<div class="wire" style="background:blue">4 Blue</div>
+<div class="wire" style="background:blue">5 White-Blue</div>
+<div class="wire" style="background:green">6 Green</div>
+<div class="wire" style="background:brown">7 White-Brown</div>
+<div class="wire" style="background:brown">8 Brown</div>
+
+<button onclick="showPage('menuPage')">Back</button>
+
+</div>
+</div>
+
+<!-- SEARCH -->
+<div id="searchPage" class="page">
+<div class="card">
+
+<h2>Smart Search</h2>
+
+<input id="searchInput">
+
+<button onclick="search()">Search</button>
+
+<p id="result"></p>
+
+<button onclick="showPage('menuPage')">Back</button>
+
+</div>
+</div>
+
+<!-- TRANSLATE -->
+<div id="translatePage" class="page">
+<div class="card">
+
+<select id="lang">
+<option value="en">English</option>
+<option value="fil">Filipino</option>
+<option value="jp">Japanese</option>
+</select>
+
+<button onclick="translate()">Translate</button>
+
+<p id="translated"></p>
+
+<button onclick="showPage('menuPage')">Back</button>
+
+</div>
+</div>
+
+<script>
+
+let facts=[
+"First computer weighed 27 tons",
+"RAM is temporary memory",
+"Servers run 24/7",
+"RJ45 is used for Ethernet",
+"CPU is brain of computer"
+];
+
+function generateFact(){
+fact.innerText=facts[Math.floor(Math.random()*facts.length)];
+}
+
+function login(){
+localStorage.user=username.value;
+welcomeText.innerText="Welcome "+username.value;
+showPage("menuPage");
+}
+
+function logout(){
+localStorage.removeItem("user");
+showPage("loginPage");
+}
+
+function showPage(id){
+document.querySelectorAll(".page").forEach(p=>p.style.display="none");
+document.getElementById(id).style.display="block";
+}
+
+function applyTheme(){
+document.body.style.background=themePicker.value;
+}
+
+let time=0,interval;
+
+function setTimer(){
+time=minutes.value*60;
+updateTimer();
+}
+
+function startTimer(){
+interval=setInterval(()=>{
+if(time>0){time--;updateTimer();}
+},1000);
+}
+
+function pauseTimer(){clearInterval(interval);}
+function resumeTimer(){startTimer();}
+function resetTimer(){clearInterval(interval);time=0;updateTimer();}
+
+function updateTimer(){
+timer.innerText=Math.floor(time/60)+":"+(time%60);
+}
+
+function submitQuiz(){
+let score=0;
+if(q1.value=="Router")score++;
+if(q2.value=="Hard Drive")score++;
+document.getElementById("score").innerText="Score "+score;
+}
+
+let knowledge=0;
+function gainKnowledge(){
+knowledge+=10;
+points.innerText=knowledge;
+}
+
+function search(){
+result.innerText="Result: "+searchInput.value+" is important in CSS";
+}
+
+function translate(){
+let l=lang.value;
+if(l=="fil") translated.innerText="Maligayang pagdating";
+else if(l=="jp") translated.innerText="ようこそ";
+else translated.innerText="Welcome";
+}
+
+window.onload=function(){
+if(localStorage.user){
+welcomeText.innerText="Welcome "+localStorage.user;
+showPage("menuPage");
+}else showPage("loginPage");
+}
+
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>🌸 Cozy Ghibli CSS Study Website</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+font-family:Poppins,sans-serif;
+margin:0;
+background:linear-gradient(180deg,#cfe9d8,#b7e4c7,#95d5b2);
+transition:0.5s;
+color:#2f3e46;
+}
+
+.page{
+display:none;
+padding:20px;
+}
+
+.card{
+background:white;
+padding:25px;
+max-width:800px;
+margin:auto;
+border-radius:20px;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+text-align:center;
+}
+
+.topbar{
+background:#588157;
+color:white;
+padding:12px;
+}
+
+.left{float:left;}
+.right{float:right;}
+
+button{
+background:#74c69d;
+border:none;
+padding:12px;
+margin:6px;
+border-radius:15px;
+cursor:pointer;
+font-size:16px;
+}
+
+button:hover{
+background:#52b788;
+transform:scale(1.05);
+}
+
+input,select{
+padding:10px;
+margin:6px;
+border-radius:10px;
+border:1px solid gray;
+}
+
+.timer{
+font-size:40px;
+margin:15px;
+}
+
+.text-left{
+text-align:left;
+}
+
+.wire{
+padding:8px;
+margin:4px;
+border-radius:10px;
+color:white;
+}
+
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginPage" class="page">
+<div class="card">
+
+<h1>🌸 Cozy CSS Study Login</h1>
+
+<input id="username" placeholder="Enter Username">
+
+<br>
+
+<button onclick="login()">Login 🌿</button>
+
+<p>Welcome to your peaceful study world</p>
+
+</div>
+</div>
+
+<!-- MENU -->
+<div id="menuPage" class="page">
+
+<div class="topbar">
+
+<button class="left" onclick="showPage('settingsPage')">⚙ Settings</button>
+
+<button class="right" onclick="logout()">Logout</button>
+
+<center><h3 id="welcomeText"></h3></center>
+
+</div>
+
+<div class="card">
+
+<h1>🌿 Main Menu</h1>
+
+<button onclick="showPage('reviewerMenu')">📚 Reviewer</button>
+
+<button onclick="showPage('quizPage')">📝 Quiz</button>
+
+<button onclick="showPage('funfactsPage')">💡 Fun Facts</button>
+
+<button onclick="showPage('gamePage')">🎮 Mini Game</button>
+
+<button onclick="showPage('utpPage')">🔌 RJ45 / UTP Learning</button>
+
+<button onclick="showPage('searchPage')">🔎 Smart Search</button>
+
+<button onclick="showPage('translatePage')">🌐 Translate</button>
+
+</div>
+</div>
+
+<!-- SETTINGS -->
+<div id="settingsPage" class="page">
+<div class="card">
+
+<h2>⚙ Theme Settings</h2>
+
+<input type="color" id="themePicker">
+
+<button onclick="applyTheme()">Apply Theme</button>
+
+<br>
+
+<button onclick="showPage('menuPage')">Back</button>
+
+</div>
+</div>
+
+<!-- REVIEWER MENU -->
+<div id="reviewerMenu" class="page">
+<div class="card">
+
+<h2>📚 Reviewer Topics</h2>
+
+<button onclick="showPage('coc1Page')">COC 1 Installing & Configuring</button>
+
+<button onclick="showPage('coc2Page')">COC 2 Computer Networks</button>
+
+<button onclick="showPage('coc3Page')">COC 3 Computer Servers</button>
+
+<br>
+
+<button onclick="showPage('menuPage')">Back</button>
+
+</div>
+</div>
+
+<!-- COC 1 -->
+<div id="coc1Page" class="page">
+<div class="card text-left">
+
+<h2>COC 1 Installing and Configuring Computer Systems</h2>
+
+<p>
+This includes assembling hardware components such as motherboard, CPU, RAM, HDD/SSD, PSU.
+Install operating systems like Windows or Linux.
+Install drivers, configure BIOS, and ensure system stability.
+</p>
+
+<button onclick="showPage('reviewerMenu')">Back</button>
+
+</div>
+</div>
+
+<!-- COC 2 -->
+<div id="coc2Page" class="page">
+<div class="card text-left">
+
+<h2>COC 2 Setting up Computer Networks</h2>
+
+<p>
+Includes configuring IP address, routers, switches, and network connectivity.
+Allows communication between computers.
+</p>
+
+<button onclick="showPage('reviewerMenu')">Back</button>
+
+</div>
+</div>
+
+<!-- COC 3 -->
+<div id="coc3Page" class="page">
+<div class="card text-left">
+
+<h2>COC 3 Setting up Computer Servers</h2>
+
+<p>
+Servers provide services such as file sharing, authentication, and network management.
+Includes installing server OS and managing users.
+</p>
+
+<button onclick="showPage('reviewerMenu')">Back</button>
+
+</div>
+</div>
+
+<!-- QUIZ -->
+<div id="quizPage" class="page">
+<div class="card">
+
+<h2>📝 Quiz</h2>
+
+<input id="minutes" placeholder="Enter minutes">
+
+<button onclick="setTimer()">Set Timer</button>
+
+<div class="timer" id="timer">0:00</div>
+
+<button onclick="startTimer()">Start</button>
+<button onclick="pauseTimer()">Pause</button>
+<button onclick="resumeTimer()">Resume</button>
+<button onclick="resetTimer()">Reset</button>
+
+<p>What connects network?</p>
+<select id="q1">
+<option>CPU</option>
+<option>Router</option>
+<option>Monitor</option>
+</select>
+
+<p>What stores files?</p>
+<select id="q2">
+<option>RAM</option>
+<option>Hard Drive</option>
+<option>GPU</option>
+</select>
+
+<button onclick="submitQuiz()">Submit</button>
+
+<p id="score"></p>
+
+<button onclick="showPage('menuPage')">Back</button>
+
+</div>
+</div>
+
+<!-- FUN FACTS -->
+<div id="funfactsPage" class="page">
+<div class="card">
+
+<h2>💡 Fun Facts</h2>
+
+<p id="fact"></p>
+
+<button onclick="generateFact()">Generate Fact</button>
+
+<br>
+
+<button onclick="showPage('menuPage')">Back</button>
+
+</div>
+</div>
+
+<!-- MINI GAME -->
+<div id="gamePage" class="page">
+<div class="card">
+
+<h2>🎮 Knowledge Game</h2>
+
+<p>Knowledge: <span id="points">0</span></p>
+
+<button onclick="gainKnowledge()">Gain Knowledge</button>
+
+<button onclick="showPage('menuPage')">Back</button>
+
+</div>
+</div>
+
+<!-- UTP -->
+<div id="utpPage" class="page">
+<div class="card">
+
+<h2>RJ45 T568B Color Order</h2>
+
+<div class="wire" style="background:orange">1 White-Orange</div>
+<div class="wire" style="background:orange">2 Orange</div>
+<div class="wire" style="background:green">3 White-Green</div>
+<div class="wire" style="background:blue">4 Blue</div>
+<div class="wire" style="background:blue">5 White-Blue</div>
+<div class="wire" style="background:green">6 Green</div>
+<div class="wire" style="background:brown">7 White-Brown</div>
+<div class="wire" style="background:brown">8 Brown</div>
+
+<button onclick="showPage('menuPage')">Back</button>
+
+</div>
+</div>
+
+<!-- SEARCH -->
+<div id="searchPage" class="page">
+<div class="card">
+
+<h2>Smart Search</h2>
+
+<input id="searchInput">
+
+<button onclick="search()">Search</button>
+
+<p id="result"></p>
+
+<button onclick="showPage('menuPage')">Back</button>
+
+</div>
+</div>
+
+<!-- TRANSLATE -->
+<div id="translatePage" class="page">
+<div class="card">
+
+<select id="lang">
+<option value="en">English</option>
+<option value="fil">Filipino</option>
+<option value="jp">Japanese</option>
+</select>
+
+<button onclick="translate()">Translate</button>
+
+<p id="translated"></p>
+
+<button onclick="showPage('menuPage')">Back</button>
+
+</div>
+</div>
+
+<script>
+
+let facts=[
+"First computer weighed 27 tons",
+"RAM is temporary memory",
+"Servers run 24/7",
+"RJ45 is used for Ethernet",
+"CPU is brain of computer"
+];
+
+function generateFact(){
+fact.innerText=facts[Math.floor(Math.random()*facts.length)];
+}
+
+function login(){
+localStorage.user=username.value;
+welcomeText.innerText="Welcome "+username.value;
+showPage("menuPage");
+}
+
+function logout(){
+localStorage.removeItem("user");
+showPage("loginPage");
+}
+
+function showPage(id){
+document.querySelectorAll(".page").forEach(p=>p.style.display="none");
+document.getElementById(id).style.display="block";
+}
+
+function applyTheme(){
+document.body.style.background=themePicker.value;
+}
+
+let time=0,interval;
+
+function setTimer(){
+time=minutes.value*60;
+updateTimer();
+}
+
+function startTimer(){
+interval=setInterval(()=>{
+if(time>0){time--;updateTimer();}
+},1000);
+}
+
+function pauseTimer(){clearInterval(interval);}
+function resumeTimer(){startTimer();}
+function resetTimer(){clearInterval(interval);time=0;updateTimer();}
+
+function updateTimer(){
+timer.innerText=Math.floor(time/60)+":"+(time%60);
+}
+
+function submitQuiz(){
+let score=0;
+if(q1.value=="Router")score++;
+if(q2.value=="Hard Drive")score++;
+document.getElementById("score").innerText="Score "+score;
+}
+
+let knowledge=0;
+function gainKnowledge(){
+knowledge+=10;
+points.innerText=knowledge;
+}
+
+function search(){
+result.innerText="Result: "+searchInput.value+" is important in CSS";
+}
+
+function translate(){
+let l=lang.value;
+if(l=="fil") translated.innerText="Maligayang pagdating";
+else if(l=="jp") translated.innerText="ようこそ";
+else translated.innerText="Welcome";
+}
+
+window.onload=function(){
+if(localStorage.user){
+welcomeText.innerText="Welcome "+localStorage.user;
+showPage("menuPage");
+}else showPage("loginPage");
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cozy Tech Study Hub</title>
+<style>
+:root{
+    --bg:#f6e6d3;
+    --primary:#c97b36;
+    --accent:#8b5e3c;
+    --card:#fff8ee;
+    --text:#4a2c2a;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    background:var(--bg);
+    height:100vh;
+    overflow:hidden;
+}
+
+/* FULL SCREEN SECTIONS */
+.section{
+    width:100%;
+    height:100vh;
+    display:none;
+    padding:40px;
+    overflow:auto;
+}
+
+.active{
+    display:block;
+}
+
+/* COZY CARD STYLE */
+.card{
+    background:var(--card);
+    padding:30px;
+    border-radius:25px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.1);
+    margin-bottom:20px;
+}
+
+/* BUTTON STYLE */
+button{
+    background:var(--primary);
+    border:none;
+    padding:12px 20px;
+    margin:8px;
+    border-radius:20px;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+button:hover{
+    background:var(--accent);
+    transform:translateY(-5px);
+}
+
+/* FUNNY BUTTONS UP & DOWN */
+.btn-up-down{
+    animation: bounce 1.5s infinite;
+}
+
+@keyframes bounce{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-6px);}
+}
+
+/* LOGIN */
+.login-box{
+    width:350px;
+    margin:auto;
+    margin-top:150px;
+    text-align:center;
+}
+
+input{
+    width:100%;
+    padding:10px;
+    margin:10px 0;
+    border-radius:10px;
+    border:1px solid #ccc;
+}
+
+/* SETTINGS */
+.settings{
+    position:fixed;
+    top:15px;
+    left:15px;
+}
+
+select{
+    padding:8px;
+    border-radius:10px;
+}
+
+/* MENU GRID */
+.menu-buttons{
+    display:flex;
+    flex-wrap:wrap;
+    gap:15px;
+}
+
+/* TIMER */
+.timer{
+    font-size:30px;
+    margin:15px 0;
+}
+</style>
+</head>
+<body>
+
+<!-- SETTINGS -->
+<div class="settings">
+<select onchange="changeTheme(this.value)">
+<option value="default">Default Cozy</option>
+<option value="dark">Dark Mode</option>
+<option value="blue">Ocean Blue</option>
+<option value="green">Soft Green</option>
+</select>
+</div>
+
+<!-- LOGIN PAGE -->
+<div id="login" class="section active">
+<div class="login-box card">
+<h2>🍞 Cozy Tech Study Hub</h2>
+<input type="text" id="username" placeholder="Enter Username">
+<input type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+</div>
+</div>
+
+<!-- MENU PAGE -->
+<div id="menu" class="section">
+<div class="card">
+<h1 id="welcomeUser">Welcome!</h1>
+<p>Choose your study mode 🍪</p>
+</div>
+
+<div class="menu-buttons">
+<button class="btn-up-down" onclick="showPage('coc1')">COC 1 Reviewer</button>
+<button class="btn-up-down" onclick="showPage('coc2')">COC 2 Reviewer</button>
+<button class="btn-up-down" onclick="showPage('coc3')">COC 3 Reviewer</button>
+<button onclick="showPage('quiz')">Quiz + Timer</button>
+<button onclick="showPage('funfacts')">Fun Facts</button>
+<button onclick="showPage('minigame')">Mini Game</button>
+<button onclick="showPage('research')">Smart Research</button>
+</div>
+</div>
+
+<!-- COC 1 -->
+<div id="coc1" class="section">
+<div class="card">
+<h2>COC 1: Installing & Configuring Computer Systems</h2>
+<ul>
+<li>✔ Identify hardware components (CPU, RAM, HDD, PSU)</li>
+<li>✔ Assemble computer parts safely</li>
+<li>✔ Install Operating System (Windows/Linux)</li>
+<li>✔ Install Drivers and Updates</li>
+<li>✔ Configure BIOS/UEFI settings</li>
+<li>✔ Test system functionality</li>
+</ul>
+<button onclick="showPage('menu')">⬆ Back to Menu</button>
+</div>
+</div>
+
+<!-- COC 2 -->
+<div id="coc2" class="section">
+<div class="card">
+<h2>COC 2: Setting Up Computer Networks</h2>
+<ul>
+<li>✔ Understand IP Address & Subnet</li>
+<li>✔ Setup Router & Switch</li>
+<li>✔ Configure LAN Cables (T568A/B)</li>
+<li>✔ Basic Network Troubleshooting</li>
+<li>✔ Setup Wireless Network</li>
+<li>✔ Network Security Basics</li>
+</ul>
+<button onclick="showPage('menu')">⬆ Back to Menu</button>
+</div>
+</div>
+
+<!-- COC 3 -->
+<div id="coc3" class="section">
+<div class="card">
+<h2>COC 3: Setting Up Computer Servers</h2>
+<ul>
+<li>✔ Install Windows/Linux Server</li>
+<li>✔ Configure DNS & DHCP</li>
+<li>✔ Setup File Sharing Server</li>
+<li>✔ Manage User Accounts</li>
+<li>✔ Backup & Recovery Planning</li>
+<li>✔ Server Security Practices</li>
+</ul>
+<button onclick="showPage('menu')">⬆ Back to Menu</button>
+</div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="section">
+<div class="card">
+<h2>Quiz Time 🧠</h2>
+<input type="number" id="setTime" placeholder="Set timer in seconds">
+<div class="timer" id="timer">00:00</div>
+<button onclick="startTimer()">Start</button>
+<button onclick="pauseTimer()">Pause</button>
+<button onclick="resumeTimer()">Resume</button>
+
+<p>Question: What does CPU stand for?</p>
+<button>Central Processing Unit</button>
+<button>Computer Power Unit</button>
+<button>Central Program Utility</button>
+
+<button onclick="showPage('menu')">⬆ Back</button>
+</div>
+</div>
+
+<!-- FUN FACTS -->
+<div id="funfacts" class="section">
+<div class="card">
+<h2>💡 Fun Computer Facts</h2>
+<ul>
+<li>🖥 The first computer weighed over 27 tons!</li>
+<li>⌨ The first mouse was made of wood.</li>
+<li>💾 The first hard drive stored only 5MB.</li>
+<li>🌐 The first website is still online.</li>
+</ul>
+<button onclick="showPage('menu')">⬆ Back</button>
+</div>
+</div>
+
+<!-- MINI GAME -->
+<div id="minigame" class="section">
+<div class="card">
+<h2>🎮 Mini Game: Guess the Component</h2>
+<p>I store temporary data for fast access. What am I?</p>
+<button onclick="alert('Correct! It is RAM!')">RAM</button>
+<button onclick="alert('Nope! Try Again!')">Hard Drive</button>
+<button onclick="alert('Nope! Try Again!')">Power Supply</button>
+<button onclick="showPage('menu')">⬆ Back</button>
+</div>
+</div>
+
+<!-- SMART RESEARCH -->
+<div id="research" class="section">
+<div class="card">
+<h2>🔎 Smart Research Tool</h2>
+<input type="text" id="researchInput" placeholder="Search topic (e.g. DHCP)">
+<button onclick="research()">Search</button>
+<p id="researchResult"></p>
+<button onclick="showPage('menu')">⬆ Back</button>
+</div>
+</div>
+
+<script>
+let currentSection="login";
+let timer;
+let timeLeft=0;
+let paused=false;
+
+function login(){
+    let user=document.getElementById("username").value;
+    if(user!=""){
+        document.getElementById("welcomeUser").innerText="Welcome, "+user+"!";
+        showPage("menu");
+    }
+}
+
+function showPage(id){
+    document.getElementById(currentSection).classList.remove("active");
+    document.getElementById(id).classList.add("active");
+    currentSection=id;
+}
+
+/* TIMER */
+function startTimer(){
+    timeLeft=document.getElementById("setTime").value;
+    updateDisplay();
+    timer=setInterval(()=>{
+        if(timeLeft>0 && !paused){
+            timeLeft--;
+            updateDisplay();
+        }
+    },1000);
+}
+
+function pauseTimer(){ paused=true; }
+function resumeTimer(){ paused=false; }
+
+function updateDisplay(){
+    document.getElementById("timer").innerText="Time Left: "+timeLeft+"s";
+}
+
+/* RESEARCH */
+function research(){
+    let input=document.getElementById("researchInput").value;
+    document.getElementById("researchResult").innerText=
+    "Research Result about "+input+": This is a networking/server concept related to Computer System Servicing.";
+}
+
+/* THEMES */
+function changeTheme(theme){
+    if(theme=="dark"){
+        document.documentElement.style.setProperty('--bg','#2e2e2e');
+        document.documentElement.style.setProperty('--card','#3b3b3b');
+        document.documentElement.style.setProperty('--text','#fff');
+    }
+    else if(theme=="blue"){
+        document.documentElement.style.setProperty('--bg','#dff3ff');
+        document.documentElement.style.setProperty('--primary','#3498db');
+    }
+    else if(theme=="green"){
+        document.documentElement.style.setProperty('--bg','#e8f5e9');
+        document.documentElement.style.setProperty('--primary','#4caf50');
+    }
+    else{
+        location.reload();
+    }
+}
+</script>
+
+</body>
+</html>

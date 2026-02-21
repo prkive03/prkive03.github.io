@@ -1,0 +1,121 @@
+:root{
+--sky:#cfe9f6;
+--grass:#dff5e1;
+--card:#ffffffcc;
+--primary:#6aa67a;
+--accent:#ffb6b9;
+--text:#2f3e46;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Trebuchet MS', sans-serif;
+}
+
+body{
+height:100vh;
+overflow:hidden;
+background:linear-gradient(to bottom,var(--sky),var(--grass));
+color:var(--text);
+}
+
+/* floating clouds */
+body::before{
+content:"☁ ☁ ☁ ☁ ☁ ☁";
+position:fixed;
+top:20px;
+left:-200px;
+font-size:40px;
+animation:cloud 40s linear infinite;
+opacity:0.4;
+}
+
+@keyframes cloud{
+from{left:-200px;}
+to{left:100%;}
+}
+
+.section{
+display:none;
+height:100vh;
+padding:40px;
+overflow:auto;
+}
+
+.active{
+display:block;
+}
+
+.card{
+background:var(--card);
+padding:30px;
+border-radius:25px;
+box-shadow:0 10px 30px rgba(0,0,0,0.15);
+margin-bottom:20px;
+backdrop-filter:blur(6px);
+}
+
+/* Settings */
+.settings{
+position:fixed;
+top:15px;
+left:15px;
+}
+
+select{
+padding:6px;
+border-radius:10px;
+border:none;
+background:var(--primary);
+color:white;
+}
+
+/* Buttons */
+button{
+background:var(--primary);
+border:none;
+padding:12px 20px;
+margin:8px;
+border-radius:20px;
+color:white;
+cursor:pointer;
+transition:0.3s;
+font-weight:bold;
+}
+
+button:hover{
+transform:translateY(-5px);
+background:var(--accent);
+}
+
+/* Funny floating button */
+.funny{
+animation:float 2s ease-in-out infinite;
+}
+
+@keyframes float{
+0%,100%{transform:translateY(0);}
+50%{transform:translateY(-8px);}
+}
+
+input{
+padding:10px;
+margin:10px 0;
+width:100%;
+border-radius:10px;
+border:1px solid #ccc;
+}
+
+.grid{
+display:flex;
+flex-wrap:wrap;
+gap:15px;
+}
+
+.timer{
+font-size:28px;
+margin:15px 0;
+color:#ff7f50;
+}
