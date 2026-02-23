@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS Buddy </title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #3B82F6;
+    --primary-dark: #1D4ED8;
+    --teal: #14B8A6;
+    --green: #22C55E;
+    --navy: #1E293B;
+    --navy-light: #2D3F55;
+    --bg: #E8EDF5;
+    --card-bg: #fff;
+    --text: #1E293B;
+    --text-muted: #64748B;
+    --sidebar-bg: #fff;
+    --border: #E2E8F0;
+    --accent: var(--primary);
+  }
+  .theme-teal { --accent: #14B8A6; --primary: #14B8A6; --primary-dark: #0D9488; }
+  .theme-green { --accent: #22C55E; --primary: #22C55E; --primary-dark: #16A34A; }
+  .theme-gray { --accent: #94A3B8; --primary: #64748B; --primary-dark: #475569; }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* NAV */
+  nav {
+    background: var(--navy);
+    padding: 0 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 68px; position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.2);
+  }
+  .logo { font-size: 1.6rem; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+  .logo span { color: var(--primary); transition: color 0.3s; }
+  .nav-links { display: flex; gap: 4px; }
+  .nav-links a {
+    color: #94A3B8; text-decoration: none; padding: 8px 16px;
+    border-radius: 8px; font-weight: 500; font-size: 0.95rem;
+    transition: all 0.2s; position: relative;
+  }
+  .nav-links a.active, .nav-links a:hover { color: #fff; background: rgba(255,255,255,0.08); }
+  .nav-links a.active::after {
+    content: ''; position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%);
+    width: 20px; height: 2px; background: var(--primary); border-radius: 2px;
+  }
+  .nav-right { display: flex; gap: 12px; align-items: center; }
+
+  /* Guest buttons */
+  .btn-login {
+    background: transparent; border: 1.5px solid #fff; color: #fff;
+    padding: 8px 20px; border-radius: 20px; font-family: 'Outfit', sans-serif;
+    font-weight: 600; cursor: pointer; font-size: 0.9rem; transition: all 0.2s;
+  }
+  .btn-login:hover { background: #fff; color: var(--navy); }
+  .btn-register-nav {
+    background: var(--primary); border: none; color: #fff;
+    padding: 8px 20px; border-radius: 20px; font-family: 'Outfit', sans-serif;
+    font-weight: 600; cursor: pointer; font-size: 0.9rem; transition: all 0.2s;
+  }
+  .btn-register-nav:hover { background: var(--primary-dark); }
+
+  /* User avatar button */
+  .user-menu-wrap { position: relative; }
+  .avatar-btn {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    border: 2px solid rgba(255,255,255,0.3);
+    color: #fff; font-weight: 800; font-size: 0.9rem;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: transform 0.2s; font-family: 'Outfit', sans-serif;
+  }
+  .avatar-btn:hover { transform: scale(1.1); }
+  .user-greeting { color: rgba(255,255,255,0.75); font-size: 0.85rem; font-weight: 500; }
+
+  /* Dropdown */
+  .user-dropdown {
+    position: absolute; top: 48px; right: 0;
+    background: #fff; border: 1px solid var(--border);
+    border-radius: 14px; box-shadow: 0 12px 40px rgba(0,0,0,0.18);
+    min-width: 230px; overflow: hidden; display: none; z-index: 300;
+    animation: dropIn 0.18s ease;
+  }
+  .user-dropdown.open { display: block; }
+  @keyframes dropIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+  .dropdown-header { padding: 16px 18px 12px; border-bottom: 1px solid var(--border); }
+  .dropdown-header .d-name { font-weight: 800; font-size: 1rem; color: var(--navy); }
+  .dropdown-header .d-email { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
+  .d-stats { display: flex; gap: 12px; margin-top: 10px; }
+  .d-stat { text-align: center; flex: 1; }
+  .d-stat-num { font-weight: 800; font-size: 1.1rem; color: var(--primary); }
+  .d-stat-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .dropdown-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 18px; font-size: 0.88rem; color: var(--text);
+    cursor: pointer; transition: background 0.15s; font-weight: 500;
+  }
+  .dropdown-item:hover { background: var(--bg); }
+  .dropdown-item .di-icon { font-size: 1rem; width: 20px; text-align: center; }
+  .dropdown-sep { height: 1px; background: var(--border); margin: 4px 0; }
+  .dropdown-item.danger { color: #EF4444; }
+
+  /* LAYOUT */
+  .main-layout { display: flex; gap: 24px; padding: 32px; max-width: 1200px; margin: 0 auto; }
+  .content-area { flex: 1; }
+  .sidebar { width: 280px; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px; }
+
+  /* HERO */
+  .hero { margin-bottom: 28px; }
+  .hero h1 { font-size: 1.6rem; font-weight: 800; color: var(--navy); margin-bottom: 6px; }
+  .hero p { color: var(--text-muted); font-size: 1rem; }
+  /* personalized hero for logged-in users */
+  .hero-welcome { font-size: 1.6rem; font-weight: 800; color: var(--navy); margin-bottom: 4px; }
+  .hero-welcome span { color: var(--primary); }
+  .hero-sub { color: var(--text-muted); font-size: 0.95rem; }
+
+  /* REVIEWER SECTION */
+  .section-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 16px; color: var(--navy); }
+  .cards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .reviewer-card {
+    border-radius: 18px; padding: 24px; cursor: pointer;
+    position: relative; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s;
+    min-height: 180px; display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .reviewer-card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.15); }
+  .reviewer-card.blue { background: linear-gradient(135deg, #4B91F7 0%, #3B82F6 100%); }
+  .reviewer-card.teal { background: linear-gradient(135deg, #2DD4BF 0%, #14B8A6 100%); }
+  .reviewer-card.blue2 { background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 80%); }
+  .reviewer-card.green { background: linear-gradient(135deg, #4ADE80 0%, #22C55E 100%); }
+
+  .card-blob {
+    position: absolute; right: -20px; top: -20px;
+    width: 100px; height: 100px; border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+  }
+  .reviewer-card h3 { color: #fff; font-weight: 700; font-size: 1rem; line-height: 1.4; position: relative; }
+  .progress-wrap { position: relative; }
+  .progress-label { color: rgba(255,255,255,0.85); font-size: 0.78rem; margin-bottom: 6px; }
+  .progress-bar { background: rgba(255,255,255,0.25); border-radius: 10px; height: 5px; margin-bottom: 14px; }
+  .progress-fill { height: 100%; border-radius: 10px; background: #fff; transition: width 0.5s; }
+  .btn-start {
+    background: var(--navy); color: #fff; border: none;
+    padding: 9px 20px; border-radius: 20px; font-family: 'Outfit', sans-serif;
+    font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;
+    align-self: flex-start;
+  }
+  .btn-start:hover { background: #0F172A; transform: scale(1.03); }
+
+  /* LOGIN BANNER */
+  .login-banner {
+    background: var(--navy); color: #fff; border-radius: 14px;
+    padding: 14px 24px; text-align: center; cursor: pointer;
+    font-weight: 600; font-size: 0.95rem; margin-top: 24px;
+    transition: all 0.2s; letter-spacing: 0.2px;
+  }
+  .login-banner:hover { background: var(--navy-light); }
+
+  /* BOOKMARKS SECTION */
+  .bookmarks-section { margin-top: 28px; display: none; }
+  .bookmarks-section.visible { display: block; }
+  .bookmarks-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+  .bookmark-item {
+    display: flex; align-items: center; justify-content: space-between;
+    background: #fff; border-radius: 10px; padding: 10px 14px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06); font-size: 0.88rem;
+    border-left: 3px solid var(--primary);
+  }
+  .bookmark-item-left { display: flex; align-items: center; gap: 8px; }
+  .bookmark-remove { background: none; border: none; color: #EF4444; cursor: pointer; font-size: 1rem; }
+  .empty-bookmarks { color: var(--text-muted); font-size: 0.88rem; font-style: italic; padding: 8px 0; }
+
+  /* SIDEBAR CARDS */
+  .sidebar-card {
+    background: var(--sidebar-bg); border-radius: 16px; padding: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .sidebar-title { font-weight: 700; font-size: 0.95rem; color: var(--navy); margin-bottom: 12px; text-align: center; }
+
+  /* COLOR THEME */
+  .theme-dots { display: flex; gap: 10px; justify-content: center; }
+  .theme-dot {
+    width: 32px; height: 32px; border-radius: 50%; cursor: pointer;
+    border: 3px solid transparent; transition: all 0.2s;
+  }
+  .theme-dot:hover { transform: scale(1.15); }
+  .theme-dot.active { border-color: var(--navy); }
+  .dot-blue { background: #3B82F6; }
+  .dot-teal { background: #14B8A6; }
+  .dot-green { background: #22C55E; }
+  .dot-gray { background: #94A3B8; }
+
+  /* TIMER */
+  .timer-display {
+    background: var(--navy); border-radius: 12px; padding: 16px;
+    text-align: center; font-family: 'JetBrains Mono', monospace;
+    font-size: 2.2rem; font-weight: 700; color: #fff;
+    letter-spacing: 2px; position: relative; margin-bottom: 10px;
+  }
+  .timer-btn {
+    background: var(--primary); color: #fff; border: none;
+    width: 28px; height: 28px; border-radius: 50%; font-size: 1.1rem;
+    cursor: pointer; position: absolute; right: 12px; top: 50%;
+    transform: translateY(-50%); font-family: 'Outfit', sans-serif;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .timer-controls { display: flex; gap: 8px; justify-content: center; }
+  .timer-ctrl-btn {
+    padding: 7px 14px; border: none; border-radius: 10px;
+    font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.8rem;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-start-timer { background: var(--primary); color: #fff; }
+  .btn-reset-timer { background: var(--border); color: var(--text); }
+  .timer-ctrl-btn:hover { opacity: 0.85; }
+
+  /* SIDEBAR ITEMS */
+  .sidebar-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 0; border-bottom: 1px solid var(--border);
+    cursor: pointer; transition: all 0.2s;
+  }
+  .sidebar-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .sidebar-item:hover { color: var(--primary); }
+  .sidebar-icon { font-size: 1.2rem; }
+  .sidebar-item span { font-weight: 600; font-size: 0.9rem; }
+
+  /* FUN FACT */
+  .fun-fact { background: #F0FDF4; border-left: 3px solid #22C55E; padding: 10px 12px; border-radius: 8px; }
+  .fun-fact strong { color: #15803D; }
+  .fun-fact p { font-size: 0.85rem; color: #166534; margin-top: 2px; }
+
+  /* ICE BREAKER */
+  .ice-breaker-q { font-size: 0.88rem; color: var(--text-muted); font-style: italic; margin-top: 8px; }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+    z-index: 200; align-items: center; justify-content: center;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: #fff; border-radius: 20px; padding: 36px;
+    width: 420px; max-width: 92vw; position: relative;
+    animation: slideUp 0.3s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .modal h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: 6px; }
+  .modal > p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 24px; }
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 6px; color: var(--navy); }
+  .form-group input {
+    width: 100%; padding: 11px 14px; border: 1.5px solid var(--border);
+    border-radius: 10px; font-family: 'Outfit', sans-serif; font-size: 0.95rem;
+    outline: none; transition: border-color 0.2s; color: var(--navy);
+  }
+  .form-group input:focus { border-color: var(--primary); }
+  .form-error { color: #EF4444; font-size: 0.82rem; margin-top: -8px; margin-bottom: 8px; min-height: 18px; }
+  .form-success { color: #22C55E; font-size: 0.85rem; margin-top: 8px; text-align: center; min-height: 18px; }
+  .btn-primary {
+    width: 100%; padding: 12px; background: var(--primary);
+    color: #fff; border: none; border-radius: 12px; font-family: 'Outfit', sans-serif;
+    font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-top: 8px;
+  }
+  .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+  .modal-close {
+    position: absolute; top: 16px; right: 16px; background: var(--bg);
+    border: none; font-size: 1.1rem; cursor: pointer; color: var(--text-muted);
+    width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+  .modal-close:hover { background: var(--border); }
+  .modal-footer { text-align: center; margin-top: 16px; font-size: 0.85rem; color: var(--text-muted); }
+  .modal-footer a { color: var(--primary); text-decoration: none; font-weight: 600; cursor: pointer; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+    background: var(--navy); color: #fff; padding: 12px 24px; border-radius: 30px;
+    font-weight: 600; font-size: 0.9rem; z-index: 400; transition: transform 0.3s;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.success { border-left: 4px solid #22C55E; border-radius: 12px; }
+  .toast.error { border-left: 4px solid #EF4444; border-radius: 12px; }
+  .toast.info { border-left: 4px solid var(--primary); border-radius: 12px; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo"><span>CSS</span> Buddy</div>
+  <div class="nav-links">
+    <a href="index.html" class="active">Home</a>
+    <a href="quiz.html" class="active">Quiz</a>
+    <a href="flashcards.html">Flashcards</a>
+    <a href="funfacts.html">Fun Facts</a>
+    <a href="icebreaker.html">Ice Breaker</a>
+    <a href="games.html"> Games</a>
+  </div>
+  <div class="nav-right">
+    <!-- GUEST BUTTONS -->
+    <div id="guest-nav" style="display:flex;gap:10px;align-items:center">
+      <div style="color:#94A3B8;font-size:0.85rem;cursor:pointer" onclick="openModal('login')">👤 Account</div>
+      <button class="btn-login" onclick="openModal('login')">Login</button>
+      <button class="btn-register-nav" onclick="openModal('register')">Register</button>
+    </div>
+    <!-- USER MENU (hidden until login) -->
+    <div id="user-nav" style="display:none" class="user-menu-wrap">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="user-greeting">Hi, <strong id="nav-username" style="color:#fff"></strong>!</span>
+        <div class="avatar-btn" id="avatar-btn" onclick="toggleUserDropdown()">?</div>
+      </div>
+      <div class="user-dropdown" id="user-dropdown">
+        <div class="dropdown-header">
+          <div class="d-name" id="dd-name">User</div>
+          <div class="d-email" id="dd-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1f6a6c7a6d5f7a727e7673317c7072">[email&#160;protected]</a></div>
+          <div class="d-stats">
+            <div class="d-stat">
+              <div class="d-stat-num" id="dd-progress">0%</div>
+              <div class="d-stat-label">Progress</div>
+            </div>
+            <div class="d-stat">
+              <div class="d-stat-num" id="dd-bookmarks">0</div>
+              <div class="d-stat-label">Bookmarks</div>
+            </div>
+            <div class="d-stat">
+              <div class="d-stat-num" id="dd-streak">0</div>
+              <div class="d-stat-label">Day Streak</div>
+            </div>
+          </div>
+        </div>
+        <div class="dropdown-item" onclick="toggleBookmarks()"><span class="di-icon"></span> My Bookmarks</div>
+        <div class="dropdown-item" onclick="openModal('changepass')"><span class="di-icon"></span> Change Password</div>
+        <div class="dropdown-sep"></div>
+        <div class="dropdown-item danger" onclick="doLogout()"><span class="di-icon"></span> Log Out</div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN LAYOUT -->
+<div class="main-layout">
+  <div class="content-area">
+
+    <!-- HERO -->
+    <div class="hero" id="hero-section">
+      <h1>Your path to CSS starts here! </h1>
+      <p>Easily study, excel, and achieve high grades.</p>
+    </div>
+
+    <div class="section-title">Reviewer</div>
+    <div class="cards-grid">
+      <div class="reviewer-card blue" onclick="window.location.href='coc1.html'">
+        <div class="card-blob"></div>
+        <h3>1. Install & Configure Computer Systems</h3>
+        <div class="progress-wrap">
+          <div class="progress-label" id="label-coc1">Progress: 0%</div>
+          <div class="progress-bar"><div class="progress-fill" id="fill-coc1" style="width:0%"></div></div>
+          <button class="btn-start">Start Review</button>
+        </div>
+      </div>
+      <div class="reviewer-card teal" onclick="window.location.href='coc2.html'">
+        <div class="card-blob"></div>
+        <h3>2. Set Up Computer Networks</h3>
+        <div class="progress-wrap">
+          <div class="progress-label" id="label-coc2">Progress: 0%</div>
+          <div class="progress-bar"><div class="progress-fill" id="fill-coc2" style="width:0%"></div></div>
+          <button class="btn-start">Start Review</button>
+        </div>
+      </div>
+      <div class="reviewer-card blue2" onclick="window.location.href='coc3.html'">
+        <div class="card-blob"></div>
+        <h3>3. Perform Diagnosis & Rectify Systems</h3>
+        <div class="progress-wrap">
+          <div class="progress-label" id="label-coc3">Progress: 0%</div>
+          <div class="progress-bar"><div class="progress-fill" id="fill-coc3" style="width:0%"></div></div>
+          <button class="btn-start">Start Review</button>
+        </div>
+      </div>
+      <div class="reviewer-card green" onclick="window.location.href='coc4.html'">
+        <div class="card-blob"></div>
+        <h3>4. Maintain & Repair Computer Systems</h3>
+        <div class="progress-wrap">
+          <div class="progress-label" id="label-coc4">Progress: 0%</div>
+          <div class="progress-bar"><div class="progress-fill" id="fill-coc4" style="width:0%"></div></div>
+          <button class="btn-start">Start Review</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOGIN BANNER (hidden when logged in) -->
+    <div class="login-banner" id="login-banner" onclick="openModal('login')">
+       Save your progress and achievements — Login now
+    </div>
+    <!-- GAMES PROMO CARD -->
+    <div style="margin-top:28px" id="mini-games">
+      <div class="section-title">🎮 Mini Games</div>
+      <div style="background:linear-gradient(135deg,var(--navy) 0%,#0f172a 100%);border-radius:20px;padding:28px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
+        <div>
+          <div style="color:#fff;font-size:1.2rem;font-weight:800;margin-bottom:6px">Play &amp; Learn! </div>
+          <div style="color:rgba(255,255,255,0.65);font-size:0.9rem;max-width:420px;line-height:1.6">6 fun mini-games based on COC 1–4 topics — Word Scramble, Memory Match, True/False, Type the Term, Catch the Parts &amp; RJ45 Cable Colors.</div>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+            <span style="background:rgba(255,255,255,0.1);color:#fff;border-radius:20px;padding:4px 12px;font-size:0.78rem;font-weight:600">🔀 Word Scramble</span>
+            <span style="background:rgba(255,255,255,0.1);color:#fff;border-radius:20px;padding:4px 12px;font-size:0.78rem;font-weight:600">🧠 Memory Match</span>
+            <span style="background:rgba(255,255,255,0.1);color:#fff;border-radius:20px;padding:4px 12px;font-size:0.78rem;font-weight:600">⚡ True or False</span>
+            <span style="background:rgba(255,255,255,0.1);color:#fff;border-radius:20px;padding:4px 12px;font-size:0.78rem;font-weight:600">⌨️ Type the Term</span>
+            <span style="background:rgba(255,255,255,0.1);color:#fff;border-radius:20px;padding:4px 12px;font-size:0.78rem;font-weight:600">🖥️ Catch the Parts</span>
+            <span style="background:rgba(255,255,255,0.1);color:#fff;border-radius:20px;padding:4px 12px;font-size:0.78rem;font-weight:600">🔌 RJ45 Colors</span>
+          </div>
+        </div>
+        <a href="games.html" style="background:var(--primary);color:#fff;padding:14px 28px;border-radius:20px;font-family:'Outfit',sans-serif;font-weight:800;font-size:1rem;text-decoration:none;display:inline-block;white-space:nowrap;transition:all 0.2s" onmouseover="this.style.background='var(--primary-dark)'" onmouseout="this.style.background='var(--primary)'">▶ Play Games →</a>
+      </div>
+    </div>
+    <!-- BOOKMARKS SECTION -->
+    <div class="bookmarks-section" id="bookmarks-section">
+      <div class="section-title"> My Bookmarks</div>
+      <div class="bookmarks-list" id="bookmarks-list">
+        <div class="empty-bookmarks">No bookmarks yet. Add bookmarks from the reviewer!</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-card">
+      <div class="sidebar-title">Color Theme</div>
+      <div class="theme-dots">
+        <div class="theme-dot dot-blue active" onclick="setTheme('blue', this)" title="Blue"></div>
+        <div class="theme-dot dot-teal" onclick="setTheme('teal', this)" title="Teal"></div>
+        <div class="theme-dot dot-green" onclick="setTheme('green', this)" title="Green"></div>
+        <div class="theme-dot dot-gray" onclick="setTheme('gray', this)" title="Gray"></div>
+      </div>
+    </div>
+
+    <div class="sidebar-card">
+      <div class="sidebar-title">Customizable Timer</div>
+      <div class="timer-display" id="timerDisplay">
+        <span id="timerText">25:00</span>
+        <button class="timer-btn" onclick="addTime()">+</button>
+      </div>
+      <div class="timer-controls">
+        <button class="timer-ctrl-btn btn-start-timer" onclick="toggleTimer()">▶ Start</button>
+        <button class="timer-ctrl-btn btn-reset-timer" onclick="resetTimer()">↺ Reset</button>
+      </div>
+    </div>
+
+    <div class="sidebar-card">
+      <div class="sidebar-item" onclick="window.location.href='flashcards.html'">
+        <span class="sidebar-icon"></span>
+        <span>Recent Flashcards</span>
+      </div>
+      <div class="sidebar-item" onclick="toggleBookmarks()">
+        <span class="sidebar-icon"></span>
+        <span>Bookmarks <span id="sidebar-bm-badge" style="font-size:0.75rem;color:var(--primary);font-weight:700"></span></span>
+      </div>
+      <div class="fun-fact">
+        <strong>Fun Fact:</strong>
+        <p id="funFactText">Did you know RAM stands for Random Access Memory? It temporarily holds data your computer is currently using!</p>
+      </div>
+      <div class="sidebar-item" onclick="window.location.href='icebreaker.html'" style="margin-top:12px">
+        <span class="sidebar-icon"></span>
+        <span>Ice Breaker</span>
+      </div>
+      <p class="ice-breaker-q">What tech could you not live without?</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LOGIN MODAL ==================== -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('login')">✕</button>
+    <h2>Welcome back! </h2>
+    <p>Login to save your progress, bookmarks and theme.</p>
+    <div class="form-group">
+      <label>Email Address</label>
+      <input type="email" id="login-email" placeholder="student@school.edu" autocomplete="email">
+    </div>
+    <div class="form-error" id="login-email-err"></div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div class="form-error" id="login-pass-err"></div>
+    <button class="btn-primary" onclick="doLogin()">Login →</button>
+    <div class="form-error" id="login-general-err" style="text-align:center;margin-top:8px"></div>
+    <div class="modal-footer">
+      Don't have an account? <a onclick="openModal('register')">Sign up free</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== REGISTER MODAL ==================== -->
+<div class="modal-overlay" id="registerModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('register')">✕</button>
+    <h2>Create Account </h2>
+    <p>Join CSS Buddy and start your learning journey!</p>
+    <div class="form-group">
+      <label>Full Name</label>
+      <input type="text" id="reg-name" placeholder="e.g. Juan dela Cruz">
+    </div>
+    <div class="form-error" id="reg-name-err"></div>
+    <div class="form-group">
+      <label>Email Address</label>
+      <input type="email" id="reg-email" placeholder="student@school.edu" autocomplete="email">
+    </div>
+    <div class="form-error" id="reg-email-err"></div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="reg-password" placeholder="At least 6 characters" autocomplete="new-password">
+    </div>
+    <div class="form-error" id="reg-pass-err"></div>
+    <div class="form-group">
+      <label>Confirm Password</label>
+      <input type="password" id="reg-confirm" placeholder="Repeat your password" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()">
+    </div>
+    <div class="form-error" id="reg-confirm-err"></div>
+    <button class="btn-primary" onclick="doRegister()">Create Account →</button>
+    <div class="form-success" id="reg-success"></div>
+    <div class="modal-footer">
+      Already have an account? <a onclick="openModal('login')">Login</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CHANGE PASSWORD MODAL ==================== -->
+<div class="modal-overlay" id="changepassModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('changepass')">✕</button>
+    <h2>Change Password </h2>
+    <p>Enter your current password and choose a new one.</p>
+    <div class="form-group">
+      <label>Current Password</label>
+      <input type="password" id="cp-current" placeholder="••••••••">
+    </div>
+    <div class="form-error" id="cp-current-err"></div>
+    <div class="form-group">
+      <label>New Password</label>
+      <input type="password" id="cp-new" placeholder="At least 6 characters">
+    </div>
+    <div class="form-error" id="cp-new-err"></div>
+    <div class="form-group">
+      <label>Confirm New Password</label>
+      <input type="password" id="cp-confirm" placeholder="Repeat new password" onkeydown="if(event.key==='Enter')doChangePassword()">
+    </div>
+    <div class="form-error" id="cp-confirm-err"></div>
+    <button class="btn-primary" onclick="doChangePassword()">Update Password</button>
+    <div class="form-success" id="cp-success"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ============================================================
+//  DATABASE HELPERS  (localStorage)
+// ============================================================
+function getDB() {
+  try { return JSON.parse(localStorage.getItem('cssBuddyDB') || '{"accounts":{}, "users":{}}'); }
+  catch { return { accounts: {}, users: {} }; }
+}
+function saveDB(db) { localStorage.setItem('cssBuddyDB', JSON.stringify(db)); }
+
+function getAccount(email) { return getDB().accounts[email] || null; }
+
+function createAccount(email, name, hash) {
+  const db = getDB();
+  db.accounts[email] = { name, hash };
+  db.users[email] = db.users[email] || {
+    progress: { coc1: 0, coc2: 0, coc3: 0, coc4: 0 },
+    bookmarks: [],
+    theme: 'blue',
+    streak: 0,
+    lastLogin: null
+  };
+  saveDB(db);
+}
+
+function getUserData(email) {
+  const db = getDB();
+  return db.users[email] || null;
+}
+
+function updateUserData(email, patch) {
+  const db = getDB();
+  if (!db.users[email]) db.users[email] = {};
+  Object.assign(db.users[email], patch);
+  saveDB(db);
+}
+
+function updatePassword(email, newHash) {
+  const db = getDB();
+  if (db.accounts[email]) db.accounts[email].hash = newHash;
+  saveDB(db);
+}
+
+// Simple hash (not cryptographic — fine for local localStorage auth)
+function hashPass(str) {
+  let h = 5381;
+  for (let i = 0; i < str.length; i++) h = (h * 33) ^ str.charCodeAt(i);
+  return (h >>> 0).toString(36);
+}
+
+// ============================================================
+//  CURRENT SESSION
+// ============================================================
+let currentUser = null; // { email, name }
+
+function restoreSession() {
+  try {
+    const saved = localStorage.getItem('cssBuddySession');
+    if (saved) {
+      const u = JSON.parse(saved);
+      // Verify account still exists
+      if (getAccount(u.email)) { loginUser(u.email, u.name, false); }
+      else { localStorage.removeItem('cssBuddySession'); }
+    }
+  } catch { localStorage.removeItem('cssBuddySession'); }
+}
+
+function loginUser(email, name, showWelcome = true) {
+  currentUser = { email, name };
+  localStorage.setItem('cssBuddySession', JSON.stringify(currentUser));
+
+  // Streak logic
+  const data = getUserData(email) || {};
+  const today = new Date().toDateString();
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+  let streak = data.streak || 0;
+  if (data.lastLogin === yesterday) streak++;
+  else if (data.lastLogin !== today) streak = data.lastLogin ? 1 : 1;
+  updateUserData(email, { lastLogin: today, streak });
+
+  // Update UI
+  document.getElementById('guest-nav').style.display = 'none';
+  document.getElementById('user-nav').style.display = 'block';
+  document.getElementById('nav-username').textContent = name.split(' ')[0];
+  document.getElementById('avatar-btn').textContent = name[0].toUpperCase();
+  document.getElementById('dd-name').textContent = name;
+  document.getElementById('dd-email').textContent = email;
+  document.getElementById('login-banner').style.display = 'none';
+
+  // Hero personalisation
+  document.getElementById('hero-section').innerHTML = `
+    <div class="hero-welcome">Welcome back, <span>${name.split(' ')[0]}</span>! 🎓</div>
+    <div class="hero-sub">Keep going — you're doing great. Review your progress below.</div>`;
+
+  // Load saved data
+  loadUserData(email);
+
+  if (showWelcome) showToast('success', `✓ Welcome back, ${name.split(' ')[0]}!`);
+}
+
+function loadUserData(email) {
+  const data = getUserData(email);
+  if (!data) return;
+
+  // Progress bars
+  const topics = ['coc1','coc2','coc3','coc4'];
+  topics.forEach(t => {
+    const pct = data.progress?.[t] || 0;
+    const fill = document.getElementById(`fill-${t}`);
+    const label = document.getElementById(`label-${t}`);
+    if (fill) fill.style.width = pct + '%';
+    if (label) label.textContent = `Progress: ${pct}%`;
+  });
+
+  // Dropdown stats
+  const totalPct = Math.round(topics.reduce((a, t) => a + (data.progress?.[t] || 0), 0) / topics.length);
+  document.getElementById('dd-progress').textContent = totalPct + '%';
+  document.getElementById('dd-bookmarks').textContent = (data.bookmarks || []).length;
+  document.getElementById('dd-streak').textContent = data.streak || 1;
+
+  // Theme
+  if (data.theme) {
+    const dot = document.querySelector(`.dot-${data.theme}`);
+    if (dot) setTheme(data.theme, dot);
+  }
+
+  // Bookmarks
+  renderBookmarks(data.bookmarks || []);
+}
+
+// ============================================================
+//  LOGIN
+// ============================================================
+function doLogin() {
+  clearErrors('login');
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-password').value;
+  let ok = true;
+
+  if (!email) { setErr('login-email-err', 'Email is required.'); ok = false; }
+  else if (!email.includes('@')) { setErr('login-email-err', 'Enter a valid email address.'); ok = false; }
+  if (!pass) { setErr('login-pass-err', 'Password is required.'); ok = false; }
+  if (!ok) return;
+
+  const account = getAccount(email);
+  if (!account) { setErr('login-general-err', '❌ No account found with that email.'); return; }
+  if (account.hash !== hashPass(pass)) { setErr('login-general-err', '❌ Incorrect password.'); return; }
+
+  closeModal('login');
+  loginUser(email, account.name);
+}
+
+// ============================================================
+//  REGISTER
+// ============================================================
+function doRegister() {
+  clearErrors('reg');
+  const name    = document.getElementById('reg-name').value.trim();
+  const email   = document.getElementById('reg-email').value.trim();
+  const pass    = document.getElementById('reg-password').value;
+  const confirm = document.getElementById('reg-confirm').value;
+  let ok = true;
+
+  if (!name) { setErr('reg-name-err', 'Full name is required.'); ok = false; }
+  if (!email) { setErr('reg-email-err', 'Email is required.'); ok = false; }
+  else if (!email.includes('@') || !email.includes('.')) { setErr('reg-email-err', 'Enter a valid email address.'); ok = false; }
+  if (!pass) { setErr('reg-pass-err', 'Password is required.'); ok = false; }
+  else if (pass.length < 6) { setErr('reg-pass-err', 'Password must be at least 6 characters.'); ok = false; }
+  if (pass !== confirm) { setErr('reg-confirm-err', 'Passwords do not match.'); ok = false; }
+  if (!ok) return;
+
+  if (getAccount(email)) { setErr('reg-email-err', ' An account with this email already exists.'); return; }
+
+  createAccount(email, name, hashPass(pass));
+  document.getElementById('reg-success').textContent = '✓ Account created! Logging you in...';
+
+  setTimeout(() => {
+    closeModal('register');
+    loginUser(email, name);
+    showToast('success', `🎉 Welcome to CSS Buddy, ${name.split(' ')[0]}!`);
+  }, 900);
+}
+
+// ============================================================
+//  CHANGE PASSWORD
+// ============================================================
+function doChangePassword() {
+  if (!currentUser) return;
+  clearErrors('cp');
+  const current  = document.getElementById('cp-current').value;
+  const newPass  = document.getElementById('cp-new').value;
+  const confirm  = document.getElementById('cp-confirm').value;
+  let ok = true;
+
+  if (!current) { setErr('cp-current-err', 'Current password is required.'); ok = false; }
+  if (!newPass) { setErr('cp-new-err', 'New password is required.'); ok = false; }
+  else if (newPass.length < 6) { setErr('cp-new-err', 'Password must be at least 6 characters.'); ok = false; }
+  if (newPass !== confirm) { setErr('cp-confirm-err', 'Passwords do not match.'); ok = false; }
+  if (!ok) return;
+
+  const account = getAccount(currentUser.email);
+  if (!account || account.hash !== hashPass(current)) {
+    setErr('cp-current-err', 'Current password is incorrect.'); return;
+  }
+
+  updatePassword(currentUser.email, hashPass(newPass));
+  document.getElementById('cp-success').textContent = '✓ Password changed successfully!';
+  document.getElementById('cp-current').value = '';
+  document.getElementById('cp-new').value = '';
+  document.getElementById('cp-confirm').value = '';
+  setTimeout(() => { closeModal('changepass'); showToast('success', ' Password updated!'); }, 1000);
+}
+
+// ============================================================
+//  LOGOUT
+// ============================================================
+function doLogout() {
+  const name = currentUser?.name?.split(' ')[0] || 'there';
+  currentUser = null;
+  localStorage.removeItem('cssBuddySession');
+
+  // Reset UI to guest state
+  document.getElementById('guest-nav').style.display = 'flex';
+  document.getElementById('user-nav').style.display = 'none';
+  document.getElementById('user-dropdown').classList.remove('open');
+  document.getElementById('login-banner').style.display = 'block';
+  document.getElementById('hero-section').innerHTML = `
+    <h1>Your path to CSS mastery starts here! 🎓</h1>
+    <p>Easily study, excel, and achieve high grades.</p>`;
+
+  // Reset progress bars
+  ['coc1','coc2','coc3','coc4'].forEach(t => {
+    const fill = document.getElementById(`fill-${t}`);
+    const label = document.getElementById(`label-${t}`);
+    if (fill) fill.style.width = '0%';
+    if (label) label.textContent = 'Progress: 0%';
+  });
+
+  // Hide bookmarks
+  document.getElementById('bookmarks-section').classList.remove('visible');
+  document.getElementById('sidebar-bm-badge').textContent = '';
+
+  showToast('info', `Logged out. See you soon, ${name}!`);
+}
+
+// ============================================================
+//  BOOKMARKS
+// ============================================================
+function toggleBookmarks() {
+  document.getElementById('user-dropdown').classList.remove('open');
+  if (!currentUser) { openModal('login'); showToast('info', '🔖 Log in to view bookmarks!'); return; }
+  const sec = document.getElementById('bookmarks-section');
+  sec.classList.toggle('visible');
+  if (sec.classList.contains('visible')) {
+    sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function renderBookmarks(bookmarks) {
+  const list = document.getElementById('bookmarks-list');
+  const badge = document.getElementById('sidebar-bm-badge');
+  badge.textContent = bookmarks.length > 0 ? `(${bookmarks.length})` : '';
+  document.getElementById('dd-bookmarks').textContent = bookmarks.length;
+
+  if (bookmarks.length === 0) {
+    list.innerHTML = '<div class="empty-bookmarks">No bookmarks yet. Complete a review to add bookmarks!</div>';
+    return;
+  }
+  list.innerHTML = bookmarks.map((bm, i) => `
+    <div class="bookmark-item">
+      <div class="bookmark-item-left">
+        <span></span>
+        <span><strong>${bm.topic || 'Slide ' + bm.slide}</strong> — ${bm.source || 'COC 1'}</span>
+      </div>
+      <button class="bookmark-remove" onclick="removeBookmark(${i})" title="Remove bookmark">✕</button>
+    </div>`).join('');
+}
+
+function removeBookmark(index) {
+  if (!currentUser) return;
+  const data = getUserData(currentUser.email);
+  const bookmarks = [...(data.bookmarks || [])];
+  bookmarks.splice(index, 1);
+  updateUserData(currentUser.email, { bookmarks });
+  renderBookmarks(bookmarks);
+  showToast('info', 'Bookmark removed.');
+}
+
+// Exposed global so coc1.html / other pages can add bookmarks
+window.CSS_BUDDY_AUTH = {
+  isLoggedIn: () => !!currentUser,
+  getCurrentUser: () => currentUser,
+  addBookmark: (topic, source) => {
+    if (!currentUser) return false;
+    const data = getUserData(currentUser.email);
+    const bookmarks = [...(data.bookmarks || []), { topic, source, addedAt: Date.now() }];
+    updateUserData(currentUser.email, { bookmarks });
+    renderBookmarks(bookmarks);
+    showToast('success', ` "${topic}" bookmarked!`);
+    return true;
+  },
+  updateProgress: (topic, pct) => {
+    if (!currentUser) return;
+    const data = getUserData(currentUser.email) || {};
+    const progress = { ...(data.progress || {}), [topic]: pct };
+    updateUserData(currentUser.email, { progress });
+    const fill = document.getElementById(`fill-${topic}`);
+    const label = document.getElementById(`label-${topic}`);
+    if (fill) fill.style.width = pct + '%';
+    if (label) label.textContent = `Progress: ${pct}%`;
+    const topics = ['coc1','coc2','coc3','coc4'];
+    const totalPct = Math.round(topics.reduce((a, t) => a + (progress[t] || 0), 0) / topics.length);
+    document.getElementById('dd-progress').textContent = totalPct + '%';
+  }
+};
+
+// ============================================================
+//  MODALS
+// ============================================================
+function openModal(type) {
+  closeAllModals();
+  document.getElementById(type + 'Modal').classList.add('active');
+  document.getElementById('user-dropdown').classList.remove('open');
+}
+function closeModal(type) {
+  document.getElementById(type + 'Modal').classList.remove('active');
+  clearErrors('login'); clearErrors('reg'); clearErrors('cp');
+  document.getElementById('reg-success').textContent = '';
+  document.getElementById('cp-success').textContent = '';
+}
+function closeAllModals() {
+  ['login','register','changepass'].forEach(t => {
+    document.getElementById(t + 'Modal').classList.remove('active');
+  });
+}
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) closeAllModals(); });
+});
+
+// ============================================================
+//  USER DROPDOWN
+// ============================================================
+function toggleUserDropdown() {
+  document.getElementById('user-dropdown').classList.toggle('open');
+}
+document.addEventListener('click', e => {
+  const wrap = document.getElementById('user-nav');
+  if (wrap && !wrap.contains(e.target)) {
+    document.getElementById('user-dropdown')?.classList.remove('open');
+  }
+});
+
+// ============================================================
+//  ERROR HELPERS
+// ============================================================
+function setErr(id, msg) { const el = document.getElementById(id); if (el) el.textContent = msg; }
+function clearErrors(prefix) {
+  document.querySelectorAll(`[id^="${prefix}-"][id$="-err"]`).forEach(el => el.textContent = '');
+  const gen = document.getElementById(`${prefix}-general-err`);
+  if (gen) gen.textContent = '';
+}
+
+// ============================================================
+//  THEME
+// ============================================================
+function setTheme(theme, el) {
+  document.documentElement.className = theme === 'blue' ? '' : `theme-${theme}`;
+  document.querySelectorAll('.theme-dot').forEach(d => d.classList.remove('active'));
+  if (el) el.classList.add('active');
+  localStorage.setItem('cssbuddy-theme', theme);
+  if (currentUser) updateUserData(currentUser.email, { theme });
+}
+
+// Load saved theme on page load
+(function() {
+  const t = localStorage.getItem('cssbuddy-theme');
+  if (t && t !== 'blue') {
+    document.documentElement.className = `theme-${t}`;
+    const dot = document.querySelector(`.dot-${t}`);
+    if (dot) { document.querySelectorAll('.theme-dot').forEach(d => d.classList.remove('active')); dot.classList.add('active'); }
+  }
+})();
+
+// ============================================================
+//  TIMER
+// ============================================================
+let totalSeconds = 25 * 60;
+let timerInterval = null;
+let running = false;
+
+function updateDisplay() {
+  const m = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+  const s = (totalSeconds % 60).toString().padStart(2, '0');
+  document.getElementById('timerText').textContent = `${m}:${s}`;
+}
+function toggleTimer() {
+  const btn = document.querySelector('.btn-start-timer');
+  if (running) {
+    clearInterval(timerInterval); running = false; btn.textContent = '▶ Start';
+  } else {
+    running = true; btn.textContent = '⏸ Pause';
+    timerInterval = setInterval(() => {
+      if (totalSeconds <= 0) {
+        clearInterval(timerInterval); running = false; btn.textContent = '▶ Start';
+        showToast('info', "Time's up! Take a break."); return;
+      }
+      totalSeconds--; updateDisplay();
+    }, 1000);
+  }
+}
+function resetTimer() {
+  clearInterval(timerInterval); running = false;
+  totalSeconds = 25 * 60; updateDisplay();
+  document.querySelector('.btn-start-timer').textContent = '▶ Start';
+}
+function addTime() { totalSeconds += 5 * 60; updateDisplay(); showToast('info', '+5 minutes added!'); }
+
+// ============================================================
+//  TOAST
+// ============================================================
+let toastTimer;
+function showToast(type, msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ============================================================
+//  FUN FACTS
+// ============================================================
+const facts = [
+  "Did you know RAM stands for Random Access Memory? It temporarily holds data your computer is using!",
+  "The first computer mouse was made of wood in 1964 by Doug Engelbart!",
+  "A CPU can perform billions of calculations per second — faster than any human brain!",
+  "BIOS stands for Basic Input/Output System — it's the first thing that runs when you turn on your PC!",
+  "The word 'byte' was coined in 1956 to avoid accidentally abbreviating to 'bit'!",
+];
+let factIndex = 0;
+setInterval(() => {
+  factIndex = (factIndex + 1) % facts.length;
+  document.getElementById('funFactText').textContent = facts[factIndex];
+}, 7000);
+
+restoreSession();
+
+</script>
+</body>
+</html>
