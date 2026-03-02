@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS Buddy — Home</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #3B82F6; --primary-dark: #1D4ED8;
+    --teal: #14B8A6; --green: #22C55E;
+    --navy: #0b3d8d; --navy-light: #2D3F55;
+    --bg: #E8EDF5; --card-bg: #fff;
+    --text: #1E293B; --text-muted: #64748B;
+    --sidebar-bg: #fff; --border: #E2E8F0; --accent: var(--primary);
+  }
+  .theme-teal  { --accent:#14B8A6;--primary:#14B8A6;--primary-dark:#0D9488; }
+  .theme-green { --accent:#22C55E;--primary:#22C55E;--primary-dark:#16A34A; }
+  .theme-gray  { --accent:#94A3B8;--primary:#64748B;--primary-dark:#475569; }
+
+  * { margin:0;padding:0;box-sizing:border-box; }
+  body { font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh; }
+
+  nav { background:var(--navy);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:68px;position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(0,0,0,0.2); }
+  .logo { font-size:1.6rem;font-weight:800;color:#fff;letter-spacing:-0.5px;text-decoration:none; }
+  .logo span { color:var(--primary);transition:color 0.3s; }
+  .nav-links { display:flex;gap:4px; }
+  .nav-links a { color:#94A3B8;text-decoration:none;padding:8px 16px;border-radius:8px;font-weight:500;font-size:0.95rem;transition:all 0.2s;position:relative; }
+  .nav-links a.active,.nav-links a:hover { color:#fff;background:rgba(255,255,255,0.08); }
+  .nav-links a.active::after { content:'';position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);width:20px;height:2px;background:var(--primary);border-radius:2px; }
+  .nav-right { display:flex;gap:8px;align-items:center; }
+
+  .main-layout { display:flex;gap:24px;padding:32px;max-width:1200px;margin:0 auto; }
+  .content-area { flex:1; }
+  .sidebar { width:280px;flex-shrink:0;display:flex;flex-direction:column;gap:16px; }
+
+  .hero { margin-bottom:28px; }
+  .hero h1 { font-size:1.6rem;font-weight:800;color:var(--navy);margin-bottom:6px; }
+  .hero p { color:var(--text-muted);font-size:1rem; }
+  .hero-welcome { font-size:1.6rem;font-weight:800;color:var(--navy);margin-bottom:4px; }
+  .hero-welcome span { color:var(--primary); }
+  .hero-sub { color:var(--text-muted);font-size:0.95rem; }
+
+  .section-title { font-size:1.3rem;font-weight:700;margin-bottom:16px;color:var(--navy); }
+  .cards-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px; }
+
+  .reviewer-card { border-radius:18px;padding:24px;cursor:pointer;position:relative;overflow:hidden;transition:transform 0.2s,box-shadow 0.2s;min-height:180px;display:flex;flex-direction:column;justify-content:space-between; }
+  .reviewer-card:hover { transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,0.15); }
+  .reviewer-card.blue  { background:linear-gradient(135deg,#4B91F7 0%,#3B82F6 100%); }
+  .reviewer-card.teal  { background:linear-gradient(135deg,#2DD4BF 0%,#14B8A6 100%); }
+  .reviewer-card.blue2 { background:linear-gradient(135deg,#60A5FA 0%,#3B82F6 80%); }
+  .reviewer-card.green { background:linear-gradient(135deg,#4ADE80 0%,#22C55E 100%); }
+
+  /* ===== IMPROVED LOCK OVERLAY ===== */
+  .card-lock-overlay {
+    display:none;
+    position:absolute;inset:0;
+    background:rgba(5,18,45,0.55);
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+    border-radius:18px;
+    align-items:center;justify-content:center;flex-direction:column;gap:10px;z-index:5;
+    transition:all 0.3s;
+  }
+  .lock-circle {
+    width:64px;height:64px;border-radius:50%;
+    background:rgba(255,255,255,0.15);
+    border:2px solid rgba(255,255,255,0.4);
+    display:flex;align-items:center;justify-content:center;
+    font-size:1.8rem;
+    box-shadow:0 4px 20px rgba(0,0,0,0.3);
+    backdrop-filter:blur(4px);
+  }
+  .lock-title {
+    color:#fff;font-size:0.95rem;font-weight:800;text-align:center;
+    text-shadow:0 1px 4px rgba(0,0,0,0.4);
+  }
+  .lock-subtitle {
+    color:rgba(255,255,255,0.8);font-size:0.75rem;font-weight:500;text-align:center;line-height:1.5;padding:0 16px;
+  }
+  .lock-btns { display:flex;gap:8px;margin-top:4px; }
+  .lock-btn {
+    padding:7px 16px;border-radius:20px;font-family:'Outfit',sans-serif;font-weight:700;font-size:0.75rem;cursor:pointer;border:none;transition:all 0.2s;
+  }
+  .lock-btn-login { background:#fff;color:var(--navy); }
+  .lock-btn-login:hover { background:#e0eaff; }
+  .lock-btn-register { background:rgba(255,255,255,0.2);color:#fff;border:1.5px solid rgba(255,255,255,0.5); }
+  .lock-btn-register:hover { background:rgba(255,255,255,0.3); }
+
+  body.guest-mode .card-lock-overlay { display:flex; }
+  body.guest-mode .reviewer-card { cursor:default; }
+  body.guest-mode .reviewer-card:hover { transform:none;box-shadow:none; }
+
+  @keyframes flashBanner {
+    0%   { transform:scale(1);box-shadow:0 0 0 0 rgba(59,130,246,0);border-color:transparent; }
+    20%  { transform:scale(1.03);box-shadow:0 0 0 8px rgba(59,130,246,0.4);border-color:var(--primary); }
+    50%  { transform:scale(0.99);box-shadow:0 0 0 2px rgba(59,130,246,0.2); }
+    70%  { transform:scale(1.02);box-shadow:0 0 0 6px rgba(59,130,246,0.25);border-color:var(--primary); }
+    100% { transform:scale(1);box-shadow:none;border-color:transparent; }
+  }
+  .login-banner.flash { animation:flashBanner 0.75s ease forwards; }
+
+  .card-blob { position:absolute;right:-20px;top:-20px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,0.12); }
+  .reviewer-card h3 { color:#fff;font-weight:700;font-size:1rem;line-height:1.4;position:relative; }
+  .progress-label { color:rgba(255,255,255,0.85);font-size:0.78rem;margin-bottom:6px; }
+  .progress-bar { background:rgba(255,255,255,0.25);border-radius:10px;height:5px;margin-bottom:14px; }
+  .progress-fill { height:100%;border-radius:10px;background:#fff;transition:width 0.5s; }
+  .btn-start { background:var(--navy);color:#fff;border:none;padding:9px 20px;border-radius:20px;font-family:'Outfit',sans-serif;font-weight:600;font-size:0.85rem;cursor:pointer;transition:all 0.2s;align-self:flex-start;position:relative;z-index:1; }
+  .btn-start:hover { background:#0F172A;transform:scale(1.03); }
+
+  .login-banner { background:var(--navy);color:#fff;border-radius:14px;padding:14px 24px;text-align:center;cursor:pointer;font-weight:600;font-size:0.95rem;margin-top:24px;transition:all 0.2s;border:2px solid transparent; }
+  .login-banner:hover { background:var(--navy-light); }
+
+  .bookmarks-section { margin-top:28px;display:none; }
+  .bookmarks-section.visible { display:block; }
+  .bookmarks-list { display:flex;flex-direction:column;gap:8px;margin-top:10px; }
+  .bookmark-item { display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:10px;padding:10px 14px;box-shadow:0 1px 4px rgba(0,0,0,0.06);font-size:0.88rem;border-left:3px solid var(--primary); }
+  .bookmark-item-left { display:flex;align-items:center;gap:8px; }
+  .bookmark-remove { background:none;border:none;color:#EF4444;cursor:pointer;font-size:1rem; }
+  .empty-bookmarks { color:var(--text-muted);font-size:0.88rem;font-style:italic;padding:8px 0; }
+
+  .sidebar-card { background:var(--sidebar-bg);border-radius:16px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,0.06); }
+  .sidebar-title { font-weight:700;font-size:0.95rem;color:var(--navy);margin-bottom:12px;text-align:center; }
+  .theme-dots { display:flex;gap:10px;justify-content:center; }
+  .theme-dot { width:32px;height:32px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all 0.2s; }
+  .theme-dot:hover { transform:scale(1.15); }
+  .theme-dot.active { border-color:var(--navy); }
+  .dot-blue{background:#3B82F6}.dot-teal{background:#14B8A6}.dot-green{background:#22C55E}.dot-gray{background:#94A3B8}
+
+  .timer-display { background:var(--navy);border-radius:12px;padding:16px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:2.2rem;font-weight:700;color:#fff;letter-spacing:2px;position:relative;margin-bottom:10px; }
+  .timer-btn { background:var(--primary);color:#fff;border:none;width:28px;height:28px;border-radius:50%;font-size:1.1rem;cursor:pointer;position:absolute;right:12px;top:50%;transform:translateY(-50%);display:flex;align-items:center;justify-content:center; }
+  .timer-controls { display:flex;gap:8px;justify-content:center; }
+  .timer-ctrl-btn { padding:7px 14px;border:none;border-radius:10px;font-family:'Outfit',sans-serif;font-weight:600;font-size:0.8rem;cursor:pointer;transition:all 0.2s; }
+  .btn-start-timer { background:var(--primary);color:#fff; }
+  .btn-reset-timer { background:var(--border);color:var(--text); }
+
+  .sidebar-item { display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:all 0.2s; }
+  .sidebar-item:last-child { border-bottom:none;padding-bottom:0; }
+  .sidebar-item:hover { color:var(--primary); }
+  .sidebar-icon { font-size:1.2rem; }
+  .sidebar-item span { font-weight:600;font-size:0.9rem; }
+
+  .fun-fact { background:#F0FDF4;border-left:3px solid #22C55E;padding:10px 12px;border-radius:8px; }
+  .fun-fact strong { color:#15803D; }
+  .fun-fact p { font-size:0.85rem;color:#166534;margin-top:2px; }
+  .ice-breaker-q { font-size:0.88rem;color:var(--text-muted);font-style:italic;margin-top:8px; }
+
+  .stats-row { display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px; }
+  .stat-card { background:#fff;border-radius:14px;padding:16px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,0.06);display:none; }
+  body:not(.guest-mode) .stat-card { display:block; }
+  .stat-num { font-size:1.8rem;font-weight:800;color:var(--primary); }
+  .stat-label { font-size:0.75rem;color:var(--text-muted);font-weight:600;margin-top:2px; }
+
+  /* Guest notice banner */
+  .guest-notice {
+    display:none;
+    background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+    border-radius:16px;padding:20px 24px;margin-bottom:24px;
+    text-align:center;color:#fff;
+  }
+  body.guest-mode .guest-notice { display:block; }
+  .guest-notice h3 { font-size:1.1rem;font-weight:800;margin-bottom:6px; }
+  .guest-notice p { font-size:0.88rem;opacity:0.9;margin-bottom:14px; }
+  .guest-notice-btns { display:flex;gap:10px;justify-content:center; }
+  .gn-btn { padding:9px 22px;border-radius:20px;font-family:'Outfit',sans-serif;font-weight:700;font-size:0.85rem;cursor:pointer;border:none;transition:all 0.2s; }
+  .gn-btn-login { background:#fff;color:#764ba2; }
+  .gn-btn-login:hover { background:#f0e6ff; }
+  .gn-btn-reg { background:rgba(255,255,255,0.2);color:#fff;border:1.5px solid rgba(255,255,255,0.5); }
+  .gn-btn-reg:hover { background:rgba(255,255,255,0.3); }
+
+  /* ── LOCK FLASH OVERLAY ── */
+  #lock-flash-overlay {
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:99999;
+    pointer-events:none;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+  }
+  #lock-flash-overlay.show { display:flex; animation: lockFlash 0.9s ease forwards; }
+  @keyframes lockFlash {
+    0%   { background:rgba(239,68,68,0); }
+    15%  { background:rgba(239,68,68,0.45); }
+    40%  { background:rgba(239,68,68,0.3); }
+    100% { background:rgba(239,68,68,0); }
+  }
+  #lock-flash-msg {
+    background:rgba(0,0,0,0.82);
+    border:2px solid #ef4444;
+    border-radius:18px;
+    padding:28px 40px;
+    text-align:center;
+    box-shadow:0 0 60px rgba(239,68,68,0.6);
+    animation: lockMsgPop 0.9s ease forwards;
+  }
+  @keyframes lockMsgPop {
+    0%   { transform:scale(0.7); opacity:0; }
+    25%  { transform:scale(1.08); opacity:1; }
+    60%  { transform:scale(1); opacity:1; }
+    100% { transform:scale(0.95); opacity:0; }
+  }
+  #lock-flash-msg .lf-icon { font-size:3rem; display:block; margin-bottom:10px; }
+  #lock-flash-msg .lf-title { color:#ef4444; font-size:1.3rem; font-weight:800; margin-bottom:6px; }
+  #lock-flash-msg .lf-sub { color:#cbd5e1; font-size:0.92rem; line-height:1.6; }
+</style>
+</head>
+<body class="guest-mode">
+
+<!-- LOCK FLASH OVERLAY -->
+<div id="lock-flash-overlay">
+  <div id="lock-flash-msg">
+    <span class="lf-icon">🔒</span>
+    <div class="lf-title" id="lf-title">COC Locked!</div>
+    <div class="lf-sub" id="lf-sub">Complete the previous COC first to unlock this.</div>
+  </div>
+</div>
+
+<nav>
+  <a href="index.html" class="logo"><span>CSS</span> Buddy</a>
+  <div class="nav-links">
+    <a href="index.html" class="active">Home</a>
+    <a href="quiz.html">Quiz</a>
+    <a href="flashcards.html">Flashcards</a>
+    <a href="funfacts.html">Fun Facts</a>
+    <a href="icebreaker.html">Ice Breaker</a>
+    <a href="games.html">Games</a>
+  </div>
+  <div class="nav-right"></div>
+</nav>
+
+<div class="main-layout">
+  <div class="content-area">
+    <div class="hero" id="hero-section">
+      <h1>Your path to CSS starts here! 🚀</h1>
+      <p>Easily study, excel, and achieve high grades.</p>
+    </div>
+
+    <!-- Guest Notice Banner -->
+    <div class="guest-notice">
+      <h3>🔐 Login or Register to Access All Features</h3>
+      <p>Create a free account to unlock reviewers, save your progress, take quizzes, and more!</p>
+      <div class="guest-notice-btns">
+        <button class="gn-btn gn-btn-login" onclick="CSS_BUDDY.openModal('login')">Login</button>
+        <button class="gn-btn gn-btn-reg" onclick="CSS_BUDDY.openModal('register')">Register with Gmail</button>
+      </div>
+    </div>
+
+    <!-- Stats row (shown when logged in) -->
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-num" id="stat-avg">0%</div><div class="stat-label">Avg Quiz Score</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-quizzes">0</div><div class="stat-label">Quizzes Taken</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-flash">0</div><div class="stat-label">Flashcards Done</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-bm">0</div><div class="stat-label">Bookmarks</div></div>
+    </div>
+
+    <div class="section-title">Reviewer</div>
+    <div class="cards-grid">
+      <div class="reviewer-card blue" onclick="handleCardClick('coc1.html')">
+        <div class="card-blob"></div>
+        <div class="card-lock-overlay">
+          <div class="lock-circle">🔒</div>
+          <div class="lock-title">Locked Content</div>
+          <div class="lock-subtitle">Login or register to access this reviewer</div>
+          <div class="lock-btns">
+            <button class="lock-btn lock-btn-login" onclick="event.stopPropagation();CSS_BUDDY.openModal('login')">Login</button>
+            <button class="lock-btn lock-btn-register" onclick="event.stopPropagation();CSS_BUDDY.openModal('register')">Register</button>
+          </div>
+        </div>
+        <h3>1. Install &amp; Configure Computer Systems</h3>
+        <div class="progress-wrap">
+          <div class="progress-label" id="label-coc1">Progress: 0%</div>
+          <div class="progress-bar"><div class="progress-fill" id="fill-coc1" style="width:0%"></div></div>
+          <button class="btn-start">Start Review</button>
+        </div>
+      </div>
+      <div class="reviewer-card teal" id="card-coc2" onclick="handleCardClick('coc2.html', 'coc1')">
+        <div class="card-blob"></div>
+        <div class="card-lock-overlay" id="lock-coc2">
+          <div class="lock-circle">🔒</div>
+          <div class="lock-title" id="lock-title-coc2">Locked Content</div>
+          <div class="lock-subtitle" id="lock-sub-coc2">Login or register to access this reviewer</div>
+          <div class="lock-btns" id="lock-btns-coc2">
+            <button class="lock-btn lock-btn-login" onclick="event.stopPropagation();CSS_BUDDY.openModal('login')">Login</button>
+            <button class="lock-btn lock-btn-register" onclick="event.stopPropagation();CSS_BUDDY.openModal('register')">Register</button>
+          </div>
+        </div>
+        <h3>2. Set Up Computer Networks</h3>
+        <div class="progress-wrap">
+          <div class="progress-label" id="label-coc2">Progress: 0%</div>
+          <div class="progress-bar"><div class="progress-fill" id="fill-coc2" style="width:0%"></div></div>
+          <button class="btn-start">Start Review</button>
+        </div>
+      </div>
+      <div class="reviewer-card blue2" id="card-coc3" onclick="handleCardClick('coc3.html', 'coc2')">
+        <div class="card-blob"></div>
+        <div class="card-lock-overlay" id="lock-coc3">
+          <div class="lock-circle">🔒</div>
+          <div class="lock-title" id="lock-title-coc3">Locked Content</div>
+          <div class="lock-subtitle" id="lock-sub-coc3">Login or register to access this reviewer</div>
+          <div class="lock-btns" id="lock-btns-coc3">
+            <button class="lock-btn lock-btn-login" onclick="event.stopPropagation();CSS_BUDDY.openModal('login')">Login</button>
+            <button class="lock-btn lock-btn-register" onclick="event.stopPropagation();CSS_BUDDY.openModal('register')">Register</button>
+          </div>
+        </div>
+        <h3>3. Perform Diagnosis &amp; Rectify Systems</h3>
+        <div class="progress-wrap">
+          <div class="progress-label" id="label-coc3">Progress: 0%</div>
+          <div class="progress-bar"><div class="progress-fill" id="fill-coc3" style="width:0%"></div></div>
+          <button class="btn-start">Start Review</button>
+        </div>
+      </div>
+      <div class="reviewer-card green" id="card-coc4" onclick="handleCardClick('coc4.html', 'coc3')">
+        <div class="card-blob"></div>
+        <div class="card-lock-overlay" id="lock-coc4">
+          <div class="lock-circle">🔒</div>
+          <div class="lock-title" id="lock-title-coc4">Locked Content</div>
+          <div class="lock-subtitle" id="lock-sub-coc4">Login or register to access this reviewer</div>
+          <div class="lock-btns" id="lock-btns-coc4">
+            <button class="lock-btn lock-btn-login" onclick="event.stopPropagation();CSS_BUDDY.openModal('login')">Login</button>
+            <button class="lock-btn lock-btn-register" onclick="event.stopPropagation();CSS_BUDDY.openModal('register')">Register</button>
+          </div>
+        </div>
+        <h3>4. Maintain &amp; Repair Computer Systems</h3>
+        <div class="progress-wrap">
+          <div class="progress-label" id="label-coc4">Progress: 0%</div>
+          <div class="progress-bar"><div class="progress-fill" id="fill-coc4" style="width:0%"></div></div>
+          <button class="btn-start">Start Review</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="login-banner" id="login-banner" onclick="CSS_BUDDY.openModal('login')">
+      🔐 Save your progress and achievements — Login now
+    </div>
+
+    <div class="bookmarks-section" id="bookmarks-section">
+      <div class="section-title">🔖 My Bookmarks</div>
+      <div class="bookmarks-list" id="bookmarks-list">
+        <div class="empty-bookmarks">No bookmarks yet. Add bookmarks from the reviewer!</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar">
+    <div id="cb-color-panel-host"></div>
+    <div class="sidebar-card">
+      <div class="sidebar-title">⏱ Customizable Timer</div>
+      <div class="timer-display" id="timerDisplay">
+        <span id="timerText">25:00</span>
+        <button class="timer-btn" onclick="addTime()">+</button>
+      </div>
+      <div class="timer-controls">
+        <button class="timer-ctrl-btn btn-start-timer" onclick="toggleTimer()">▶ Start</button>
+        <button class="timer-ctrl-btn btn-reset-timer" onclick="resetTimer()">↺ Reset</button>
+      </div>
+    </div>
+    <div class="sidebar-card">
+      <div class="sidebar-item" onclick="window.location.href='flashcards.html'">
+        <span class="sidebar-icon"></span><span>Flashcards</span>
+      </div>
+      <div class="sidebar-item" onclick="window.location.href='quiz.html'">
+        <span class="sidebar-icon"></span><span>Take a Quiz</span>
+      </div>
+      <div class="sidebar-item" onclick="toggleBookmarks()">
+        <span class="sidebar-icon"></span>
+        <span>Bookmarks <span id="sidebar-bm-badge" style="font-size:0.75rem;color:var(--primary);font-weight:700"></span></span>
+      </div>
+      <div class="fun-fact">
+        <strong> Fun Fact:</strong>
+        <p id="funFactText">RAM stands for Random Access Memory — it temporarily holds data your computer is currently using!</p>
+      </div>
+      <div class="sidebar-item" onclick="window.location.href='icebreaker.html'" style="margin-top:12px">
+        <span class="sidebar-icon"></span><span>Ice Breaker</span>
+      </div>
+      <p class="ice-breaker-q">What tech could you not live without?</p>
+    </div>
+  </div>
+</div>
+
+<script>
+let timerSeconds = 25 * 60, timerRunning = false, timerInterval;
+function pad(n) { return String(n).padStart(2, '0'); }
+function updateTimerDisplay() {
+  const m = Math.floor(timerSeconds / 60), s = timerSeconds % 60;
+  document.getElementById('timerText').textContent = pad(m) + ':' + pad(s);
+}
+function toggleTimer() {
+  const btn = document.querySelector('.btn-start-timer');
+  if (timerRunning) {
+    clearInterval(timerInterval); timerRunning = false; btn.textContent = '▶ Start';
+  } else {
+    timerRunning = true; btn.textContent = '⏸ Pause';
+    timerInterval = setInterval(() => {
+      if (timerSeconds > 0) { timerSeconds--; updateTimerDisplay(); }
+      else { clearInterval(timerInterval); timerRunning = false; btn.textContent = '▶ Start'; if(typeof CSS_BUDDY!=='undefined') CSS_BUDDY._showToast('info','⏰ Time is up!'); }
+    }, 1000);
+  }
+}
+function resetTimer() {
+  clearInterval(timerInterval); timerRunning = false;
+  timerSeconds = 25 * 60; updateTimerDisplay();
+  document.querySelector('.btn-start-timer').textContent = '▶ Start';
+}
+function addTime() { timerSeconds += 5 * 60; updateTimerDisplay(); }
+
+function showLockFlash(reqNum) {
+  var overlay = document.getElementById('lock-flash-overlay');
+  var title   = document.getElementById('lf-title');
+  var sub     = document.getElementById('lf-sub');
+  if (!overlay) return;
+  title.textContent = '🔒 COC ' + (reqNum + 1) + ' is Locked!';
+  sub.innerHTML     = 'You need to finish <strong>COC ' + reqNum + '</strong> (100%) before you can access this.';
+  overlay.classList.remove('show');
+  void overlay.offsetWidth; // force reflow
+  overlay.classList.add('show');
+  setTimeout(function() { overlay.classList.remove('show'); }, 950);
+}
+
+function handleCardClick(url, reqCoc) {
+  if (typeof CSS_BUDDY === 'undefined' || !CSS_BUDDY.isLoggedIn()) {
+    const lb = document.getElementById('login-banner');
+    lb.classList.remove('flash');
+    void lb.offsetWidth;
+    lb.classList.add('flash');
+    lb.scrollIntoView({ behavior:'smooth', block:'center' });
+    setTimeout(() => { if(typeof CSS_BUDDY!=='undefined') CSS_BUDDY.openModal('login'); }, 400);
+    return;
+  }
+  if (reqCoc) {
+    const pct = CSS_BUDDY.getProgress(reqCoc);
+    if (pct < 100) {
+      const num = parseInt(reqCoc.replace('coc',''));
+      showLockFlash(num);
+      return;
+    }
+  }
+  window.location.href = url;
+}
+
+function toggleBookmarks() {
+  document.getElementById('bookmarks-section').classList.toggle('visible');
+}
+function renderBookmarks(list) {
+  const cont = document.getElementById('bookmarks-list');
+  const sec  = document.getElementById('bookmarks-section');
+  if (!list || !list.length) {
+    cont.innerHTML = '<div class="empty-bookmarks">No bookmarks yet. Add bookmarks from the reviewer!</div>';
+    return;
+  }
+  cont.innerHTML = list.map(b => `
+    <div class="bookmark-item">
+      <div class="bookmark-item-left"><span>🔖</span>${b.text}</div>
+      <button class="bookmark-remove" onclick="removeBookmark('${b.id}')">✕</button>
+    </div>`).join('');
+  sec.classList.add('visible');
+}
+function removeBookmark(id) {
+  CSS_BUDDY.removeBookmark(id);
+  const bms = CSS_BUDDY.getBookmarks();
+  renderBookmarks(bms);
+  updateStats();
+}
+function updateStats() {
+  const data = CSS_BUDDY.getAllData(); if (!data) return;
+  const scores = data.quizScores || [];
+  const avg = scores.length ? Math.round(scores.reduce((a,s)=>a+s.pct,0)/scores.length) : 0;
+  document.getElementById('stat-avg').textContent     = avg + '%';
+  document.getElementById('stat-quizzes').textContent = scores.length;
+  document.getElementById('stat-flash').textContent   = data.flashcardsDone || 0;
+  document.getElementById('stat-bm').textContent      = (data.bookmarks||[]).length;
+  const badge = document.getElementById('sidebar-bm-badge');
+  if (badge) badge.textContent = (data.bookmarks||[]).length > 0 ? `(${(data.bookmarks||[]).length})` : '';
+}
+
+window.onCBLogin = function(user, data) {
+  document.body.classList.remove('guest-mode');
+  document.getElementById('hero-section').innerHTML =
+    `<div class="hero-welcome">Welcome back, <span>${user.name.split(' ')[0]}</span>! 🎓</div>
+     <div class="hero-sub">Keep going — you're doing great. Review your progress below.</div>`;
+  const lb = document.getElementById('login-banner');
+  if (lb) lb.style.display = 'none';
+  ['coc1','coc2','coc3','coc4'].forEach(t => {
+    const pct = data.progress?.[t] || 0;
+    const fill  = document.getElementById('fill-' + t);
+    const label = document.getElementById('label-' + t);
+    if (fill)  fill.style.width  = pct + '%';
+    if (label) label.textContent = 'Progress: ' + pct + '%';
+  });
+  // Update lock overlays for COC 2/3/4 based on prerequisite completion
+  const locks = [
+    { lock:'lock-coc2', req:'coc1', reqNum:1, title:'lock-title-coc2', sub:'lock-sub-coc2', btns:'lock-btns-coc2' },
+    { lock:'lock-coc3', req:'coc2', reqNum:2, title:'lock-title-coc3', sub:'lock-sub-coc3', btns:'lock-btns-coc3' },
+    { lock:'lock-coc4', req:'coc3', reqNum:3, title:'lock-title-coc4', sub:'lock-sub-coc4', btns:'lock-btns-coc4' },
+  ];
+  locks.forEach(function(l) {
+    const overlay = document.getElementById(l.lock);
+    if (!overlay) return;
+    const reqPct = data.progress?.[l.req] || 0;
+    if (reqPct >= 100) {
+      // Unlocked — hide the overlay entirely
+      overlay.style.display = 'none';
+    } else {
+      // Show progress-based lock message
+      overlay.style.display = '';
+      const titleEl = document.getElementById(l.title);
+      const subEl   = document.getElementById(l.sub);
+      const btnsEl  = document.getElementById(l.btns);
+      if (titleEl) titleEl.textContent = `🔒 COC ${l.reqNum + 1} Locked`;
+      if (subEl)   subEl.innerHTML = `Complete <strong>COC ${l.reqNum}</strong> (${reqPct}% / 100%) to unlock`;
+      if (btnsEl)  btnsEl.innerHTML = `<a href="coc${l.reqNum}.html" style="padding:8px 18px;background:#fff;color:var(--navy);border-radius:8px;font-weight:700;font-size:.85rem;text-decoration:none;">Go to COC ${l.reqNum} →</a>`;
+    }
+  });
+  renderBookmarks(data.bookmarks || []);
+  updateStats();
+};
+window.onCBLogout = function() {
+  document.body.classList.add('guest-mode');
+  document.getElementById('hero-section').innerHTML =
+    '<h1>Your path to CSS starts here! 🚀</h1><p>Easily study, excel, and achieve high grades.</p>';
+  const lb = document.getElementById('login-banner');
+  if (lb) lb.style.display = 'block';
+  ['coc1','coc2','coc3','coc4'].forEach(t => {
+    const fill  = document.getElementById('fill-' + t);
+    const label = document.getElementById('label-' + t);
+    if (fill)  fill.style.width  = '0%';
+    if (label) label.textContent = 'Progress: 0%';
+  });
+  // Reset lock overlays to login-required state
+  ['coc2','coc3','coc4'].forEach(function(t) {
+    const overlay = document.getElementById('lock-' + t);
+    const titleEl = document.getElementById('lock-title-' + t);
+    const subEl   = document.getElementById('lock-sub-' + t);
+    const btnsEl  = document.getElementById('lock-btns-' + t);
+    if (overlay) overlay.style.display = '';
+    if (titleEl) titleEl.textContent = 'Locked Content';
+    if (subEl)   subEl.textContent   = 'Login or register to access this reviewer';
+    if (btnsEl)  btnsEl.innerHTML    = '<button class="lock-btn lock-btn-login" onclick="event.stopPropagation();CSS_BUDDY.openModal(\'login\')">Login</button><button class="lock-btn lock-btn-register" onclick="event.stopPropagation();CSS_BUDDY.openModal(\'register\')">Register</button>';
+  });
+  renderBookmarks([]);
+};
+
+const funFacts = [
+  'RAM stands for Random Access Memory — it temporarily holds data your CPU is currently using!',
+  'The first computer mouse was made of wood in 1964 by Doug Engelbart.',
+  'BIOS stands for Basic Input/Output System — it initializes hardware before the OS loads.',
+  'An SSD can be up to 10× faster than a traditional HDD for boot times.',
+  'The TCP/IP protocol suite is the foundation of how the internet works.',
+  'ESD (Electrostatic Discharge) can permanently damage components with as little as 10 volts!',
+  'DHCP automatically assigns IP addresses so you don\'t have to set them manually.',
+  'A crossover cable connects two similar devices directly using T568A on one end and T568B on the other.',
+];
+let factIdx = Math.floor(Math.random() * funFacts.length);
+document.getElementById('funFactText').textContent = funFacts[factIdx];
+setInterval(() => {
+  factIdx = (factIdx + 1) % funFacts.length;
+  document.getElementById('funFactText').textContent = funFacts[factIdx];
+}, 8000);
+</script>
+<script src="cssbuddy-shared.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if(typeof CSS_BUDDY !== 'undefined') CSS_BUDDY.buildColorPanel('cb-color-panel-host');
+});
+</script>
+</body>
+</html>
