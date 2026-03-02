@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS Buddy — My Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{--primary:#3B82F6;--primary-dark:#1D4ED8;--teal:#14B8A6;--green:#22C55E;--navy:#0b3d8d;--bg:#E8EDF5;--text:#1E293B;--text-muted:#64748B;--border:#E2E8F0;--card:#fff}
+  .theme-teal{--primary:#14B8A6;--primary-dark:#0D9488}
+  .theme-green{--primary:#22C55E;--primary-dark:#16A34A}
+  .theme-gray{--primary:#64748B;--primary-dark:#475569}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+  /* ── NAV ── */
+  nav{background:var(--navy);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:68px;position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(0,0,0,0.2)}
+  .logo{font-size:1.6rem;font-weight:800;color:#fff;letter-spacing:-0.5px}.logo span{color:var(--primary)}
+  .nav-links{display:flex;gap:4px}.nav-links a{color:#94A3B8;text-decoration:none;padding:8px 16px;border-radius:8px;font-weight:500;font-size:0.95rem;transition:all 0.2s;position:relative}
+  .nav-links a.active,.nav-links a:hover{color:#fff;background:rgba(255,255,255,0.08)}
+  .nav-links a.active::after{content:'';position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);width:20px;height:2px;background:var(--primary);border-radius:2px}
+  .nav-right{display:flex;gap:12px;align-items:center}
+
+  /* ── LAYOUT ── */
+  .page-wrap{max-width:1060px;margin:0 auto;padding:32px 24px 60px}
+  .back-link{display:inline-flex;align-items:center;gap:6px;color:var(--text-muted);font-size:0.85rem;font-weight:600;text-decoration:none;margin-bottom:20px;transition:color 0.2s}
+  .back-link:hover{color:var(--primary)}
+
+  /* ── GUEST WALL ── */
+  #guest-wall{text-align:center;padding:80px 24px;display:none}
+  #guest-wall h2{font-size:2rem;font-weight:900;color:var(--navy);margin-bottom:12px}
+  #guest-wall p{color:var(--text-muted);font-size:1rem;margin-bottom:28px;line-height:1.7}
+  .wall-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .wall-btn{padding:13px 32px;border-radius:20px;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.95rem;cursor:pointer;border:none;transition:all 0.2s}
+  .wall-btn-login{background:var(--primary);color:#fff}.wall-btn-login:hover{background:var(--primary-dark);transform:translateY(-1px)}
+  .wall-btn-reg{background:var(--navy);color:#fff}.wall-btn-reg:hover{background:#0f172a;transform:translateY(-1px)}
+
+  /* ── PROFILE CONTENT ── */
+  #profile-content{display:none}
+
+  /* Hero card */
+  .profile-hero{background:linear-gradient(135deg,var(--navy) 0%,#0f172a 100%);border-radius:24px;padding:32px 36px;margin-bottom:24px;display:flex;align-items:center;gap:28px;flex-wrap:wrap;position:relative;overflow:hidden}
+  .profile-hero::after{content:'';position:absolute;right:-40px;top:-40px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,0.05)}
+  .avatar-circle{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-dark));display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;color:#fff;flex-shrink:0;border:3px solid rgba(255,255,255,0.25);box-shadow:0 8px 24px rgba(0,0,0,0.3)}
+  .profile-info{flex:1;min-width:0}
+  .profile-name{font-size:1.75rem;font-weight:900;color:#fff;margin-bottom:4px}
+  .profile-email{color:rgba(255,255,255,0.6);font-size:0.88rem;margin-bottom:10px}
+  .profile-id-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .profile-id-badge{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.85);font-family:'JetBrains Mono',monospace;font-size:0.72rem;padding:5px 12px;border-radius:8px;letter-spacing:0.5px;display:flex;align-items:center;gap:6px}
+  .copy-id-btn{background:rgba(255,255,255,0.15);border:none;color:#fff;font-size:0.7rem;font-family:'Outfit',sans-serif;font-weight:700;padding:3px 8px;border-radius:5px;cursor:pointer;transition:all 0.2s}
+  .copy-id-btn:hover{background:rgba(255,255,255,0.3)}
+  .provider-badge{font-size:0.72rem;font-weight:700;padding:4px 10px;border-radius:20px;background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.8)}
+  .joined-date{font-size:0.76rem;color:rgba(255,255,255,0.5);margin-top:8px}
+  .profile-hero-stats{display:flex;gap:20px;margin-left:auto;flex-shrink:0;flex-wrap:wrap}
+  .hero-stat{text-align:center;background:rgba(255,255,255,0.08);border-radius:14px;padding:14px 20px;border:1px solid rgba(255,255,255,0.12)}
+  .hero-stat-num{font-size:1.8rem;font-weight:900;color:#fff;line-height:1}
+  .hero-stat-label{font-size:0.7rem;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:0.8px;margin-top:4px}
+
+  /* Grid */
+  .profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:660px){.profile-grid{grid-template-columns:1fr}}
+  .profile-card{background:var(--card);border-radius:18px;padding:22px;box-shadow:0 2px 14px rgba(0,0,0,0.06)}
+  .card-title{font-size:0.95rem;font-weight:800;color:var(--navy);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+  .card-title span{font-size:1.1rem}
+
+  /* Progress rings */
+  .rings-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .ring-wrap{display:flex;flex-direction:column;align-items:center;gap:6px}
+  .ring-svg{transform:rotate(-90deg)}
+  .ring-bg{fill:none;stroke:#E2E8F0;stroke-width:8}
+  .ring-fill{fill:none;stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset 1s cubic-bezier(0.4,0,0.2,1)}
+  .ring-label{font-size:0.78rem;font-weight:800;color:var(--text-muted);text-align:center;line-height:1.3}
+  .ring-center-text{font-family:'JetBrains Mono',monospace;font-size:0.9rem;font-weight:800}
+
+  /* Quiz history table */
+  .quiz-table{width:100%;border-collapse:collapse}
+  .quiz-table th{font-size:0.72rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.6px;padding:6px 10px;text-align:left;border-bottom:2px solid var(--border)}
+  .quiz-table td{padding:9px 10px;font-size:0.85rem;border-bottom:1px solid var(--border);vertical-align:middle}
+  .quiz-table tr:last-child td{border-bottom:none}
+  .quiz-table tr:hover td{background:#F8FAFC}
+  .pct-pill{display:inline-block;padding:3px 10px;border-radius:20px;font-weight:800;font-size:0.78rem}
+  .pct-great{background:#F0FDF4;color:#16A34A}
+  .pct-ok{background:#FFFBEB;color:#D97706}
+  .pct-low{background:#FEF2F2;color:#DC2626}
+  .empty-msg{color:var(--text-muted);font-size:0.85rem;font-style:italic;padding:12px 0;text-align:center}
+
+  /* Game scores */
+  .game-list{display:flex;flex-direction:column;gap:10px}
+  .game-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg);border-radius:12px}
+  .game-name{font-weight:700;font-size:0.88rem;text-transform:capitalize;display:flex;align-items:center;gap:8px}
+  .game-score{font-family:'JetBrains Mono',monospace;font-weight:800;color:var(--primary);font-size:0.95rem}
+  .trophy{font-size:1rem}
+
+  /* Bookmarks list */
+  .bm-list{display:flex;flex-direction:column;gap:8px}
+  .bm-item{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:var(--bg);border-radius:10px;font-size:0.85rem;border-left:3px solid var(--primary)}
+  .bm-coc{font-size:0.7rem;font-weight:800;text-transform:uppercase;color:var(--primary);letter-spacing:0.5px;white-space:nowrap}
+
+  /* Account actions */
+  .action-list{display:flex;flex-direction:column;gap:8px}
+  .action-row{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-radius:12px;background:var(--bg);font-size:0.88rem;font-weight:600}
+  .action-label{color:var(--text-muted);font-size:0.76rem;font-weight:600;margin-bottom:2px}
+  .action-value{font-weight:700;color:var(--text);font-size:0.9rem}
+  .action-btn{padding:7px 16px;border-radius:12px;border:none;font-family:'Outfit',sans-serif;font-weight:700;font-size:0.8rem;cursor:pointer;transition:all 0.2s}
+  .action-btn-danger{background:#FEF2F2;color:#DC2626}.action-btn-danger:hover{background:#DC2626;color:#fff}
+  .action-btn-primary{background:rgba(59,130,246,0.1);color:var(--primary)}.action-btn-primary:hover{background:var(--primary);color:#fff}
+
+  /* Full-width card */
+  .full-width{grid-column:1 / -1}
+
+  /* ── SCROLL BUTTONS ── */
+  .scroll-btns{position:fixed;right:20px;bottom:80px;z-index:500;display:flex;flex-direction:column;gap:8px}
+  .scroll-btn{width:46px;height:46px;border-radius:14px;background:var(--navy);color:#fff;border:none;font-size:1.2rem;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center}
+  .scroll-btn:hover{background:var(--primary);transform:scale(1.08)}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  .profile-hero{animation:fadeUp 0.35s ease}
+  .profile-card{animation:fadeUp 0.4s ease both}
+  .profile-card:nth-child(2){animation-delay:0.04s}
+  .profile-card:nth-child(3){animation-delay:0.08s}
+  .profile-card:nth-child(4){animation-delay:0.12s}
+  .profile-card:nth-child(5){animation-delay:0.16s}
+
+  /* Edit name modal */
+  .edit-btn{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);color:#fff;padding:6px 14px;border-radius:10px;font-family:'Outfit',sans-serif;font-weight:700;font-size:0.78rem;cursor:pointer;margin-left:8px;transition:all 0.2s}
+  .edit-btn:hover{background:rgba(255,255,255,0.24)}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo"><span>CSS</span> Buddy</div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="quiz.html">Quiz</a>
+    <a href="flashcards.html">Flashcards</a>
+    <a href="funfacts.html">Fun Facts</a>
+    <a href="icebreaker.html">Ice Breaker</a>
+    <a href="games.html">Games</a>
+  </div>
+  <div class="nav-right"></div>
+</nav>
+
+<!-- ── SCROLL BUTTONS ── -->
+<div class="scroll-btns">
+  <button class="scroll-btn" onclick="window.scrollBy({top:-300,behavior:'smooth'})" title="Scroll Up">▲</button>
+  <button class="scroll-btn" onclick="window.scrollBy({top:300,behavior:'smooth'})" title="Scroll Down">▼</button>
+</div>
+
+<div class="page-wrap">
+  <a href="index.html" class="back-link">← Back to Home</a>
+
+  <!-- GUEST WALL -->
+  <div id="guest-wall">
+    <div style="font-size:4rem;margin-bottom:16px">🔒</div>
+    <h2>Login to view your profile</h2>
+    <p>Your profile saves your <strong>progress</strong>, <strong>quiz scores</strong>,<br>
+    <strong>game high scores</strong>, and <strong>bookmarks</strong> — all in one place.</p>
+    <div class="wall-btns">
+      <button class="wall-btn wall-btn-login" onclick="CSS_BUDDY.openModal('login')">🔑 Login</button>
+      <button class="wall-btn wall-btn-reg"   onclick="CSS_BUDDY.openModal('register')">✨ Create Account</button>
+    </div>
+  </div>
+
+  <!-- PROFILE CONTENT -->
+  <div id="profile-content">
+
+    <!-- Hero -->
+    <div class="profile-hero">
+      <div class="avatar-circle" id="p-avatar">?</div>
+      <div class="profile-info">
+        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px">
+          <div class="profile-name" id="p-name">—</div>
+          <button class="edit-btn" onclick="editName()">✏️ Edit</button>
+        </div>
+        <div class="profile-email" id="p-email">—</div>
+        <div class="profile-id-row">
+          <div class="profile-id-badge">
+            🪪 ID: <span id="p-uid-short">—</span>
+            <button class="copy-id-btn" onclick="copyUID()">Copy</button>
+          </div>
+          <div class="provider-badge" id="p-provider">email</div>
+        </div>
+        <div class="joined-date" id="p-joined">—</div>
+      </div>
+      <div class="profile-hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-num" id="hs-quizzes">0</div>
+          <div class="hero-stat-label">Quizzes Taken</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num" id="hs-avg">—</div>
+          <div class="hero-stat-label">Avg Score</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num" id="hs-games">0</div>
+          <div class="hero-stat-label">Games Played</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num" id="hs-bm">0</div>
+          <div class="hero-stat-label">Bookmarks</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-grid">
+
+      <!-- Review Progress -->
+      <div class="profile-card">
+        <div class="card-title"><span>📚</span> Review Progress</div>
+        <div class="rings-grid" id="p-rings"></div>
+      </div>
+
+      <!-- Quiz History -->
+      <div class="profile-card">
+        <div class="card-title"><span>🧠</span> Quiz Score History</div>
+        <div id="p-quiz-history"></div>
+      </div>
+
+      <!-- Game High Scores -->
+      <div class="profile-card">
+        <div class="card-title"><span>🎮</span> Game High Scores</div>
+        <div class="game-list" id="p-games"></div>
+      </div>
+
+      <!-- Bookmarks -->
+      <div class="profile-card">
+        <div class="card-title"><span>🔖</span> My Bookmarks</div>
+        <div class="bm-list" id="p-bookmarks"></div>
+      </div>
+
+      <!-- Account Info -->
+      <div class="profile-card full-width">
+        <div class="card-title"><span>⚙️</span> Account Details</div>
+        <div class="action-list">
+
+          <div class="action-row">
+            <div>
+              <div class="action-label">Full User ID</div>
+              <div class="action-value" id="p-uid-full" style="font-family:'JetBrains Mono',monospace;font-size:0.82rem;color:var(--text-muted)">—</div>
+            </div>
+            <button class="action-btn action-btn-primary" onclick="copyUID()">📋 Copy ID</button>
+          </div>
+
+          <div class="action-row">
+            <div>
+              <div class="action-label">Registered With</div>
+              <div class="action-value" id="p-provider-full">Email / Password</div>
+            </div>
+          </div>
+
+          <div class="action-row">
+            <div>
+              <div class="action-label">Account Created</div>
+              <div class="action-value" id="p-joined-full">—</div>
+            </div>
+          </div>
+
+          <div class="action-row">
+            <div>
+              <div class="action-label">Data Storage</div>
+              <div class="action-value">Local (this browser only)</div>
+            </div>
+          </div>
+
+          <div class="action-row" style="border-top:2px solid var(--border);margin-top:4px;padding-top:14px">
+            <div>
+              <div class="action-label">Reset all progress & scores</div>
+              <div class="action-value" style="color:var(--text-muted);font-weight:500;font-size:0.82rem">This cannot be undone</div>
+            </div>
+            <button class="action-btn action-btn-danger" onclick="resetProgress()">🗑️ Reset Progress</button>
+          </div>
+
+          <div class="action-row">
+            <div>
+              <div class="action-label">Sign out of CSS Buddy</div>
+              <div class="action-value" style="color:var(--text-muted);font-weight:500;font-size:0.82rem">You can log back in anytime</div>
+            </div>
+            <button class="action-btn action-btn-danger" onclick="CSS_BUDDY.logout(); window.location.href='index.html'">🚪 Logout</button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div><!-- end #profile-content -->
+</div>
+
+<script>
+const COC_COLORS = {coc1:'#3B82F6', coc2:'#14B8A6', coc3:'#8B5CF6', coc4:'#22C55E'};
+const COC_LABELS = {coc1:'COC 1\nInstall & Config', coc2:'COC 2\nNetworks', coc3:'COC 3\nDiagnosis', coc4:'COC 4\nMaintenance'};
+const GAME_LABELS = {wordScramble:'Word Scramble 📝', trueOrFalse:'True or False ✅', rj45Quiz:'RJ45 Wire Quiz 🔌', catchGame:'Catch Parts 🎯', memoryMatch:'Memory Match 🧠', typeGame:'Type the Term ⌨️'};
+
+let _fullUID = '';
+
+function renderProfile(u) {
+  // Hero
+  const initials = u.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  // BUG FIX: show Google profile photo if available
+  const avatarEl = document.getElementById('p-avatar');
+  if (u.picture) {
+    avatarEl.innerHTML = `<img src="${u.picture}" alt="${initials}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;" onerror="this.parentElement.textContent='${initials}'">`;
+    avatarEl.style.background = 'transparent';
+    avatarEl.style.padding = '0';
+  } else {
+    avatarEl.textContent = initials;
+  }
+  document.getElementById('p-name').textContent = u.name;
+  document.getElementById('p-email').textContent = u.email;
+  _fullUID = u.uid;
+  const shortUID = u.uid ? (u.uid.length > 14 ? u.uid.slice(0,6) + '…' + u.uid.slice(-4) : u.uid) : '—';
+  document.getElementById('p-uid-short').textContent = shortUID;
+  document.getElementById('p-uid-full').textContent = u.uid || '—';
+
+  // BUG FIX: show correct provider badge
+  const isGoogle = u.provider === 'google' || u.provider === 'firebase_google';
+  const provLabel = isGoogle ? '🌐 Google' : '✉️ Email';
+  document.getElementById('p-provider').textContent = provLabel;
+  document.getElementById('p-provider-full').textContent = isGoogle ? 'Google Sign-In (Firebase)' : 'Email / Password';
+
+  const joined = u.data.createdAt ? new Date(u.data.createdAt).toLocaleDateString('en-PH',{year:'numeric',month:'long',day:'numeric'}) : 'Unknown';
+  document.getElementById('p-joined').textContent = 'Joined ' + joined;
+  document.getElementById('p-joined-full').textContent = joined;
+
+  // Hero stats
+  const quizzes = u.data.quizScores || [];
+  const games   = u.data.gameScores || {};
+  const bm      = u.data.bookmarks  || [];
+  document.getElementById('hs-quizzes').textContent = quizzes.length;
+  document.getElementById('hs-games').textContent   = Object.keys(games).length;
+  document.getElementById('hs-bm').textContent      = bm.length;
+  if (quizzes.length) {
+    const avg = Math.round(quizzes.reduce((s,q)=>s+q.pct,0) / quizzes.length);
+    document.getElementById('hs-avg').textContent = avg + '%';
+  } else {
+    document.getElementById('hs-avg').textContent = '—';
+  }
+
+  // Progress rings
+  const prog = u.data.progress || {};
+  const R = 36, C = 2 * Math.PI * R;
+  document.getElementById('p-rings').innerHTML = ['coc1','coc2','coc3','coc4'].map(coc => {
+    const pct = prog[coc] || 0;
+    const offset = C - (pct / 100) * C;
+    const lines = COC_LABELS[coc].split('\n');
+    return `
+      <div class="ring-wrap">
+        <svg width="88" height="88" class="ring-svg">
+          <circle class="ring-bg" cx="44" cy="44" r="${R}"/>
+          <circle class="ring-fill" cx="44" cy="44" r="${R}"
+            stroke="${COC_COLORS[coc]}"
+            stroke-dasharray="${C}"
+            stroke-dashoffset="${offset}"
+            id="ring-${coc}"/>
+          <text x="44" y="40" text-anchor="middle" dominant-baseline="middle"
+            style="fill:${COC_COLORS[coc]};font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:800;transform:rotate(90deg) translate(0,-88px)" class="ring-center-text">
+            ${pct}%
+          </text>
+        </svg>
+        <div class="ring-label">${lines[0]}<br><span style="font-weight:500;font-size:0.7rem;opacity:0.7">${lines[1]||''}</span></div>
+      </div>`;
+  }).join('');
+
+  // Animate rings after DOM update
+  setTimeout(() => {
+    ['coc1','coc2','coc3','coc4'].forEach(coc => {
+      const el = document.getElementById('ring-' + coc);
+      if (el) {
+        const pct = prog[coc] || 0;
+        const offset = C - (pct / 100) * C;
+        el.style.strokeDashoffset = C; // start at 0
+        requestAnimationFrame(() => { el.style.strokeDashoffset = offset; });
+      }
+    });
+  }, 50);
+
+  // Quiz history
+  const histHTML = quizzes.length
+    ? `<table class="quiz-table">
+        <thead><tr><th>Topic</th><th>Score</th><th>%</th><th>Date</th></tr></thead>
+        <tbody>${quizzes.slice(0,15).map(q => `
+          <tr>
+            <td><strong>${q.coc.toUpperCase()}</strong></td>
+            <td>${q.score}/${q.total}</td>
+            <td><span class="pct-pill ${q.pct>=80?'pct-great':q.pct>=60?'pct-ok':'pct-low'}">${q.pct}%</span></td>
+            <td style="color:var(--text-muted);font-size:0.78rem">${new Date(q.date).toLocaleDateString()}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>`
+    : `<div class="empty-msg">No quiz scores yet.<br>Take a quiz to see your history!</div>`;
+  document.getElementById('p-quiz-history').innerHTML = histHTML;
+
+  // Game scores
+  const gameKeys = Object.keys(games);
+  document.getElementById('p-games').innerHTML = gameKeys.length
+    ? gameKeys.map(g => `
+        <div class="game-row">
+          <div class="game-name"><span class="trophy">🏆</span>${GAME_LABELS[g] || g}</div>
+          <div class="game-score">${games[g]}</div>
+        </div>`).join('')
+    : `<div class="empty-msg">No game scores yet.<br>Play a game to see your best scores!</div>`;
+
+  // Bookmarks
+  document.getElementById('p-bookmarks').innerHTML = bm.length
+    ? bm.slice(0,8).map(b => `
+        <div class="bm-item">
+          <span class="bm-coc">${(b.coc||'').toUpperCase() || '📌'}</span>
+          <span>${b.text}</span>
+        </div>`).join('')
+    : `<div class="empty-msg">No bookmarks yet.<br>Bookmark terms from the reviewer!</div>`;
+}
+
+function copyUID() {
+  if (!_fullUID) return;
+  navigator.clipboard.writeText(_fullUID).then(() => {
+    CSS_BUDDY._showToast('ok', '✅ User ID copied to clipboard!');
+  }).catch(() => {
+    prompt('Your User ID:', _fullUID);
+  });
+}
+
+function editName() {
+  const newName = prompt('Enter your new display name:', document.getElementById('p-name').textContent);
+  if (!newName || !newName.trim()) return;
+  // BUG FIX: users stored by email key, not uid
+  const u = CSS_BUDDY.currentUser();
+  if (!u) return;
+  try {
+    const users = JSON.parse(localStorage.getItem('cssbuddy_users') || '{}');
+    const key = u.email;
+    if (users[key]) {
+      users[key].name = newName.trim();
+      localStorage.setItem('cssbuddy_users', JSON.stringify(users));
+      document.getElementById('p-name').textContent = newName.trim();
+      document.getElementById('p-avatar').textContent = newName.trim().split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      CSS_BUDDY._showToast('ok', '✅ Name updated!');
+      CSS_BUDDY.buildNav();
+    }
+  } catch(e) { console.error(e); }
+}
+
+function resetProgress() {
+  if (!confirm('Reset ALL your progress and scores? This cannot be undone.')) return;
+  // BUG FIX: users stored by email key
+  const u = CSS_BUDDY.currentUser();
+  if (!u) return;
+  try {
+    const users = JSON.parse(localStorage.getItem('cssbuddy_users') || '{}');
+    const key = u.email;
+    if (users[key]) {
+      const createdAt = users[key].data ? users[key].data.createdAt : Date.now();
+      users[key].data = { progress:{coc1:0,coc2:0,coc3:0,coc4:0}, quizScores:[], gameScores:{}, bookmarks:[], createdAt };
+      ['coc1','coc2','coc3','coc4'].forEach(coc => {
+        if (users[key][coc]) users[key][coc] = { sectionsCompleted:[], reviewPct:0, sessions:0, lastVisit:null };
+      });
+      localStorage.setItem('cssbuddy_users', JSON.stringify(users));
+      CSS_BUDDY._showToast('inf', '🗑️ Progress reset successfully.');
+      setTimeout(() => location.reload(), 800);
+    }
+  } catch(e) { console.error(e); }
+}
+
+// ── onCBLogin callback ── called by shared.js on page load if logged in
+window.onCBLogin = function(user) {
+  document.getElementById('guest-wall').style.display = 'none';
+  document.getElementById('profile-content').style.display = 'block';
+  // BUG FIX: auth system uses user.id not user.uid; fall back through all possible keys
+  const users = JSON.parse(localStorage.getItem('cssbuddy_users') || '{}');
+  const full = users[user.email] || users[user.id] || null;
+  if (!full) return;
+  // Ensure data structure is complete
+  if (!full.data) full.data = { progress:{coc1:0,coc2:0,coc3:0,coc4:0}, quizScores:[], gameScores:{}, bookmarks:[], createdAt:Date.now() };
+  if (!full.data.progress)   full.data.progress   = {coc1:0,coc2:0,coc3:0,coc4:0};
+  if (!full.data.gameScores) full.data.gameScores  = {};
+  if (!full.data.bookmarks)  full.data.bookmarks   = [];
+  if (!full.data.quizScores) full.data.quizScores  = [];
+  // Sync COC progress from direct fields if not already in data.progress
+  ['coc1','coc2','coc3','coc4'].forEach(coc => {
+    if (!full.data.progress[coc] && full[coc] && full[coc].reviewPct) {
+      full.data.progress[coc] = full[coc].reviewPct;
+    }
+  });
+  const uid = full.id || user.id || user.email;
+  renderProfile({ uid, name: full.name, email: full.email, provider: full.provider || 'email', picture: full.picture || null, data: full.data });
+};
+
+window.onCBLogout = function() {
+  document.getElementById('guest-wall').style.display = 'block';
+  document.getElementById('profile-content').style.display = 'none';
+};
+
+// Show guest wall by default until shared.js fires login
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    if (!CSS_BUDDY.isLoggedIn()) {
+      document.getElementById('guest-wall').style.display = 'block';
+      document.getElementById('profile-content').style.display = 'none';
+    }
+  }, 80);
+});
+</script>
+<script src="cssbuddy-shared.js"></script>
+</body>
+</html>
