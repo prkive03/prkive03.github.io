@@ -1,0 +1,14 @@
+.cb-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.3);
+  overflow: hidden;
+}
+
+.cb-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 20%; /* Shows face + upper body */
+}

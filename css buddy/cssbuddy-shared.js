@@ -16,15 +16,58 @@
            → Click CREATE → Copy the Client ID
    STEP 3: Paste your Client ID below (replace YOUR_CLIENT_ID...)
    ══════════════════════════════════════════════════════ */
+  /*
+ * Create form to request access token from Google's OAuth 2.0 server.
+ */
+ async function handleLogin() {
+    account.createOAuth2Session (
+       'google',
+       'https://group2-matiyaga.netlify.app/',
+       'https://group2-matiyaga.netlify.app/fail'
+    )
+ }
+
+
+
+function oauthSignIn() {
+  // Google's OAuth 2.0 endpoint for requesting an access token
+  var oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
+
+  // Create <form> element to submit parameters to OAuth 2.0 endpoint.
+  var form = document.createElement('form');
+  form.setAttribute('method', 'GET'); // Send as a GET request.
+  form.setAttribute('action', oauth2Endpoint);
+
+  // Parameters to pass to OAuth 2.0 endpoint.
+  var params = {'client_id': '732747904577-mehjk086g8jdedcs80518pu86eeirdk9.apps.googleusercontent.com',
+                'redirect_uri': 'YOUR_REDIRECT_URI',
+                'response_type': 'token',
+                'scope': 'https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/calendar.readonly',
+                'include_granted_scopes': 'true',
+                'state': 'pass-through value'};
+
+  // Add form parameters as hidden input values.
+  for (var p in params) {
+    var input = document.createElement('input');
+    input.setAttribute('type', 'hidden');
+    input.setAttribute('name', p);
+    input.setAttribute('value', params[p]);
+    form.appendChild(input);
+  }
+
+  // Add form to page and submit it to open the OAuth 2.0 endpoint.
+  document.body.appendChild(form);
+  form.submit();
+}
 
 (function (global) {
   'use strict';
-var GOOGLE_CLIENT_ID = '732747904577-55f8ft84kch2kvl9scbhejqihbj0begq.apps.googleusercontent.com';
+var GOOGLE_CLIENT_ID = '732747904577-mehjk086g8jdedcs80518pu86eeirdk9.apps.googleusercontent.com';
   /* ═══════════════════════════════════════════════════════
      🔑  PASTE YOUR GOOGLE CLIENT ID HERE  (line below)
          It looks like:  1234567890-abcdef.apps.googleusercontent.com
   ═══════════════════════════════════════════════════════ */
-  var GOOGLE_CLIENT_ID = '732747904577-55f8ft84kch2kvl9scbhejqihbj0begq.apps.googleusercontent.com';
+var GOOGLE_CLIENT_ID = '732747904577-mehjk086g8jdedcs80518pu86eeirdk9.apps.googleusercontent.com';
   /* ════════════════════════════════════════════════════ */
 
   var STORAGE_KEY = 'cssbuddy_session';
@@ -209,8 +252,8 @@ var GOOGLE_CLIENT_ID = '732747904577-55f8ft84kch2kvl9scbhejqihbj0begq.apps.googl
 +'.cb-reg-btn{padding:7px 14px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);color:#fff;border-radius:9px;font-family:\'Outfit\',sans-serif;font-weight:600;font-size:.83rem;cursor:pointer;transition:background .2s}.cb-reg-btn:hover{background:rgba(255,255,255,.24)}\n'
 +'.cb-home-btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.2);border-radius:9px;color:#fff;font-family:\'Outfit\',sans-serif;font-weight:600;font-size:.82rem;text-decoration:none;transition:background .2s;white-space:nowrap}.cb-home-btn:hover{background:rgba(255,255,255,.24)}\n'
 +'.cb-bubble{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.12);border-radius:28px;padding:4px 11px 4px 5px;cursor:pointer;position:relative}\n'
-+'.cb-avatar{width:28px;height:28px;border-radius:50%;background:var(--primary,#3B82F6);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.78rem;overflow:hidden;flex-shrink:0}\n'
-+'.cb-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}\n'
++'.cb-avatar{width:38px;height:38px;border-radius:50%;background:var(--primary,#3B82F6);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.78rem;overflow:hidden;flex-shrink:0;border:2px solid rgba(255,255,255,0.3)}\n'
++'.cb-avatar img{width:100%;height:100%;object-fit:cover;object-position:center 20%;border-radius:50%}\n'
 +'.cb-uname{color:#fff;font-weight:600;font-size:.83rem;max-width:80px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n'
 +'.cb-dd{display:none;position:absolute;top:calc(100% + 7px);right:0;background:#fff;border-radius:13px;padding:7px;min-width:175px;box-shadow:0 10px 36px rgba(0,0,0,.16);z-index:200}\n'
 +'.cb-bubble:hover .cb-dd{display:block}\n'
@@ -547,10 +590,31 @@ var GOOGLE_CLIENT_ID = '732747904577-55f8ft84kch2kvl9scbhejqihbj0begq.apps.googl
       var ini=user.name.split(' ').map(function(n){return n[0];}).join('').toUpperCase().slice(0,2);
       var isGoogle=user.provider==='google';
       var pb=isGoogle?'<span style="font-size:.6rem;background:#EA4335;color:#fff;padding:1px 5px;border-radius:4px;font-weight:700;margin-left:4px;">G</span>':'';
-      var av=user.picture?'<img src="'+user.picture+'" alt="'+ini+'" onerror="this.parentElement.textContent=\''+ini+'\'">':ini;
+      var avMap={girl:'2197.png',girl_pe:'2196.png',boy:'2199.png',boy_pe:'2198.png'};
+      var users_av=getUsers(), full_av=users_av[user.email]||null;
+      var avatarChoice=full_av&&full_av.avatarChoice?full_av.avatarChoice:null;
+      // Resolve avatar images relative to the script's own location so they
+      // work from any page depth (root, subfolder, etc.)
+      var scriptBase=(function(){
+        var scripts=document.querySelectorAll('script[src]');
+        for(var i=0;i<scripts.length;i++){
+          if(scripts[i].src.indexOf('cssbuddy-shared')>-1){
+            return scripts[i].src.replace(/[^/]*$/,'');
+          }
+        }
+        return '/'; // fallback to root
+      })();
+      var av;
+      if(avatarChoice&&avMap[avatarChoice]){
+        av='<img src="'+scriptBase+avMap[avatarChoice]+'" alt="avatar" style="width:100%;height:100%;object-fit:cover;object-position:center top;border-radius:50%;" onerror="this.parentElement.textContent=\''+ini+'\'">';
+      } else if(user.picture){
+        av='<img src="'+user.picture+'" alt="'+ini+'" style="width:100%;height:100%;object-fit:cover;object-position:center 20%;border-radius:50%;" onerror="this.parentElement.textContent=\''+ini+'\'">';
+      } else {
+        av=ini;
+      }
       nr.innerHTML=homeBtn
         +'<div class="cb-bubble">'
-        +'<div class="cb-avatar">'+av+'</div>'
+        +'<div class="cb-avatar-ring"><div class="cb-avatar">'+av+'</div></div>'
         +'<span class="cb-uname">'+user.name.split(' ')[0]+'</span>'
         +'<span style="color:#94A3B8;font-size:.72rem">&#9660;</span>'
         +'<div class="cb-dd">'
@@ -602,3 +666,4 @@ var GOOGLE_CLIENT_ID = '732747904577-55f8ft84kch2kvl9scbhejqihbj0begq.apps.googl
   else{ CSS_BUDDY.init(); }
 
 })(window);
+
