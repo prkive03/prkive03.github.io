@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fun Facts – CSS Buddy</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#3B82F6;--primary-dark:#1D4ED8;--navy:#1E293B;
+  --bg:#E8EDF5;--text:#1E293B;--muted:#64748B;--border:#E2E8F0;--card:#fff;
+}
+.theme-teal{--primary:#14B8A6;--primary-dark:#0D9488;}
+.theme-green{--primary:#22C55E;--primary-dark:#16A34A;}
+.theme-gray{--primary:#64748B;--primary-dark:#475569;}
+.theme-purple{--primary:#8B5CF6;--primary-dark:#7C3AED;}
+.theme-orange{--primary:#F97316;--primary-dark:#EA580C;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* NAV */
+nav{background:var(--navy);padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:99;box-shadow:0 2px 16px rgba(0,0,0,.18);}
+.logo{font-size:1.5rem;font-weight:800;color:#fff;text-decoration:none;}
+.logo span{color:var(--primary);}
+.nav-links{display:flex;gap:4px;}
+.nav-links a{color:#94A3B8;text-decoration:none;padding:7px 13px;border-radius:8px;font-weight:500;font-size:.88rem;transition:all .2s;}
+.nav-links a:hover,.nav-links a.active{color:#fff;background:rgba(255,255,255,.09);}
+.btn-login{background:transparent;border:1.5px solid #fff;color:#fff;padding:7px 18px;border-radius:20px;font-family:'Outfit',sans-serif;font-weight:600;cursor:pointer;font-size:.88rem;}
+
+/* PAGE */
+.wrap{max-width:980px;margin:0 auto;padding:36px 20px 60px;}
+
+/* HEADER */
+.page-hd{text-align:center;margin-bottom:36px;}
+.page-hd .badge{display:inline-block;background:#EFF6FF;color:var(--primary);font-size:.72rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:12px;}
+.page-hd h1{font-size:2.2rem;font-weight:900;color:var(--navy);margin-bottom:8px;}
+.page-hd h1 span{color:var(--primary);}
+.page-hd p{color:var(--muted);font-size:.97rem;max-width:500px;margin:0 auto 20px;}
+.shuffle-btn{
+  display:inline-flex;align-items:center;gap:9px;
+  background:var(--primary);color:#fff;border:none;padding:13px 28px;border-radius:14px;
+  font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;
+  box-shadow:0 4px 18px rgba(59,130,246,.35);transition:all .22s;
+}
+.shuffle-btn:hover{background:var(--primary-dark);transform:translateY(-2px);box-shadow:0 8px 28px rgba(59,130,246,.4);}
+.spin{display:inline-block;transition:transform .55s ease;}
+
+/* COUNTER */
+.fact-counter{text-align:center;font-size:.82rem;font-weight:700;color:var(--muted);margin-bottom:24px;letter-spacing:.5px;}
+
+/* GRID */
+.facts-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(290px,1fr));
+  gap:20px;
+}
+
+/* FACT CARD */
+.fact-card{
+  background:var(--card);border-radius:20px;overflow:hidden;
+  border:2px solid var(--border);box-shadow:0 3px 14px rgba(0,0,0,.06);
+  transition:all .28s;display:flex;flex-direction:column;
+  animation:popIn .42s ease both;
+}
+.fact-card:hover{transform:translateY(-5px);box-shadow:0 14px 40px rgba(0,0,0,.11);border-color:var(--fc-accent,var(--primary));}
+@keyframes popIn{from{opacity:0;transform:translateY(18px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+/* IMAGE AREA */
+.card-img-wrap{position:relative;height:195px;overflow:hidden;background:#F1F5F9;flex-shrink:0;}
+.card-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s ease;}
+.fact-card:hover .card-img-wrap img{transform:scale(1.06);}
+.img-fallback{display:none;position:absolute;inset:0;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:linear-gradient(135deg,#F1F5F9,#E2E8F0);}
+.img-fallback span{font-size:3rem;}
+.img-fallback p{font-size:.72rem;color:var(--muted);font-weight:600;}
+.cat-tag{position:absolute;top:11px;left:11px;padding:4px 11px;border-radius:10px;font-size:.67rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.3);}
+.proof-label{position:absolute;bottom:9px;left:0;right:0;text-align:center;padding:0 8px;}
+.proof-label span{background:rgba(0,0,0,.58);color:#fff;font-size:.64rem;font-weight:600;padding:3px 10px;border-radius:8px;backdrop-filter:blur(4px);}
+
+/* CARD BODY */
+.card-body{padding:17px 20px 15px;display:flex;flex-direction:column;flex:1;}
+.card-emoji{font-size:1.45rem;margin-bottom:8px;line-height:1;}
+.card-title{font-size:.97rem;font-weight:800;color:var(--navy);margin-bottom:7px;line-height:1.35;}
+.card-text{font-size:.85rem;color:var(--muted);line-height:1.72;flex:1;}
+.card-text b{color:var(--navy);}
+.card-footer{margin-top:12px;padding-top:10px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.card-year{font-size:.7rem;font-weight:700;color:var(--muted);background:#F1F5F9;padding:3px 9px;border-radius:8px;white-space:nowrap;}
+.card-src{font-size:.67rem;color:var(--muted);font-style:italic;text-align:right;line-height:1.4;}
+
+/* LOAD MORE */
+.load-more-wrap{text-align:center;margin-top:32px;}
+.load-more-btn{background:var(--card);border:2px solid var(--border);color:var(--navy);padding:12px 28px;border-radius:14px;font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .22s;}
+.load-more-btn:hover{border-color:var(--primary);color:var(--primary);}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy);color:#fff;padding:11px 22px;border-radius:28px;font-weight:600;font-size:.88rem;z-index:300;transition:transform .28s;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+@media(max-width:600px){
+  .facts-grid{grid-template-columns:1fr;}
+  .page-hd h1{font-size:1.65rem;}
+  .nav-links{display:none;}
+}
+  .page-lock{display:none;position:fixed;inset:0;z-index:9999;background:rgba(5,18,45,0.60);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);align-items:center;justify-content:center;}
+  body.guest-mode .page-lock{display:flex;}
+  .page-lock-box{background:#fff;border-radius:24px;padding:44px 52px;text-align:center;max-width:420px;width:90%;box-shadow:0 24px 80px rgba(0,0,0,0.3);}
+  .page-lock-box .lock-emoji{font-size:3.5rem;margin-bottom:14px;}
+  .page-lock-box h2{font-size:1.4rem;font-weight:800;color:var(--navy,#0b3d8d);margin-bottom:8px;}
+  .page-lock-box p{color:#64748b;font-size:0.9rem;line-height:1.65;margin-bottom:24px;}
+  .lock-divider{font-size:0.78rem;color:#94a3b8;margin:4px 0;}
+  .lock-btn-primary{width:100%;padding:13px 24px;background:var(--navy,#0b3d8d);color:#fff;border:none;border-radius:12px;font-family:'Outfit',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;transition:all .2s;margin-bottom:10px;display:block;}
+  .lock-btn-primary:hover{background:var(--primary,#3B82F6);}
+  .lock-btn-secondary{width:100%;padding:11px 24px;background:transparent;color:var(--navy,#0b3d8d);border:2px solid var(--navy,#0b3d8d);border-radius:12px;font-family:'Outfit',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;transition:all .2s;display:block;}
+  .lock-btn-secondary:hover{background:#EFF6FF;border-color:var(--primary,#3B82F6);color:var(--primary,#3B82F6);}
+</style>
+</head>
+<body class="guest-mode">
+
+<div class="page-lock" id="page-lock">
+  <div class="page-lock-box">
+    <div class="lock-emoji">🔒</div>
+    <h2>Login to Access Fun Facts</h2>
+    <p>Create a free account or login to explore fun facts, track your progress, and unlock all COC modules.</p>
+    <button class="lock-btn-primary" onclick="CSS_BUDDY.openModal('login')">Login to my account</button>
+    <div class="lock-divider">— or —</div>
+    <button class="lock-btn-secondary" onclick="CSS_BUDDY.openModal('register')">Create free account</button>
+  </div>
+</div>
+
+<nav>
+  <a class="logo" href="index.html"><span>CSS</span> Buddy</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="quiz.html">Quiz</a>
+    <a href="flashcards.html">Flashcards</a>
+    <a href="funfacts.html" class="active">Fun Facts</a>
+    <a href="icebreaker.html">Ice Breaker</a>
+    <a href="games.html">Games</a>
+  </div>
+  <div class="nav-right"></div>
+</nav>
+
+<div class="wrap">
+  <div id="facts-back"></div>
+  <div class="page-hd">
+    <div class="badge">🤯 Did You Know?</div>
+    <h1>Weird &amp; Wild <span>Tech Fun Facts</span></h1>
+    <p>Short, snappy, and totally real facts about computers, tech history &amp; the people who built our digital world. Photos included as proof!</p>
+    <button class="shuffle-btn" onclick="shuffleAll()">
+      <span class="spin" id="spinIcon">🔀</span> Shuffle Facts
+    </button>
+  </div>
+
+  <div class="fact-counter" id="factCounter"></div>
+  <div class="facts-grid" id="factsGrid"></div>
+  <div class="load-more-wrap" id="loadMoreWrap" style="display:none">
+    <button class="load-more-btn" onclick="loadMore()">Load More Facts ↓</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─────────────────────────────────────────────────────────────────
+// FACTS DATA
+// Images: Wikimedia Commons public domain / CC-licensed photos
+// ─────────────────────────────────────────────────────────────────
+const FACTS = [
+  {
+    emoji:'🐛', year:'1945',
+    cat:'History', catColor:'#7C3AED', catBg:'rgba(124,58,237,.13)',
+    accent:'#7C3AED',
+    title:'The First Computer Bug Was an Actual Bug',
+    body:'In 1945, engineers found a real <b>moth</b> stuck in the Harvard Mark II computer causing errors. Grace Hopper\'s team taped it in the logbook: <b>"First actual case of bug being found."</b> The words "bug" and "debugging" were born that day.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/8/8a/H96566k.jpg',
+    src:'Smithsonian / Naval Surface Warfare Center'
+  },
+  {
+    emoji:'🌐', year:'1989',
+    cat:'History', catColor:'#7C3AED', catBg:'rgba(124,58,237,.13)',
+    accent:'#14B8A6',
+    title:'Tim Berners-Lee Gave the Web Away for FREE',
+    body:'<b>Tim Berners-Lee</b> invented the World Wide Web at CERN and chose not to patent it — giving it to the world for free. Had he charged even a tiny fee per page view, he would be worth <b>trillions</b> of dollars today.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/4/4e/Sir_Tim_Berners-Lee_%28cropped%29.jpg',
+    src:'Wikimedia Commons (CC BY-SA 4.0)'
+  },
+  {
+    emoji:'💾', year:'1956',
+    cat:'Hardware', catColor:'#3B82F6', catBg:'rgba(59,130,246,.12)',
+    accent:'#3B82F6',
+    title:'First Hard Drive Cost $50,000 per Megabyte',
+    body:'IBM\'s <b>RAMAC 350</b> stored just 5 MB on 50 pizza-sized platters, weighed over a ton, and cost the equivalent of <b>$50,000 per MB</b> today. A modern 4TB drive costs $60 — that\'s about $0.000015 per MB. Storage improved by a factor of 3 billion.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/IBM_350_RAMAC.jpg/1280px-IBM_350_RAMAC.jpg',
+    src:'Computer History Museum (Public Domain)'
+  },
+  {
+    emoji:'🎵', year:'1995',
+    cat:'Funny', catColor:'#EC4899', catBg:'rgba(236,72,153,.12)',
+    accent:'#EC4899',
+    title:'Windows 95 Startup Sound Made on a Mac',
+    body:'Microsoft hired music legend <b>Brian Eno</b> to compose the Windows 95 startup sound. In a 2009 interview he revealed: <b>"I made it on a Mac."</b> He submitted 84 variations. Over a billion people heard the chosen piece — composed on the competition\'s hardware.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Brian_Eno_2011_3_%28cropped%29.jpg/800px-Brian_Eno_2011_3_%28cropped%29.jpg',
+    src:'Wikimedia Commons (CC BY-SA 2.0)'
+  },
+  {
+    emoji:'🐧', year:'1991',
+    cat:'History', catColor:'#7C3AED', catBg:'rgba(124,58,237,.13)',
+    accent:'#22C55E',
+    title:'"Linux Won\'t Be Big or Professional" — Linus',
+    body:'In 1991, <b>Linus Torvalds</b> posted online: <i>"I\'m doing a free OS… just a hobby, won\'t be big and professional."</i> Linux now powers <b>96.3%</b> of the world\'s top 500 supercomputers, all Android phones, NASA, and most internet servers.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/LinuxCon_Europe_Linus_Torvalds_03_%28cropped%29.jpg/800px-LinuxCon_Europe_Linus_Torvalds_03_%28cropped%29.jpg',
+    src:'Wikimedia Commons (CC BY-SA 3.0) — LinuxCon Europe'
+  },
+  {
+    emoji:'🧮', year:'1969',
+    cat:'Space', catColor:'#0EA5E9', catBg:'rgba(14,165,233,.12)',
+    accent:'#0EA5E9',
+    title:'Apollo Moon Computer Had 4KB of RAM',
+    body:'The <b>Apollo Guidance Computer</b> that landed humans on the moon had just <b>4KB of RAM</b> and ran at 0.043 MHz. Your smartphone is about <b>120 million times more powerful</b>. Neil Armstrong literally landed on the moon with less computing power than a cheap pocket calculator.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Apollo_Guidance_Computer_with_DSKY.jpg/1280px-Apollo_Guidance_Computer_with_DSKY.jpg',
+    src:'Wikimedia Commons / NASA (Public Domain)'
+  },
+  {
+    emoji:'🖱️', year:'1964',
+    cat:'Inventor', catColor:'#F59E0B', catBg:'rgba(245,158,11,.12)',
+    accent:'#F59E0B',
+    title:'Mouse Inventor Earned Less Than $10,000 Total',
+    body:'<b>Douglas Engelbart</b> invented the computer mouse in 1964. His employer SRI licensed the patent to Apple for $40,000. His patent expired in 1987, right before the PC mouse boom. He earned less than <b>$10,000 total</b> from the device that changed human-computer interaction forever.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Douglas_Engelbart_2008.jpg/800px-Douglas_Engelbart_2008.jpg',
+    src:'Wikimedia Commons (CC BY-SA 2.0)'
+  },
+  {
+    emoji:'👩‍💻', year:'1843',
+    cat:'History', catColor:'#7C3AED', catBg:'rgba(124,58,237,.13)',
+    accent:'#EC4899',
+    title:'First Programmer Was a Woman — in 1843',
+    body:'<b>Ada Lovelace</b> wrote the world\'s first computer algorithm in 1843 — over <b>100 years</b> before modern computers existed. She was the daughter of poet Lord Byron. The U.S. military programming language <b>Ada</b> was named in her honour.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Ada_Lovelace_portrait.jpg/800px-Ada_Lovelace_portrait.jpg',
+    src:'Portrait by Alfred Edward Chalon, 1840 (Public Domain)'
+  },
+  {
+    emoji:'🧠', year:'1945',
+    cat:'History', catColor:'#7C3AED', catBg:'rgba(124,58,237,.13)',
+    accent:'#7C3AED',
+    title:'Alan Turing Saved Up to 14 Million Lives',
+    body:'<b>Alan Turing</b> cracked the Nazi Enigma code in WWII. Historians estimate his work shortened the war by 2–4 years, potentially saving <b>14 million lives</b>. He was later prosecuted by the UK for being gay and died aged 41. His face now appears on the British <b>£50 note</b>.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Alan_Turing_Aged_16.jpg/800px-Alan_Turing_Aged_16.jpg',
+    src:'Wikimedia Commons (Public Domain)'
+  },
+  {
+    emoji:'🔍', year:'1997',
+    cat:'Business', catColor:'#EF4444', catBg:'rgba(239,68,68,.12)',
+    accent:'#EF4444',
+    title:'Google Was Almost Named "BackRub"',
+    body:'Before Google, <b>Larry Page and Sergey Brin</b> called their search engine <b>"BackRub"</b> because it analyzed backlinks. "Google" is a misspelling of <b>googol</b> (the number 10¹⁰⁰). An early investor wrote a $100k check to "Google Inc." before the company legally existed.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Sergey_Brin_Ted_2010.jpg/800px-Sergey_Brin_Ted_2010.jpg',
+    src:'Wikimedia Commons (CC BY 2.0) — TED 2010'
+  },
+  {
+    emoji:'💡', year:'1995',
+    cat:'Code', catColor:'#F59E0B', catBg:'rgba(245,158,11,.12)',
+    accent:'#F59E0B',
+    title:'JavaScript Was Built in Just 10 Days',
+    body:'<b>Brendan Eich</b> created JavaScript in just <b>10 days</b> in May 1995 at Netscape. Despite being rushed and quirky (try typing <b>0.1 + 0.2</b> in a browser console!), it\'s now the <b>most used programming language</b> on Earth. The name was a marketing trick — it has almost nothing to do with Java.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Unofficial_JavaScript_logo_2.svg/800px-Unofficial_JavaScript_logo_2.svg.png',
+    src:'JavaScript Logo — Wikimedia Commons (Public Domain)'
+  },
+  {
+    emoji:'📧', year:'1971',
+    cat:'History', catColor:'#7C3AED', catBg:'rgba(124,58,237,.13)',
+    accent:'#14B8A6',
+    title:'First Email Was Sent to the Computer Next Door',
+    body:'<b>Ray Tomlinson</b> sent the first email in 1971 — to himself, on two computers sitting <b>right next to each other</b>. He chose the <b>@ symbol</b> to separate the username from the host. He later admitted he had no idea what the first message said. Probably just keyboard spam.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Ray_Tomlinson.jpg/800px-Ray_Tomlinson.jpg',
+    src:'Wikimedia Commons (CC BY-SA 3.0)'
+  },
+  {
+    emoji:'🏋️', year:'1945',
+    cat:'Hardware', catColor:'#3B82F6', catBg:'rgba(59,130,246,.12)',
+    accent:'#3B82F6',
+    title:'ENIAC Weighed 27 Tons and Used 150,000 Watts',
+    body:'<b>ENIAC (1945)</b> was the first general-purpose electronic computer. It weighed <b>27 tons</b>, occupied 1,800 sq ft, used 18,000 vacuum tubes, and consumed <b>150,000 watts</b> of power. Today\'s M4 chip does billions of times more work in a laptop running on ~10 watts.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Eniac.jpg/1280px-Eniac.jpg',
+    src:'U.S. Army Photo (Public Domain)'
+  },
+  {
+    emoji:'🔵', year:'2004',
+    cat:'Funny', catColor:'#EC4899', catBg:'rgba(236,72,153,.12)',
+    accent:'#1D4ED8',
+    title:'Facebook Is Blue Because Zuckerberg Is Color Blind',
+    body:'<b>Mark Zuckerberg</b> is red-green colorblind. He said in 2010: <b>"Blue is the richest color for me — I can see all of blue."</b> That\'s the only reason Facebook is blue. No focus groups or brand research — just the color the founder happened to see best.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/800px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg',
+    src:'Wikimedia Commons (CC BY 2.0) — F8 2019'
+  },
+  {
+    emoji:'⌨️', year:'1873',
+    cat:'Weird', catColor:'#14B8A6', catBg:'rgba(20,184,166,.12)',
+    accent:'#14B8A6',
+    title:'QWERTY Was Designed to Slow Typists Down',
+    body:'The <b>QWERTY</b> keyboard layout (1873) separated common letter pairs so mechanical <b>typewriter keys wouldn\'t jam</b>. It was optimised for 1870s metal machinery — not human hands. We\'re still using a layout designed to fight jamming keys, on glass touchscreens.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/QWERTY-home-keys-position.svg/1280px-QWERTY-home-keys-position.svg.png',
+    src:'Wikimedia Commons (Public Domain)'
+  },
+  {
+    emoji:'🍎', year:'1976',
+    cat:'Business', catColor:'#EF4444', catBg:'rgba(239,68,68,.12)',
+    accent:'#EF4444',
+    title:'Man Sold 10% of Apple for $800. It\'s Now Worth $300B',
+    body:'<b>Ronald Wayne</b>, Apple\'s third co-founder, sold his 10% stake back for just <b>$800</b> in 1976 because he was nervous about company debt. That stake is now worth over <b>$300 billion</b>. It may be the single most expensive decision in business history.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/800px-Apple_logo_black.svg.png',
+    src:'Apple Inc. Logo — Wikimedia Commons'
+  },
+  {
+    emoji:'🌙', year:'1969',
+    cat:'Space', catColor:'#0EA5E9', catBg:'rgba(14,165,233,.12)',
+    accent:'#0EA5E9',
+    title:'Apollo 11 Software Was Woven by Hand',
+    body:'The Apollo Guidance Computer\'s software was stored in <b>rope core memory</b> — copper wires literally <b>hand-woven</b> through magnetic rings by a team of women in a factory. Each wire threading represented a 0 or 1. It took weeks to "weave" a program.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Apollo_11_Launch_-_GPN-2000-000630.jpg/800px-Apollo_11_Launch_-_GPN-2000-000630.jpg',
+    src:'NASA (Public Domain)'
+  },
+  {
+    emoji:'🐍', year:'1989',
+    cat:'Code', catColor:'#F59E0B', catBg:'rgba(245,158,11,.12)',
+    accent:'#22C55E',
+    title:'Python Is Named After a Comedy Show — Not the Snake',
+    body:'<b>Guido van Rossum</b> named Python after <b>Monty Python\'s Flying Circus</b>. He started coding it over Christmas 1989 because he was bored. Python now powers AI, machine learning, NASA, Instagram, and scientific research — all from a Christmas holiday project.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Python_logo_51.svg/800px-Python_logo_51.svg.png',
+    src:'Python Software Foundation Logo — Wikimedia Commons'
+  },
+  {
+    emoji:'🤖', year:'1920',
+    cat:'History', catColor:'#7C3AED', catBg:'rgba(124,58,237,.13)',
+    accent:'#8B5CF6',
+    title:'"Robot" Means "Forced Labor" in Czech',
+    body:'The word <b>"robot"</b> comes from a 1920 Czech play by Karel Čapek. In Czech, <b>robota</b> means "forced labor." The play featured artificial workers that eventually revolt against their creators — predicting <b>AI ethics debates</b> by a full century.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Capek_brothers.jpg/800px-Capek_brothers.jpg',
+    src:'Wikimedia Commons (Public Domain) — Karel Čapek on right'
+  },
+  {
+    emoji:'💿', year:'1979',
+    cat:'Weird', catColor:'#14B8A6', catBg:'rgba(20,184,166,.12)',
+    accent:'#14B8A6',
+    title:'CD Capacity Was Set to Fit Beethoven\'s 9th Symphony',
+    body:'When Sony & Philips designed the CD in 1979, executive <b>Norio Ohga</b> insisted the disc must hold <b>Beethoven\'s 9th Symphony</b> without interruption (~74 minutes). A musical masterpiece from <b>1824</b> literally determined the specs of a format that sold 200 billion copies.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Beethoven.jpg/800px-Beethoven.jpg',
+    src:'Portrait by Joseph Karl Stieler, 1820 (Public Domain)'
+  },
+  {
+    emoji:'📡', year:'1969',
+    cat:'History', catColor:'#7C3AED', catBg:'rgba(124,58,237,.13)',
+    accent:'#22C55E',
+    title:'The Internet\'s First Message Was a Crash — "LO"',
+    body:'The first message ever sent over <b>ARPANET</b> (internet\'s ancestor) in 1969 was meant to be "LOGIN." The system <b>crashed after 2 letters</b>: "LO." The very first internet transmission in history was an accidental abbreviation — followed immediately by a system failure.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Arpanet_logical_map%2C_march_1977.png/1280px-Arpanet_logical_map%2C_march_1977.png',
+    src:'ARPANET map 1977 — Wikimedia Commons (Public Domain)'
+  },
+  {
+    emoji:'🌊', year:'1901',
+    cat:'Inventor', catColor:'#F59E0B', catBg:'rgba(245,158,11,.12)',
+    accent:'#0EA5E9',
+    title:'Nikola Tesla Predicted Wi-Fi in 1901',
+    body:'<b>Nikola Tesla</b> pitched his "World Wireless System" to investor J.P. Morgan in 1901 — a global network for wirelessly transmitting information to anyone on Earth. Morgan pulled funding when he realised he <b>couldn\'t meter it.</b> Tesla was describing the internet 90 years before it existed.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/N.Tesla.JPG/800px-N.Tesla.JPG',
+    src:'Wikimedia Commons (Public Domain)'
+  },
+  {
+    emoji:'🎪', year:'1976',
+    cat:'Inventor', catColor:'#F59E0B', catBg:'rgba(245,158,11,.12)',
+    accent:'#F59E0B',
+    title:'Steve Wozniak Designed the Apple I Completely Alone',
+    body:'<b>Steve Wozniak</b> designed every circuit and wrote every line of code for the Apple I by himself, in his spare time while working at HP. He offered the design to HP <b>five times</b> — they rejected it every time. Steve Jobs never wrote a single line of code for Apple.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Steve_Wozniak_by_Gage_Skidmore.jpg/800px-Steve_Wozniak_by_Gage_Skidmore.jpg',
+    src:'Wikimedia Commons (CC BY-SA 3.0) — Gage Skidmore'
+  },
+  {
+    emoji:'⚡', year:'1971',
+    cat:'Hardware', catColor:'#3B82F6', catBg:'rgba(59,130,246,.12)',
+    accent:'#3B82F6',
+    title:'First Intel CPU Had Only 2,300 Transistors',
+    body:'The <b>Intel 4004 (1971)</b> — the world\'s first commercial microprocessor — had just <b>2,300 transistors</b> and ran at 740 kHz. The modern Apple M3 Ultra has <b>153 billion</b> transistors. That\'s a 66-million-fold increase in 53 years.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Intel_C4004.jpg/1280px-Intel_C4004.jpg',
+    src:'Wikimedia Commons (CC BY-SA 2.5) — Rostislav Lisový'
+  },
+  {
+    emoji:'☕', year:'1991',
+    cat:'Funny', catColor:'#EC4899', catBg:'rgba(236,72,153,.12)',
+    accent:'#EC4899',
+    title:'The First Webcam Watched a Coffee Pot',
+    body:'The world\'s first webcam (1991) was set up at <b>Cambridge University</b> to watch the Trojan Room <b>coffee pot</b>. Researchers were tired of walking downstairs only to find an empty pot. They pointed a camera at it and connected it to the network. It was switched off in 2001.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Coffeemaker.jpg/800px-Coffeemaker.jpg',
+    src:'Coffee pot — Wikimedia Commons (CC BY-SA)'
+  },
+  {
+    emoji:'🦠', year:'1971',
+    cat:'Security', catColor:'#EF4444', catBg:'rgba(239,68,68,.12)',
+    accent:'#EF4444',
+    title:'The First Computer Virus Was Made as a Joke',
+    body:'The first computer virus, <b>Creeper (1971)</b>, spread across ARPANET displaying: <i>"I\'m the creeper, catch me if you can!"</i> It was written by <b>Bob Thomas</b> as a harmless experiment — not to cause damage. The first antivirus, <b>"Reaper,"</b> was written specifically to hunt and delete it.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/OriginalCorelDRAW.png/800px-OriginalCorelDRAW.png',
+    src:'Early computer art — Wikimedia Commons'
+  },
+  {
+    emoji:'🗂️', year:'1973',
+    cat:'History', catColor:'#7C3AED', catBg:'rgba(124,58,237,.13)',
+    accent:'#7C3AED',
+    title:'Windows, Icons & Mouse Were All Invented at Xerox',
+    body:'Everything on your screen today — <b>windows, folders, icons, the mouse, drag-and-drop</b> — was invented at <b>Xerox PARC</b> in the early 1970s. Xerox never commercialised it. Steve Jobs saw a demo in 1979, built it into the Mac, and the rest is history.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Xerox_Alto.jpg/800px-Xerox_Alto.jpg',
+    src:'Xerox Alto — the first GUI computer. Wikimedia Commons'
+  },
+  {
+    emoji:'🏆', year:'1975',
+    cat:'Inventor', catColor:'#F59E0B', catBg:'rgba(245,158,11,.12)',
+    accent:'#3B82F6',
+    title:'Bill Gates Dropped Out of Harvard at 19',
+    body:'<b>Bill Gates</b> dropped out of Harvard at 19 to co-found Microsoft with Paul Allen. Their big break: they sold IBM an operating system they didn\'t own yet — they bought it for <b>$75,000</b>, kept the rights, licensed it to IBM, and built a <b>$3 trillion empire.</b>',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Bill_Gates_2017_%28cropped%29.jpg/800px-Bill_Gates_2017_%28cropped%29.jpg',
+    src:'Wikimedia Commons (CC BY-SA 2.0)'
+  },
+  {
+    emoji:'🎮', year:'1978',
+    cat:'History', catColor:'#7C3AED', catBg:'rgba(124,58,237,.13)',
+    accent:'#8B5CF6',
+    title:'Space Invaders Caused Japan\'s First Coin Shortage',
+    body:'When <b>Space Invaders</b> launched in Japan in 1978, arcades ran out of 100-yen coins so fast that Japan reportedly had to <b>quadruple its coin production.</b> It is the first documented case of a video game causing a national supply shortage.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Space_Invaders-Gameplay.gif/220px-Space_Invaders-Gameplay.gif',
+    src:'Space Invaders — Taito Corporation / Wikimedia Commons'
+  },
+  {
+    emoji:'🔦', year:'1945',
+    cat:'Hardware', catColor:'#3B82F6', catBg:'rgba(59,130,246,.12)',
+    accent:'#F59E0B',
+    title:'Early Computers Failed Every 2 Minutes',
+    body:'ENIAC\'s 18,000 <b>vacuum tubes</b> failed at a rate of roughly <b>one every two minutes.</b> Engineers walked the aisles constantly, replacing blown tubes to keep the machine running. Maintaining early computers was essentially a full-time job for a team of people.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Elektronenroehren-auswahl.jpg/1280px-Elektronenroehren-auswahl.jpg',
+    src:'Vacuum tubes — Wikimedia Commons (CC BY-SA 3.0)'
+  },
+  {
+    emoji:'📺', year:'2005',
+    cat:'History', catColor:'#7C3AED', catBg:'rgba(124,58,237,.13)',
+    accent:'#EF4444',
+    title:'YouTube\'s First Video Was About Zoo Elephants',
+    body:'The first YouTube video, <b>"Me at the zoo"</b> (April 23, 2005), was 18 seconds long. Co-founder Jawed Karim stands in front of elephants and says: <i>"the cool thing about these guys is… they have really, really long trunks."</i> It now has over <b>300 million views.</b>',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/YouTube_Logo.svg/1280px-YouTube_Logo.svg.png',
+    src:'YouTube Logo — Wikimedia Commons (Fair Use)'
+  },
+  {
+    emoji:'🔐', year:'1961',
+    cat:'Security', catColor:'#EF4444', catBg:'rgba(239,68,68,.12)',
+    accent:'#EF4444',
+    title:'Passwords Existed Since 1961 — and Were Immediately Breached',
+    body:'The first computer password system was made at <b>MIT in 1961</b>. Within months, a researcher accidentally <b>printed the entire password file</b> and shared it with colleagues. The very first password database in history suffered one of the very first data breaches.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/MIT_Building_10_and_the_Great_Dome%2C_2019.jpg/1280px-MIT_Building_10_and_the_Great_Dome%2C_2019.jpg',
+    src:'MIT Campus — Wikimedia Commons (CC BY-SA 3.0)'
+  },
+  {
+    emoji:'🧊', year:'2018',
+    cat:'Weird', catColor:'#14B8A6', catBg:'rgba(20,184,166,.12)',
+    accent:'#14B8A6',
+    title:'Microsoft Has Servers Underwater on the Ocean Floor',
+    body:'Microsoft\'s <b>Project Natick</b> placed a sealed server pod on the <b>seafloor off Scotland</b> in 2018. Cooled by the cold ocean, it ran for 2 years. When retrieved in 2020, the underwater servers were <b>8× more reliable</b> than land-based data centers.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Beautiful_fish.jpg/1280px-Beautiful_fish.jpg',
+    src:'Ocean — home of Microsoft\'s Project Natick servers (Wikimedia CC)'
+  },
+  {
+    emoji:'🔒', year:'2023',
+    cat:'Security', catColor:'#EF4444', catBg:'rgba(239,68,68,.12)',
+    accent:'#EF4444',
+    title:'"123456" Is Still the Most Common Password on Earth',
+    body:'Year after year, <b>"123456"</b>, "password," and "qwerty" top the global most-breached password lists. In 2023, "123456" appeared in over <b>23 million</b> breached accounts. Security experts call it "the digital equivalent of leaving your front door wide open."',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Combination_lock.jpg/800px-Combination_lock.jpg',
+    src:'Combination lock — Wikimedia Commons (CC BY-SA)'
+  },
+  {
+    emoji:'🌍', year:'2011',
+    cat:'Weird', catColor:'#14B8A6', catBg:'rgba(20,184,166,.12)',
+    accent:'#3B82F6',
+    title:'The Entire Internet Weighs About 50 Grams',
+    body:'Physicist Russel Seitz calculated that all internet data, stored as <b>electron states</b>, has a total mass of about <b>50 grams</b> — roughly the weight of a strawberry. All of YouTube, Wikipedia, every email, every photo ever uploaded. One strawberry\'s worth.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Strawberry_Festival.jpg/1280px-Strawberry_Festival.jpg',
+    src:'Strawberry — about 50g, same as the entire internet (Wikimedia CC)'
+  },
+  {
+    emoji:'🎭', year:'1984',
+    cat:'Funny', catColor:'#EC4899', catBg:'rgba(236,72,153,.12)',
+    accent:'#EC4899',
+    title:'Steve Jobs Used Calligraphy Class to Design the Mac\'s Fonts',
+    body:'<b>Steve Jobs</b> dropped out of Reed College in 1972 but kept attending a <b>calligraphy class for free</b>. 10 years later, he used everything he learned to design the Macintosh\'s beautiful typography — the first computer with proportionally spaced fonts. <i>"None of this would have happened if I hadn\'t dropped in on that single course."</i>',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Steve_Jobs_Headshot_2010-CROP_%28cropped_2%29.jpg/800px-Steve_Jobs_Headshot_2010-CROP_%28cropped_2%29.jpg',
+    src:'Steve Jobs — Wikimedia Commons (CC BY-SA 2.0)'
+  },
+  {
+    emoji:'💽', year:'1980',
+    cat:'Hardware', catColor:'#3B82F6', catBg:'rgba(59,130,246,.12)',
+    accent:'#3B82F6',
+    title:'First 1GB Hard Drive Cost $40,000 and Weighed 550 lbs',
+    body:'In 1980, the first <b>1-gigabyte</b> hard drive made by IBM cost <b>$40,000</b>, weighed 250 kg (550 lbs), and was the size of a refrigerator. Today a 1GB microSD card costs about <b>$0.50</b> and fits on your fingernail.',
+    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Hard_disk_platter_reflection.jpg/1280px-Hard_disk_platter_reflection.jpg',
+    src:'Hard disk platters — Wikimedia Commons (CC BY-SA)'
+  },
+];
+
+// ─────────────────────────────────────────────────────────────────
+const BATCH = 12;
+let pool = [];
+let showCount = 0;
+
+function init() {
+  pool = shuffle([...FACTS]);
+  showCount = BATCH;
+  render();
+}
+
+function shuffleAll() {
+  const icon = document.getElementById('spinIcon');
+  icon.style.transform = 'rotate(360deg)';
+  setTimeout(() => { icon.style.transform = ''; }, 600);
+  pool = shuffle([...FACTS]);
+  showCount = BATCH;
+  render();
+  showToast('🔀 Facts shuffled! Fresh order!');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function loadMore() {
+  showCount = Math.min(showCount + BATCH, pool.length);
+  render();
+}
+
+function render() {
+  const grid = document.getElementById('factsGrid');
+  const slice = pool.slice(0, showCount);
+
+  grid.innerHTML = slice.map((f, i) => {
+    const delay = (i % BATCH) * 55;
+    return `
+    <div class="fact-card" style="--fc-accent:${f.accent};animation-delay:${delay}ms">
+      <div class="card-img-wrap">
+        <img src="${f.img}" alt="${f.title}" loading="lazy"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="img-fallback">
+          <span>${f.emoji}</span>
+          <p>Photo unavailable</p>
+        </div>
+        <span class="cat-tag" style="background:${f.catBg};color:${f.catColor}">${f.cat}</span>
+        <div class="proof-label"><span>📸 ${f.src}</span></div>
+      </div>
+      <div class="card-body">
+        <div class="card-emoji">${f.emoji}</div>
+        <div class="card-title">${f.title}</div>
+        <div class="card-text">${f.body}</div>
+        <div class="card-footer">
+          <span class="card-year">📅 ${f.year}</span>
+          <span class="card-src">${f.src}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Update counter
+  document.getElementById('factCounter').textContent =
+    `Showing ${Math.min(showCount, pool.length)} of ${pool.length} facts`;
+
+  // Load more button
+  document.getElementById('loadMoreWrap').style.display =
+    showCount >= pool.length ? 'none' : 'block';
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+const theme = localStorage.getItem('cssbuddy-theme');
+if (theme && theme !== 'blue') document.documentElement.className = 'theme-' + theme;
+
+init();
+</script>
+<script src="cssbuddy-shared.js"></script>
+<script>
+window.onCBLogin = function(user, data) {
+  document.body.classList.remove('guest-mode');
+};
+window.onCBLogout = function() {
+  document.body.classList.add('guest-mode');
+};
+</script>
+</body>
+</html>

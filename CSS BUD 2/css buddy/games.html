@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS Buddy — Games </title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #3B82F6;
+    --primary-dark: #1D4ED8;
+    --teal: #14B8A6;
+    --green: #22C55E;
+    --navy: #1E293B;
+    --navy-light: #2D3F55;
+    --bg: #E8EDF5;
+    --card-bg: #fff;
+    --text: #1E293B;
+    --text-muted: #64748B;
+    --sidebar-bg: #fff;
+    --border: #E2E8F0;
+    --accent: var(--primary);
+  }
+  .theme-teal { --accent: #14B8A6; --primary: #14B8A6; --primary-dark: #0D9488; }
+  .theme-green { --accent: #22C55E; --primary: #22C55E; --primary-dark: #16A34A; }
+  .theme-gray  { --accent: #94A3B8; --primary: #64748B; --primary-dark: #475569; }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  nav {
+    background: var(--navy); padding: 0 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 68px; position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.2);
+  }
+  .logo { font-size: 1.6rem; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+  .logo span { color: var(--primary); transition: color 0.3s; }
+  .nav-links { display: flex; gap: 4px; }
+  .nav-links a {
+    color: #94A3B8; text-decoration: none; padding: 8px 16px;
+    border-radius: 8px; font-weight: 500; font-size: 0.95rem;
+    transition: all 0.2s; position: relative;
+  }
+  .nav-links a.active, .nav-links a:hover { color: #fff; background: rgba(255,255,255,0.08); }
+  .nav-links a.active::after {
+    content: ''; position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%);
+    width: 20px; height: 2px; background: var(--primary); border-radius: 2px;
+  }
+
+  .page-wrap { max-width: 860px; margin: 0 auto; padding: 32px 24px 60px; }
+
+  .games-hero {
+    background: linear-gradient(135deg, var(--navy) 0%, #0f172a 100%);
+    border-radius: 24px; padding: 36px 40px; margin-bottom: 32px;
+    position: relative; overflow: hidden;
+  }
+  .games-hero::before {
+    content: '🎮'; position: absolute; right: 32px; top: 50%;
+    transform: translateY(-50%); font-size: 6rem; opacity: 0.15;
+  }
+  .games-hero h1 { color: #fff; font-size: 2rem; font-weight: 900; margin-bottom: 8px; }
+  .games-hero h1 span { color: var(--primary); }
+  .games-hero p { color: rgba(255,255,255,0.65); font-size: 1rem; max-width: 480px; }
+  .games-hero .back-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 20px; background: rgba(255,255,255,0.1); color: #fff;
+    border: 1.5px solid rgba(255,255,255,0.2); border-radius: 20px;
+    padding: 8px 20px; font-family: 'Outfit',sans-serif; font-weight: 600;
+    font-size: 0.88rem; cursor: pointer; text-decoration: none; transition: all 0.2s;
+  }
+  .games-hero .back-btn:hover { background: rgba(255,255,255,0.2); }
+
+  .game-cards-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+    margin-bottom: 28px;
+  }
+  @media (max-width: 640px) { .game-cards-grid { grid-template-columns: repeat(2, 1fr); } }
+  .game-card-btn {
+    background: var(--card-bg); border: 2.5px solid var(--border);
+    border-radius: 16px; padding: 20px 16px; cursor: pointer;
+    text-align: center; transition: all 0.22s; font-family: 'Outfit',sans-serif;
+    position: relative; overflow: hidden;
+  }
+  .game-card-btn::after {
+    content: ''; position: absolute; inset: 0; border-radius: 14px;
+    background: var(--primary); opacity: 0; transition: opacity 0.2s;
+  }
+  .game-card-btn:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 8px 28px rgba(59,130,246,0.18); }
+  .game-card-btn:hover::after { opacity: 0.04; }
+  .game-card-btn.active-card { border-color: var(--primary); background: var(--primary); color: #fff; box-shadow: 0 6px 24px rgba(59,130,246,0.35); }
+  .game-card-btn.active-card .gc-label { color: rgba(255,255,255,0.85); }
+  .gc-emoji { font-size: 2.2rem; margin-bottom: 8px; display: block; }
+  .gc-name { font-weight: 800; font-size: 0.92rem; color: var(--navy); margin-bottom: 4px; }
+  .game-card-btn.active-card .gc-name { color: #fff; }
+  .gc-label { font-size: 0.72rem; color: var(--text-muted); font-weight: 500; }
+
+  .section-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 18px; color: var(--navy); }
+
+  .game-panel { display: none; }
+  .game-panel.active { display: block; animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+  .game-box {
+    background: var(--card-bg); border-radius: 20px; padding: 28px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.07); position: relative; overflow: hidden;
+  }
+  .game-box::before {
+    content: ''; position: absolute; top: -40px; right: -40px;
+    width: 160px; height: 160px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), transparent); opacity: 0.07;
+  }
+  .game-title { font-size: 1.25rem; font-weight: 800; color: var(--navy); margin-bottom: 4px; }
+  .game-desc  { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px; }
+  .game-score-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
+  .game-score {
+    background: var(--navy); color: #fff; border-radius: 10px;
+    padding: 8px 18px; font-weight: 800; font-size: 0.9rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .game-btn {
+    background: var(--primary); color: #fff; border: none; padding: 10px 22px;
+    border-radius: 20px; font-family: 'Outfit', sans-serif; font-weight: 700;
+    font-size: 0.9rem; cursor: pointer; transition: all 0.2s;
+  }
+  .game-btn:hover { background: var(--primary-dark); transform: scale(1.04); }
+  .game-btn.danger { background: #EF4444; }
+  .game-btn.danger:hover { background: #DC2626; }
+
+  .scramble-word {
+    font-size: 2.4rem; font-weight: 900; letter-spacing: 8px;
+    color: var(--primary); text-align: center; padding: 20px;
+    background: var(--bg); border-radius: 14px; margin-bottom: 16px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .scramble-hint { text-align: center; color: var(--text-muted); font-size: 0.85rem; margin-bottom: 12px; font-style: italic; }
+  .scramble-input {
+    width: 100%; padding: 12px 16px; border: 2.5px solid var(--border);
+    border-radius: 12px; font-family: 'Outfit', sans-serif; font-size: 1.1rem;
+    font-weight: 700; text-align: center; letter-spacing: 4px;
+    outline: none; transition: border-color 0.2s; text-transform: uppercase;
+  }
+  .scramble-input:focus { border-color: var(--primary); }
+  .scramble-input.correct { border-color: #22C55E; background: #F0FDF4; color: #16A34A; }
+  .scramble-input.wrong   { border-color: #EF4444; background: #FEF2F2; animation: shake 0.3s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+  .scramble-feedback { text-align: center; font-weight: 700; font-size: 0.95rem; min-height: 28px; margin-top: 12px; }
+
+  .memory-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; max-width: 560px; margin: 0 auto 16px; }
+  .mem-card {
+    aspect-ratio: 1; border-radius: 14px; cursor: pointer;
+    background: var(--navy); display: flex; align-items: center; justify-content: center;
+    transition: transform 0.4s; transform-style: preserve-3d;
+    user-select: none; position: relative; border: none; outline: none;
+    min-height: 110px;
+  }
+  .mem-card .front, .mem-card .back {
+    position: absolute; inset: 0; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    backface-visibility: hidden; transition: transform 0.4s;
+  }
+  .mem-card .front { background: linear-gradient(135deg, #1E293B, #0f172a); }
+  .mem-card .back  { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); transform: rotateY(180deg); }
+  .mem-card.flipped { pointer-events: none; }
+  .mem-card.flipped .front { transform: rotateY(180deg); }
+  .mem-card.flipped .back  { transform: rotateY(0deg); }
+  .mem-card.matched .front { transform: rotateY(180deg); }
+  .mem-card.matched .back  { transform: rotateY(0deg); background: linear-gradient(135deg, #22C55E, #16A34A); }
+  .mem-card.wrong-flash .back { background: linear-gradient(135deg, #EF4444, #DC2626); }
+  .mem-emoji { font-size: 2.8rem; line-height: 1; display: block; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
+  .mem-label { font-size: 0.72rem; font-weight: 800; color: rgba(255,255,255,0.92); letter-spacing: 0.3px; text-align: center; }
+
+  .tf-question {
+    background: var(--bg); border-radius: 14px; padding: 20px;
+    font-size: 1rem; font-weight: 600; color: var(--navy); text-align: center;
+    min-height: 80px; display: flex; align-items: center; justify-content: center;
+    margin-bottom: 16px; line-height: 1.5;
+  }
+  .tf-btns { display: flex; gap: 12px; justify-content: center; margin-bottom: 12px; }
+  .tf-btn {
+    flex: 1; max-width: 160px; padding: 14px; border: none; border-radius: 14px;
+    font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.1rem; cursor: pointer; transition: all 0.2s;
+  }
+  .tf-true  { background: #22C55E; color: #fff; }
+  .tf-true:hover  { background: #16A34A; transform: scale(1.05); }
+  .tf-false { background: #EF4444; color: #fff; }
+  .tf-false:hover { background: #DC2626; transform: scale(1.05); }
+  .tf-progress-bar { background: var(--border); border-radius: 20px; height: 6px; margin-bottom: 10px; overflow: hidden; }
+  .tf-progress-fill { height: 100%; background: var(--primary); border-radius: 20px; transition: width 0.15s linear; }
+  .tf-feedback { text-align: center; font-weight: 700; font-size: 0.95rem; min-height: 28px; }
+
+  .type-term-display {
+    font-size: 1.1rem; font-weight: 700; color: var(--navy); padding: 16px;
+    background: var(--bg); border-radius: 14px; margin-bottom: 10px; text-align: center; line-height: 1.6;
+  }
+  .type-input {
+    width: 100%; padding: 12px 16px; border: 2.5px solid var(--border);
+    border-radius: 12px; font-family: 'Outfit', sans-serif; font-size: 1rem;
+    font-weight: 600; outline: none; transition: border-color 0.2s;
+  }
+  .type-input:focus   { border-color: var(--primary); }
+  .type-input.correct { border-color: #22C55E; background: #F0FDF4; }
+  .type-input.wrong   { border-color: #EF4444; animation: shake 0.3s; }
+  .type-streak { font-size: 0.85rem; color: var(--text-muted); text-align: center; margin-top: 8px; }
+
+  .game-results {
+    text-align: center; padding: 20px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    border-radius: 16px; color: #fff; margin-top: 16px; display: none;
+  }
+  .game-results.show { display: block; }
+  .game-results h3 { font-size: 1.6rem; font-weight: 900; margin-bottom: 8px; }
+  .game-results p   { font-size: 0.95rem; opacity: 0.9; }
+
+  #catch-canvas-wrap {
+    position: relative; background: linear-gradient(180deg,#0f172a 0%,#1e293b 100%);
+    border-radius: 16px; overflow: hidden; height: 420px; cursor: crosshair;
+    border: 2px solid var(--navy);
+  }
+  #catch-canvas { display: block; width: 100%; height: 100%; }
+  #catch-overlay {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; background: rgba(0,0,0,0.72);
+    border-radius: 16px; color: #fff;
+  }
+  #catch-overlay h3 { font-size: 1.8rem; font-weight: 900; margin-bottom: 10px; }
+  #catch-overlay p  { font-size: 0.95rem; opacity: 0.8; margin-bottom: 18px; text-align: center; max-width: 320px; }
+  .catch-stats { display: flex; gap: 10px; margin-bottom: 14px; justify-content: center; flex-wrap: wrap; }
+  .catch-stat {
+    background: var(--navy); color: #fff; border-radius: 10px;
+    padding: 7px 16px; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 0.85rem;
+  }
+  #catch-label {
+    position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+    background: rgba(59,130,246,0.9); color: #fff; padding: 6px 16px;
+    border-radius: 20px; font-weight: 700; font-size: 0.82rem; white-space: nowrap;
+    pointer-events: none; transition: opacity 0.3s;
+  }
+
+  .rj45-subtabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .rj45-tab {
+    padding: 8px 18px; border-radius: 20px; border: 2px solid var(--border);
+    background: #fff; font-family: 'Outfit',sans-serif; font-weight: 700;
+    font-size: 0.82rem; cursor: pointer; transition: all 0.2s; color: var(--text-muted);
+  }
+  .rj45-tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .rj45-tab:hover:not(.active) { border-color: var(--primary); color: var(--primary); }
+  .rj45-panel { display: none; }
+  .rj45-panel.active { display: block; }
+
+  .cable-visual {
+    display: flex; gap: 5px; align-items: flex-end; justify-content: center;
+    margin: 16px 0; padding: 20px 16px 12px; background: var(--navy); border-radius: 14px;
+  }
+  .wire-pin { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .wire-block {
+    width: 34px; height: 100px; border-radius: 6px 6px 0 0;
+    border: 2px solid rgba(255,255,255,0.18);
+    display: flex; align-items: flex-end; justify-content: center;
+    padding-bottom: 5px; font-size: 0.65rem; font-weight: 800;
+    color: rgba(0,0,0,0.7); cursor: default; transition: transform 0.15s;
+  }
+  .wire-block:hover { transform: scaleY(1.06); }
+  .wire-num { font-size: 0.68rem; font-weight: 800; color: #94A3B8; }
+
+  .drag-bank {
+    display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0;
+    min-height: 54px; padding: 8px; background: var(--bg);
+    border-radius: 10px; border: 2px dashed var(--border);
+  }
+  .drag-wire {
+    width: 42px; height: 62px; border-radius: 6px; border: 2px solid rgba(0,0,0,0.18);
+    cursor: grab; display: flex; align-items: center; justify-content: center;
+    font-size: 0.58rem; font-weight: 900; color: rgba(0,0,0,0.65);
+    transition: transform 0.15s; user-select: none;
+  }
+  .drag-wire:hover  { transform: scale(1.1); }
+  .drag-wire.dragging { opacity: 0.4; }
+  .drop-slots { display: flex; gap: 6px; justify-content: center; margin: 12px 0; flex-wrap: wrap; }
+  .drop-slot {
+    width: 44px; height: 72px; border-radius: 8px; border: 2.5px dashed var(--primary);
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+    padding-bottom: 4px; font-size: 0.65rem; font-weight: 800; color: var(--primary);
+    background: rgba(59,130,246,0.04); transition: background 0.2s;
+  }
+  .drop-slot.has-wire   { border-style: solid; }
+  .drop-slot.correct-slot { border-color: #22C55E; background: rgba(34,197,94,0.08); }
+  .drop-slot.wrong-slot   { border-color: #EF4444; background: rgba(239,68,68,0.08); }
+
+  /* ── Standard toggle for drag-drop ── */
+  .dd-toggle-btn {
+    padding: 9px 26px; border-radius: 20px; border: 2.5px solid var(--border);
+    background: #fff; font-family: 'Outfit',sans-serif; font-weight: 800;
+    font-size: 0.88rem; cursor: pointer; transition: all 0.22s; color: var(--text-muted);
+  }
+  .dd-toggle-btn:hover:not(.active-b):not(.active-a) { border-color: var(--primary); color: var(--primary); }
+  .dd-toggle-btn.active-b { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 4px 14px rgba(59,130,246,0.3); }
+  .dd-toggle-btn.active-a { background: #14B8A6; color: #fff; border-color: #14B8A6; box-shadow: 0 4px 14px rgba(20,184,166,0.3); }
+
+  .wire-quiz-q {
+    background: var(--bg); border-radius: 12px; padding: 16px;
+    font-weight: 600; color: var(--navy); text-align: center;
+    margin-bottom: 14px; line-height: 1.5; font-size: 0.95rem;
+  }
+  .wire-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .wire-opt {
+    padding: 10px 14px; border-radius: 10px; border: 2px solid var(--border);
+    background: #fff; font-family: 'Outfit',sans-serif; font-weight: 700;
+    font-size: 0.85rem; cursor: pointer; transition: all 0.2s; color: var(--text);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .wire-opt:hover { border-color: var(--primary); color: var(--primary); }
+  .wire-opt.correct-opt { border-color: #22C55E; background: #F0FDF4; color: #16A34A; }
+  .wire-opt.wrong-opt   { border-color: #EF4444; background: #FEF2F2; color: #DC2626; }
+  .wire-opt .wire-dot   { width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; border: 2px solid rgba(0,0,0,0.2); }
+
+  .toast {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(100px);
+    background: var(--navy); color: #fff; padding: 12px 24px; border-radius: 30px;
+    font-weight: 600; font-size: 0.9rem; z-index: 400; transition: transform 0.3s;
+  }
+  .toast.show   { transform: translateX(-50%) translateY(0); }
+  .toast.success { border-left: 4px solid #22C55E; border-radius: 12px; }
+  .toast.info    { border-left: 4px solid var(--primary); border-radius: 12px; }
+  .page-lock{display:none;position:fixed;inset:0;z-index:9999;background:rgba(5,18,45,0.60);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);align-items:center;justify-content:center;}
+  body.guest-mode .page-lock{display:flex;}
+  .page-lock-box{background:#fff;border-radius:24px;padding:44px 52px;text-align:center;max-width:420px;width:90%;box-shadow:0 24px 80px rgba(0,0,0,0.3);}
+  .page-lock-box .lock-emoji{font-size:3.5rem;margin-bottom:14px;}
+  .page-lock-box h2{font-size:1.4rem;font-weight:800;color:var(--navy,#0b3d8d);margin-bottom:8px;}
+  .page-lock-box p{color:#64748b;font-size:0.9rem;line-height:1.65;margin-bottom:24px;}
+  .lock-divider{font-size:0.78rem;color:#94a3b8;margin:4px 0;}
+  .lock-btn-primary{width:100%;padding:13px 24px;background:var(--navy,#0b3d8d);color:#fff;border:none;border-radius:12px;font-family:'Outfit',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;transition:all .2s;margin-bottom:10px;display:block;}
+  .lock-btn-primary:hover{background:var(--primary,#3B82F6);}
+  .lock-btn-secondary{width:100%;padding:11px 24px;background:transparent;color:var(--navy,#0b3d8d);border:2px solid var(--navy,#0b3d8d);border-radius:12px;font-family:'Outfit',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;transition:all .2s;display:block;}
+  .lock-btn-secondary:hover{background:#EFF6FF;border-color:var(--primary,#3B82F6);color:var(--primary,#3B82F6);}
+</style>
+</head>
+<body class="guest-mode">
+
+<div class="page-lock" id="page-lock">
+  <div class="page-lock-box">
+    <div class="lock-emoji">🔒</div>
+    <h2>Login to Access Games</h2>
+    <p>Create a free account or login to play games, track your progress, and unlock all COC modules.</p>
+    <button class="lock-btn-primary" onclick="CSS_BUDDY.openModal('login')">Login to my account</button>
+    <div class="lock-divider">— or —</div>
+    <button class="lock-btn-secondary" onclick="CSS_BUDDY.openModal('register')">Create free account</button>
+  </div>
+</div>
+
+<nav>
+  <a href="index.html" class="logo"><span>CSS</span> Buddy</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="quiz.html">Quiz</a>
+    <a href="flashcards.html">Flashcards</a>
+    <a href="funfacts.html">Fun Facts</a>
+    <a href="icebreaker.html">Ice Breaker</a>
+    <a href="games.html" class="active">Games</a>
+  </div>
+  <div class="nav-right"></div>
+</nav>
+
+<div class="page-wrap">
+  <div id="cb-back-btn" style="margin-bottom:16px"></div>
+
+  <div class="games-hero">
+    <h1> <span>Mini </span> Games </h1>
+    <p>Play &amp; learn! All games are based on COC1–4 topics — computer hardware, networking, troubleshooting, and maintenance.</p>
+    <a href="index.html" class="back-btn">← Back to Home</a>
+  </div>
+
+  <div class="section-title">Choose a Game</div>
+  <div class="game-cards-grid">
+    <button class="game-card-btn active-card" id="card-scramble"   onclick="switchGame('scramble',this)">
+      <span class="gc-emoji"></span>
+      <div class="gc-name">Word Scramble</div>
+      <div class="gc-label">Unscramble tech terms</div>
+    </button>
+    <button class="game-card-btn" id="card-memory"    onclick="switchGame('memory',this)">
+      <span class="gc-emoji"></span>
+      <div class="gc-name">Memory Match</div>
+      <div class="gc-label">Flip &amp; find pairs</div>
+    </button>
+    <button class="game-card-btn" id="card-truefalse" onclick="switchGame('truefalse',this)">
+      <span class="gc-emoji"></span>
+      <div class="gc-name">True or False</div>
+      <div class="gc-label">Rapid fire quiz</div>
+    </button>
+    <button class="game-card-btn" id="card-typeit"    onclick="switchGame('typeit',this)">
+      <span class="gc-emoji"></span>
+      <div class="gc-name">Type the Term</div>
+      <div class="gc-label">Type the definition</div>
+    </button>
+    <button class="game-card-btn" id="card-catch"     onclick="switchGame('catch',this)">
+      <span class="gc-emoji"></span>
+      <div class="gc-name">Catch the Parts</div>
+      <div class="gc-label">Basket catch arcade</div>
+    </button>
+    <button class="game-card-btn" id="card-rj45"      onclick="switchGame('rj45',this)">
+      <span class="gc-emoji"></span>
+      <div class="gc-name">RJ45 Colors</div>
+      <div class="gc-label">T568A / T568B wiring</div>
+    </button>
+  </div>
+
+  <!-- GAME 1: WORD SCRAMBLE -->
+  <div class="game-panel active" id="game-scramble">
+    <div class="game-box">
+      <div class="game-title"> Word Scramble</div>
+      <div class="game-desc">Unscramble the tech / computer term. Topics from COC 1–4!</div>
+      <div class="game-score-row">
+        <div class="game-score">Score: <span id="scramble-score">0</span></div>
+        <div class="game-score" style="background:var(--primary)">Round: <span id="scramble-round">1</span>/10</div>
+        <button class="game-btn danger" onclick="initScramble()">↺ New Game</button>
+      </div>
+      <div class="scramble-word" id="scramble-display">GDNLBOAT</div>
+      <div class="scramble-hint" id="scramble-hint"> Loading…</div>
+      <input class="scramble-input" id="scramble-input" maxlength="20" placeholder="TYPE YOUR ANSWER" oninput="checkScramble()" autocomplete="off">
+      <div class="scramble-feedback" id="scramble-feedback"></div> 
+    </div>
+  </div>
+
+  <!-- GAME 2: MEMORY MATCH -->
+  <div class="game-panel" id="game-memory">
+    <div class="game-box">
+      <div class="game-title"> Memory Match</div>
+      <div class="game-desc">Match tech terms with their emoji symbols. Flip cards to find pairs!</div>
+      <div class="game-score-row">
+        <div class="game-score">Moves: <span id="mem-moves">0</span></div>
+        <div class="game-score" style="background:var(--teal)"> <span id="mem-time">0</span>s</div>
+        <div class="game-score" style="background:#22C55E">Pairs: <span id="mem-pairs">0</span>/8</div>
+        <button class="game-btn danger" onclick="initMemory()">↺ New Game</button>
+      </div>
+      <div class="memory-grid" id="memory-grid"></div>
+    </div>
+  </div>
+
+  <!-- GAME 3: TRUE OR FALSE -->
+  <div class="game-panel" id="game-truefalse">
+    <div class="game-box">
+      <div class="game-title"> True or False — Rapid Fire!</div>
+      <div class="game-desc">10 tech questions, 8 seconds each. How many can you nail?</div>
+      <div class="game-score-row">
+        <div class="game-score">Score: <span id="tf-score">0</span>/10</div>
+        <div class="game-score" style="background:var(--teal)">Q: <span id="tf-qnum">1</span>/10</div>
+        <button class="game-btn danger" id="tf-start-btn" onclick="startTF()">▶ Start</button>
+      </div>
+      <div class="tf-progress-bar"><div class="tf-progress-fill" id="tf-timer-bar" style="width:100%"></div></div>
+      <div class="tf-question" id="tf-question">Press Start to begin the rapid fire round!</div>
+      <div class="tf-btns">
+        <button class="tf-btn tf-true"  id="tf-true-btn"  onclick="answerTF(true)"  disabled> TRUE</button>
+        <button class="tf-btn tf-false" id="tf-false-btn" onclick="answerTF(false)" disabled> FALSE</button>
+      </div>
+      <div class="tf-feedback" id="tf-feedback"></div>
+      <div class="game-results" id="tf-results">
+        <h3 id="tf-result-title"> Well Done!</h3>
+        <p  id="tf-result-msg">You scored 7/10!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- GAME 4: TYPE THE TERM -->
+  <div class="game-panel" id="game-typeit">
+    <div class="game-box">
+      <div class="game-title"> Type the Term</div>
+      <div class="game-desc">Read the definition and type the correct tech term. Case-insensitive!</div>
+      <div class="game-score-row">
+        <div class="game-score">Score: <span id="type-score">0</span></div>
+        <div class="game-score" style="background:#22C55E"> <span id="type-correct">0</span> correct</div>
+        <button class="game-btn danger" onclick="initTypeIt()">↺ New Game</button>
+      </div>
+      <div class="type-term-display" id="type-definition">Click New Game to start!</div>
+      <input class="type-input" id="type-input" placeholder="Type the term here and press Enter…"
+             onkeydown="if(event.key==='Enter')checkTypeIt()" autocomplete="off">
+      <div class="type-streak" style="margin-top:10px">
+        🔥 Streak: <span id="type-streak">0</span> &nbsp;|&nbsp;
+        ⏭ <button class="game-btn" style="padding:4px 12px;font-size:0.78rem" onclick="nextTypeIt()">Skip</button>
+      </div>
+      <div class="scramble-feedback" id="type-feedback"></div>
+    </div>
+  </div>
+
+  <!-- GAME 5: CATCH THE PARTS -->
+  <div class="game-panel" id="game-catch">
+    <div class="game-box">
+      <div class="game-title"> Catch the Computer Parts!</div>
+      <div class="game-desc">Move your basket to catch falling computer parts. Avoid virus &amp; junk! COC1–4 themed.</div>
+      <div class="catch-stats">
+        <div class="catch-stat">🏆 Score: <span id="catch-score">0</span></div>
+        <div class="catch-stat" id="catch-lives">❤️❤️❤️ Lives: 3</div>
+        <div class="catch-stat"> Level: <span id="catch-level">1</span></div>
+        <div class="catch-stat"> Caught: <span id="catch-caught">0</span></div>
+      </div>
+      <div id="catch-canvas-wrap">
+        <canvas id="catch-canvas"></canvas>
+        <div id="catch-label" style="opacity:0"></div>
+        <div id="catch-overlay">
+          <h3>🖥️ Catch the Parts!</h3>
+          <p>Use ← → arrow keys or mouse/touch to move your basket.<br>Catch  good parts, avoid  junk!</p>
+          <button class="game-btn" onclick="startCatch()">▶ Start Game</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GAME 6: RJ45 CABLE COLOR CODING -->
+  <div class="game-panel" id="game-rj45">
+    <div class="game-box">
+      <div class="game-title"> RJ45 UTP Cable Color Coding</div>
+      <div class="game-desc">Master T568A &amp; T568B wiring standards, then test your knowledge. COC2 topic!</div>
+
+      <div class="rj45-subtabs">
+        <button class="rj45-tab active" id="rj45-btn-visual"   onclick="switchRJ45('visual',this)"> Color Chart</button>
+        <button class="rj45-tab"        id="rj45-btn-dragdrop" onclick="switchRJ45('dragdrop',this)"> Drag &amp; Order</button>
+        <button class="rj45-tab"        id="rj45-btn-quiz"     onclick="switchRJ45('quiz',this)"> Wire Quiz</button>
+      </div>
+
+      <!-- Visual Reference -->
+      <div class="rj45-panel active" id="rj45-visual">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+          <button class="rj45-tab active" id="std-btn-a" onclick="showStandard('A',this)">T568-A</button>
+          <button class="rj45-tab"        id="std-btn-b" onclick="showStandard('B',this)">T568-B</button>
+        </div>
+        <div id="cable-visual-display"></div>
+        <div id="wire-legend" style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
+      </div>
+
+      <!-- Drag & Drop — toggle between T568A and T568B -->
+      <div class="rj45-panel" id="rj45-dragdrop">
+
+        <!-- Standard toggle buttons -->
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+          <span style="font-weight:700;font-size:0.82rem;color:var(--text-muted)">Choose standard:</span>
+          <button class="dd-toggle-btn active-b" id="dd-btn-b" onclick="switchDDStd('B')">T568-B</button>
+          <button class="dd-toggle-btn"          id="dd-btn-a" onclick="switchDDStd('A')">T568-A</button>
+        </div>
+
+        <!-- T568-B section -->
+        <div id="dd-section-b">
+          <p style="font-weight:700;color:var(--navy);margin-bottom:10px"> Drag the wires into the correct <strong>T568-B</strong> pin order (Pin 1 → 8)</p>
+          <div class="drag-bank" id="drag-bank-b"></div>
+          <div class="drop-slots" id="drop-slots-b"></div>
+          <div style="display:flex;gap:10px;margin-top:12px;align-items:center;flex-wrap:wrap">
+            <button class="game-btn"        onclick="checkDragDrop('B')"> Check Order</button>
+            <button class="game-btn danger" onclick="initDragDrop('B')">↺ Reset</button>
+            <div class="scramble-feedback" id="dd-feedback-b" style="flex:1"></div>
+          </div>
+        </div>
+
+        <!-- T568-A section (hidden by default) -->
+        <div id="dd-section-a" style="display:none">
+          <p style="font-weight:700;color:var(--navy);margin-bottom:10px"> Drag the wires into the correct <strong>T568-A</strong> pin order (Pin 1 → 8)</p>
+          <div class="drag-bank" id="drag-bank-a"></div>
+          <div class="drop-slots" id="drop-slots-a"></div>
+          <div style="display:flex;gap:10px;margin-top:12px;align-items:center;flex-wrap:wrap">
+            <button class="game-btn"        onclick="checkDragDrop('A')"> Check Order</button>
+            <button class="game-btn danger" onclick="initDragDrop('A')">↺ Reset</button>
+            <div class="scramble-feedback" id="dd-feedback-a" style="flex:1"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Wire Quiz -->
+      <div class="rj45-panel" id="rj45-quiz">
+        <div class="game-score-row" style="margin-bottom:12px">
+          <div class="game-score">Score: <span id="rj-score">0</span></div>
+          <div class="game-score" style="background:var(--teal)">Q: <span id="rj-qnum">1</span>/10</div>
+          <button class="game-btn danger" onclick="initWireQuiz()">↺ New Quiz</button>
+        </div>
+        <div class="wire-quiz-q" id="rj-question">Press New Quiz to begin!</div>
+        <div class="wire-opts"   id="rj-opts"></div>
+        <div class="scramble-feedback" id="rj-feedback" style="margin-top:10px;text-align:center"></div>
+        <div class="game-results" id="rj-results">
+          <h3 id="rj-result-title">🎉 Quiz Done!</h3>
+          <p  id="rj-result-msg">You scored 0/10!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function shuffle(arr){ return [...arr].sort(()=>Math.random()-0.5); }
+
+let toastTimer;
+function showToast(type, msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = `toast ${type} show`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 3500);
+}
+
+function switchGame(name, btn){
+  document.querySelectorAll('.game-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.game-card-btn').forEach(b=>b.classList.remove('active-card'));
+  document.getElementById('game-'+name).classList.add('active');
+  btn.classList.add('active-card');
+  window.scrollTo({top: document.querySelector('.game-cards-grid').offsetTop - 20, behavior:'smooth'});
+}
+
+// WORD SCRAMBLE
+const scrambleWords = [
+  { word:'MOTHERBOARD',  hint:'Main circuit board connecting all computer components (COC1)' },
+  { word:'BANDWIDTH',    hint:'Maximum rate of data transfer across a network path (COC2)' },
+  { word:'FIREWALL',     hint:'Security system that monitors and controls network traffic (COC2)' },
+  { word:'DEFRAGMENT',   hint:'Reorganizes fragmented data on a hard disk (COC3/4)' },
+  { word:'PROCESSOR',    hint:'The brain of the computer that executes instructions (COC1)' },
+  { word:'ROUTER',       hint:'Device that forwards data packets between networks (COC2)' },
+  { word:'HEATSINK',     hint:'Absorbs and dissipates heat from the CPU (COC1/4)' },
+  { word:'PROTOCOL',     hint:'A set of rules governing data communication (COC2)' },
+  { word:'BIOS',         hint:'Firmware that initializes hardware during boot (COC1)' },
+  { word:'PARTITION',    hint:'Division of a hard drive into separate storage areas (COC1/3)' },
+  { word:'SUBNET',       hint:'A logical subdivision of an IP network (COC2)' },
+  { word:'REGISTRY',     hint:'Windows database storing configuration settings (COC3)' },
+  { word:'ETHERNET',     hint:'Standard technology for wired LAN connections (COC2)' },
+  { word:'DRIVER',       hint:'Software allowing the OS to communicate with hardware (COC1)' },
+  { word:'CACHE',        hint:'Fast memory that stores frequently accessed data (COC1/3)' },
+];
+let scrambleList=[], scrambleIdx=0, scrambleScoreVal=0, scrambleAnswered=false;
+function scrambleStr(str){ let s; do{ s=shuffle(str.split('')).join(''); }while(s===str); return s; }
+function initScramble(){
+  scrambleList=shuffle(scrambleWords).slice(0,10); scrambleIdx=0; scrambleScoreVal=0;
+  document.getElementById('scramble-score').textContent=0;
+  document.getElementById('scramble-input').style.display='';
+  loadScrambleWord();
+}
+function loadScrambleWord(){
+  if(scrambleIdx>=scrambleList.length){
+    document.getElementById('scramble-display').textContent=' DONE!';
+    document.getElementById('scramble-hint').textContent=`Final score: ${scrambleScoreVal}/10 — ${scrambleScoreVal>=8?'🏆 Tech master!':scrambleScoreVal>=5?'👍 Good job!':'📚 Keep studying!'}`;
+    document.getElementById('scramble-input').style.display='none';
+    document.getElementById('scramble-feedback').textContent='';
+    if(CSS_BUDDY&&CSS_BUDDY.isLoggedIn())CSS_BUDDY.saveGameScore('wordScramble',scrambleScoreVal);
+    return;
+  }
+  const item=scrambleList[scrambleIdx];
+  document.getElementById('scramble-display').textContent=scrambleStr(item.word);
+  document.getElementById('scramble-hint').textContent=' '+item.hint;
+  document.getElementById('scramble-round').textContent=scrambleIdx+1;
+  document.getElementById('scramble-input').value='';
+  document.getElementById('scramble-input').className='scramble-input';
+  document.getElementById('scramble-feedback').textContent='';
+  scrambleAnswered=false; document.getElementById('scramble-input').focus();
+}
+function checkScramble(){
+  if(scrambleAnswered||scrambleIdx>=scrambleList.length)return;
+  const val=document.getElementById('scramble-input').value.toUpperCase().trim();
+  const answer=scrambleList[scrambleIdx].word;
+  if(val===answer){
+    scrambleAnswered=true;
+    document.getElementById('scramble-input').className='scramble-input correct';
+    document.getElementById('scramble-feedback').innerHTML='<span style="color:#16A34A"> Correct! +1</span>';
+    scrambleScoreVal++; document.getElementById('scramble-score').textContent=scrambleScoreVal;
+    scrambleIdx++; setTimeout(loadScrambleWord,900);
+  }else if(val.length===answer.length){
+    document.getElementById('scramble-input').className='scramble-input wrong';
+    document.getElementById('scramble-feedback').innerHTML=`<span style="color:#DC2626"> Wrong! Answer: <strong>${answer}</strong></span>`;
+    scrambleAnswered=true; scrambleIdx++;
+    setTimeout(()=>{ document.getElementById('scramble-input').className='scramble-input'; loadScrambleWord(); },1800);
+  }
+}
+
+// MEMORY MATCH
+const memPairs=[
+  {term:'💾', label:'Storage'},
+  {term:'🌐', label:'Network'},
+  {term:'🔌', label:'Power'},
+  {term:'🖥️', label:'Monitor'},
+  {term:'🧠', label:'CPU'},
+  {term:'📡', label:'Router'},
+  {term:'🔒', label:'Firewall'},
+  {term:'🔧', label:'Repair'},
+];
+let memFlipped=[],memMatched=0,memMoves=0,memLocked=false,memTimerInt=null,memSecs=0;
+function initMemory(){
+  clearInterval(memTimerInt); memFlipped=[]; memMatched=0; memMoves=0; memLocked=false; memSecs=0;
+  ['mem-moves','mem-pairs','mem-time'].forEach(id=>document.getElementById(id).textContent='0');
+  const cards=shuffle([...memPairs,...memPairs].map((p,i)=>({...p,id:i})));
+  document.getElementById('memory-grid').innerHTML=cards.map((c,i)=>`
+    <button class="mem-card" id="mc-${i}" data-label="${c.label}" onclick="flipCard(${i},'${c.label}')">
+      <div class="front"><span style="font-size:1.8rem;opacity:0.25">❓</span></div>
+      <div class="back">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+          <span class="mem-emoji">${c.term}</span>
+          <span class="mem-label">${c.label}</span>
+        </div>
+      </div>
+    </button>`).join('');
+  memTimerInt=setInterval(()=>{ memSecs++; document.getElementById('mem-time').textContent=memSecs; },1000);
+}
+function flipCard(idx,label){
+  if(memLocked)return;
+  const card=document.getElementById('mc-'+idx);
+  if(card.classList.contains('matched')||card.classList.contains('flipped'))return;
+  card.classList.add('flipped'); memFlipped.push({idx,label});
+  if(memFlipped.length===2){
+    memLocked=true; memMoves++; document.getElementById('mem-moves').textContent=memMoves;
+    const[a,b]=memFlipped;
+    if(a.label===b.label){
+      document.getElementById('mc-'+a.idx).classList.add('matched');
+      document.getElementById('mc-'+b.idx).classList.add('matched');
+      memMatched++; document.getElementById('mem-pairs').textContent=memMatched;
+      memFlipped=[]; memLocked=false;
+      if(memMatched===8){ clearInterval(memTimerInt); showToast('success',` All pairs matched in ${memMoves} moves & ${memSecs}s!`); }
+    }else{
+      document.getElementById('mc-'+a.idx).classList.add('wrong-flash');
+      document.getElementById('mc-'+b.idx).classList.add('wrong-flash');
+      setTimeout(()=>{ [a.idx,b.idx].forEach(i=>{ const c=document.getElementById('mc-'+i); c.classList.remove('flipped','wrong-flash'); }); memFlipped=[]; memLocked=false; },900);
+    }
+  }
+}
+
+// TRUE OR FALSE
+const tfQuestions=[
+  {q:'COC1: A CPU socket and a RAM slot are the same thing on a motherboard.',a:false},
+  {q:'COC2: The default subnet mask for a Class C network is 255.255.255.0.',a:true},
+  {q:'COC1: SATA is faster than NVMe (M.2) for SSD connections.',a:false},
+  {q:'COC3: The Blue Screen of Death (BSOD) usually indicates a hardware or driver error.',a:true},
+  {q:'COC2: A switch operates at the Network Layer (Layer 3) of the OSI model.',a:false},
+  {q:'COC4: Thermal paste should be reapplied when a CPU heatsink is removed.',a:true},
+  {q:'COC1: A 64-bit OS can run on a 32-bit processor.',a:false},
+  {q:'COC2: DHCP automatically assigns IP addresses to devices on a network.',a:true},
+  {q:'COC3: Defragmentation is recommended for Solid State Drives (SSDs).',a:false},
+  {q:'COC4: ESD (Electrostatic Discharge) can permanently damage computer components.',a:true},
+  {q:'COC1: DDR4 RAM is backward compatible with DDR3 motherboard slots.',a:false},
+  {q:'COC2: A firewall can be either hardware-based or software-based.',a:true},
+  {q:'COC3: Running CHKDSK on a drive can help fix file system errors.',a:true},
+  {q:'COC4: Capacitors on a motherboard can store charge even when the PC is unplugged.',a:true},
+  {q:'COC1: The BIOS/UEFI settings are lost when the computer is turned off.',a:false},
+];
+let tfList=[],tfIdx=0,tfScoreVal=0,tfRunning=false,tfTimerInt=null,tfTimeLeft=8;
+function startTF(){
+  tfList=shuffle(tfQuestions).slice(0,10); tfIdx=0; tfScoreVal=0; tfRunning=true;
+  document.getElementById('tf-score').textContent=0;
+  document.getElementById('tf-results').classList.remove('show');
+  document.getElementById('tf-start-btn').textContent='↺ Restart';
+  loadTFQuestion();
+}
+function loadTFQuestion(){
+  if(tfIdx>=tfList.length){endTF();return;}
+  clearInterval(tfTimerInt); tfTimeLeft=8;
+  document.getElementById('tf-qnum').textContent=tfIdx+1;
+  document.getElementById('tf-question').textContent=tfList[tfIdx].q;
+  document.getElementById('tf-feedback').textContent='';
+  document.getElementById('tf-true-btn').disabled=false;
+  document.getElementById('tf-false-btn').disabled=false;
+  document.getElementById('tf-timer-bar').style.width='100%';
+  document.getElementById('tf-timer-bar').style.background='var(--primary)';
+  tfTimerInt=setInterval(()=>{
+    tfTimeLeft-=0.1;
+    document.getElementById('tf-timer-bar').style.width=(tfTimeLeft/8*100)+'%';
+    if(tfTimeLeft<=2)document.getElementById('tf-timer-bar').style.background='#EF4444';
+    if(tfTimeLeft<=0){clearInterval(tfTimerInt);timeOutTF();}
+  },100);
+}
+function answerTF(answer){
+  if(!tfRunning)return;
+  clearInterval(tfTimerInt);
+  document.getElementById('tf-true-btn').disabled=true;
+  document.getElementById('tf-false-btn').disabled=true;
+  const correct=tfList[tfIdx].a;
+  if(answer===correct){ tfScoreVal++; document.getElementById('tf-score').textContent=tfScoreVal; document.getElementById('tf-feedback').innerHTML='<span style="color:#16A34A;font-size:1.1rem"> Correct!</span>'; }
+  else { document.getElementById('tf-feedback').innerHTML=`<span style="color:#DC2626;font-size:1.1rem"> Wrong! Answer: <strong>${correct?'TRUE':'FALSE'}</strong></span>`; }
+  tfIdx++; setTimeout(loadTFQuestion,1200);
+}
+function timeOutTF(){
+  document.getElementById('tf-true-btn').disabled=true; document.getElementById('tf-false-btn').disabled=true;
+  document.getElementById('tf-feedback').innerHTML='<span style="color:#F97316;font-size:1.1rem"> Time\'s up!</span>';
+  tfIdx++; setTimeout(loadTFQuestion,1000);
+}
+function endTF(){
+  tfRunning=false; document.getElementById('tf-true-btn').disabled=true; document.getElementById('tf-false-btn').disabled=true;
+  document.getElementById('tf-question').textContent='🏁 Round complete!'; document.getElementById('tf-feedback').textContent='';
+  const res=document.getElementById('tf-results'); res.classList.add('show');
+  const pct=Math.round(tfScoreVal/10*100);
+  document.getElementById('tf-result-title').textContent=pct>=80?' Outstanding!':pct>=60?' Good Job!':' Keep Studying!';
+  document.getElementById('tf-result-msg').textContent=`You scored ${tfScoreVal}/10 (${pct}%). ${pct>=80?'You really know your COC topics!':'Review your notes and try again!'}`;
+  if(CSS_BUDDY&&CSS_BUDDY.isLoggedIn())CSS_BUDDY.saveGameScore('trueOrFalse',tfScoreVal);
+}
+
+// TYPE THE TERM
+const typeTerms=[
+  {def:'COC1: The main circuit board that connects the CPU, RAM, storage, and other components.',term:'MOTHERBOARD'},
+  {def:'COC2: A device that connects multiple devices on a LAN and forwards data based on MAC addresses.',term:'SWITCH'},
+  {def:'COC1: Non-volatile memory that stores firmware used to initialize hardware during the boot process.',term:'BIOS'},
+  {def:'COC3: A diagnostic process to identify and resolve hardware or software problems in a computer.',term:'TROUBLESHOOTING'},
+  {def:'COC4: The process of cleaning, updating, and optimizing a computer to keep it running efficiently.',term:'MAINTENANCE'},
+  {def:'COC2: A set of rules that determines how data is transmitted between devices over a network.',term:'PROTOCOL'},
+  {def:'COC1: Volatile memory that temporarily stores data being actively used by the CPU.',term:'RAM'},
+  {def:'COC4: A component that absorbs and dissipates heat away from the processor.',term:'HEATSINK'},
+  {def:'COC2: A network security system that monitors and controls incoming and outgoing network traffic.',term:'FIREWALL'},
+  {def:'COC3: The process of reinstalling the OS to restore a computer to working condition.',term:'REIMAGING'},
+  {def:'COC1: Software that allows the operating system to communicate with hardware devices.',term:'DRIVER'},
+  {def:'COC2: A unique identifier assigned to a network interface controller for communications.',term:'MAC ADDRESS'},
+  {def:'COC3: A Windows tool that scans and repairs errors on a hard disk or file system.',term:'CHKDSK'},
+  {def:'COC4: Static electricity that can damage sensitive electronic components.',term:'ESD'},
+  {def:'COC2: A protocol that automatically assigns IP addresses to devices on a network.',term:'DHCP'},
+];
+let typeList=[],typeIdx=0,typeScoreVal=0,typeCorrectVal=0,typeStreakVal=0;
+function initTypeIt(){
+  typeList=shuffle(typeTerms); typeIdx=0; typeScoreVal=0; typeCorrectVal=0; typeStreakVal=0;
+  ['type-score','type-correct','type-streak'].forEach(id=>document.getElementById(id).textContent=0);
+  document.getElementById('type-input').value=''; document.getElementById('type-input').className='type-input';
+  document.getElementById('type-feedback').textContent=''; loadTypeWord();
+}
+function loadTypeWord(){
+  if(typeIdx>=typeList.length)typeIdx=0;
+  document.getElementById('type-definition').textContent=typeList[typeIdx].def;
+  document.getElementById('type-input').value=''; document.getElementById('type-input').className='type-input';
+  document.getElementById('type-feedback').textContent=''; document.getElementById('type-input').focus();
+}
+function checkTypeIt(){
+  const val=document.getElementById('type-input').value.trim().toUpperCase();
+  const answer=typeList[typeIdx].term.toUpperCase();
+  if(!val)return;
+  if(val===answer){
+    document.getElementById('type-input').className='type-input correct';
+    typeScoreVal+=10+typeStreakVal; typeCorrectVal++; typeStreakVal++;
+    document.getElementById('type-score').textContent=typeScoreVal;
+    document.getElementById('type-correct').textContent=typeCorrectVal;
+    document.getElementById('type-streak').textContent=typeStreakVal;
+    document.getElementById('type-feedback').innerHTML=`<span style="color:#16A34A"> Correct! +${10+typeStreakVal-1}pts 🔥 Streak: ${typeStreakVal}</span>`;
+    typeIdx++; setTimeout(loadTypeWord,800);
+  }else{
+    document.getElementById('type-input').className='type-input wrong';
+    typeStreakVal=0; document.getElementById('type-streak').textContent=0;
+    document.getElementById('type-feedback').innerHTML='<span style="color:#DC2626">❌ Not quite! Try again or skip.</span>';
+    setTimeout(()=>document.getElementById('type-input').className='type-input',600);
+  }
+}
+function nextTypeIt(){ typeIdx++; typeStreakVal=0; document.getElementById('type-streak').textContent=0; loadTypeWord(); }
+
+// CATCH THE PARTS
+const CATCH_PARTS=[
+  {label:'CPU',emoji:'',good:true},{label:'RAM',emoji:'',good:true},{label:'GPU',emoji:'',good:true},
+  {label:'Motherboard',emoji:'',good:true},{label:'HDD',emoji:'',good:true},{label:'SSD',emoji:'',good:true},
+  {label:'Heatsink',emoji:'',good:true},{label:'PSU',emoji:'',good:true},{label:'NIC Card',emoji:'',good:true},
+  {label:'USB Hub',emoji:'',good:true},{label:'Router',emoji:'',good:true},{label:'Switch',emoji:'',good:true},
+  {label:'Virus!',emoji:'',good:false},{label:'Static!',emoji:'',good:false},{label:'Water!',emoji:'',good:false},
+  {label:'Malware',emoji:'',good:false},{label:'Dust!',emoji:'',good:false},{label:'Overheat',emoji:'',good:false},
+];
+let catchAnim;
+function startCatch(){
+  const wrap=document.getElementById('catch-canvas-wrap');
+  const canvas=document.getElementById('catch-canvas');
+  const overlay=document.getElementById('catch-overlay');
+  overlay.style.display='none';
+  canvas.width=wrap.clientWidth; canvas.height=wrap.clientHeight;
+  const W=canvas.width, H=canvas.height;
+  const ctx=canvas.getContext('2d');
+  const cs={score:0,lives:3,level:1,caught:0,basket:{x:W/2,w:100,h:18,speed:7},items:[],spawnTimer:0,spawnRate:75,keys:{},touchX:null,running:true,labelTimer:0};
+  document.getElementById('catch-score').textContent=0;
+  document.getElementById('catch-caught').textContent=0;
+  document.getElementById('catch-level').textContent=1;
+  document.getElementById('catch-lives').textContent='❤️❤️❤️ Lives: 3';
+  function spawnItem(){ const part=CATCH_PARTS[Math.floor(Math.random()*CATCH_PARTS.length)]; cs.items.push({x:48+Math.random()*(W-96),y:-36,speed:1.4+Math.random()*1.5+cs.level*0.35,...part,size:38}); }
+  function showLabel(text,color){ const lbl=document.getElementById('catch-label'); lbl.textContent=text; lbl.style.background=color; lbl.style.opacity=1; cs.labelTimer=65; }
+  function draw(){
+    if(!cs.running)return;
+    ctx.clearRect(0,0,W,H);
+    if(cs.keys['ArrowLeft']||cs.keys['a'])cs.basket.x-=cs.basket.speed;
+    if(cs.keys['ArrowRight']||cs.keys['d'])cs.basket.x+=cs.basket.speed;
+    if(cs.touchX!==null)cs.basket.x+=(cs.touchX-cs.basket.w/2-cs.basket.x)*0.2;
+    cs.basket.x=Math.max(0,Math.min(W-cs.basket.w,cs.basket.x));
+    if(++cs.spawnTimer>=cs.spawnRate){spawnItem();cs.spawnTimer=0;}
+    const bx=cs.basket.x, by=H-44;
+    ctx.fillStyle='#3B82F6'; ctx.beginPath(); ctx.roundRect(bx,by,cs.basket.w,cs.basket.h,8); ctx.fill();
+    ctx.fillStyle='#1D4ED8'; ctx.fillRect(bx+5,by+5,cs.basket.w-10,4);
+    cs.items=cs.items.filter(item=>{
+      item.y+=item.speed;
+      if(item.y+item.size>=by&&item.y<by+cs.basket.h&&item.x+item.size/2>bx&&item.x-item.size/2<bx+cs.basket.w){
+        if(item.good){ cs.score+=10; cs.caught++; document.getElementById('catch-score').textContent=cs.score; document.getElementById('catch-caught').textContent=cs.caught; showLabel(' '+item.label+' +10','rgba(34,197,94,0.9)'); if(cs.caught%10===0){cs.level++;cs.spawnRate=Math.max(28,cs.spawnRate-8);document.getElementById('catch-level').textContent=cs.level;showLabel('🚀 Level '+cs.level+'!','rgba(99,102,241,0.9)');} }
+        else{ cs.lives--; const hearts=['','❤️','❤️❤️','❤️❤️❤️'][cs.lives]||''; document.getElementById('catch-lives').textContent=hearts+' Lives: '+cs.lives; showLabel(''+item.label+'! -1 Life','rgba(239,68,68,0.9)'); if(cs.lives<=0){gameOver(cs);return false;} }
+        return false;
+      }
+      if(item.y>H+10)return false;
+      ctx.font=item.size+'px serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(item.emoji,item.x,item.y);
+      ctx.font='bold 9px Outfit,sans-serif'; ctx.fillStyle=item.good?'#86efac':'#fca5a5'; ctx.fillText(item.label,item.x,item.y+item.size/2+7);
+      return true;
+    });
+    if(cs.labelTimer>0&&--cs.labelTimer===0)document.getElementById('catch-label').style.opacity=0;
+    catchAnim=requestAnimationFrame(draw);
+  }
+  function gameOver(cs){ cs.running=false; cancelAnimationFrame(catchAnim); overlay.style.display='flex'; overlay.innerHTML=`<h3> Game Over!</h3><p>Score: <strong>${cs.score}</strong> | Caught: <strong>${cs.caught}</strong> parts | Level: <strong>${cs.level}</strong><br>${cs.score>=200?' Amazing technician skills!':cs.score>=100?' Good job!':' Study your COC1 parts list!'}</p><button class="game-btn" onclick="startCatch()" style="margin-top:10px">▶ Play Again</button>`; }
+  const kd=e=>{cs.keys[e.key]=true;}; const ku=e=>{cs.keys[e.key]=false;};
+  document.addEventListener('keydown',kd); document.addEventListener('keyup',ku);
+  wrap.addEventListener('mousemove',e=>{const r=wrap.getBoundingClientRect();cs.touchX=e.clientX-r.left;});
+  wrap.addEventListener('touchmove',e=>{e.preventDefault();const r=wrap.getBoundingClientRect();cs.touchX=e.touches[0].clientX-r.left;},{passive:false});
+  draw();
+}
+
+// RJ45 DATA
+const T568A=[
+  {pin:1,color:'White/Green',  hex:'#d4f5d4',stripe:true, pair:'3-1'},
+  {pin:2,color:'Green',        hex:'#22c55e',stripe:false,pair:'3-2'},
+  {pin:3,color:'White/Orange', hex:'#fed7aa',stripe:true, pair:'2-1'},
+  {pin:4,color:'Blue',         hex:'#3b82f6',stripe:false,pair:'1-1'},
+  {pin:5,color:'White/Blue',   hex:'#bfdbfe',stripe:true, pair:'1-2'},
+  {pin:6,color:'Orange',       hex:'#f97316',stripe:false,pair:'2-2'},
+  {pin:7,color:'White/Brown',  hex:'#e7d5b8',stripe:true, pair:'4-1'},
+  {pin:8,color:'Brown',        hex:'#92400e',stripe:false,pair:'4-2'},
+];
+const T568B=[
+  {pin:1,color:'White/Orange', hex:'#fed7aa',stripe:true, pair:'2-1'},
+  {pin:2,color:'Orange',       hex:'#f97316',stripe:false,pair:'2-2'},
+  {pin:3,color:'White/Green',  hex:'#d4f5d4',stripe:true, pair:'3-1'},
+  {pin:4,color:'Blue',         hex:'#3b82f6',stripe:false,pair:'1-1'},
+  {pin:5,color:'White/Blue',   hex:'#bfdbfe',stripe:true, pair:'1-2'},
+  {pin:6,color:'Green',        hex:'#22c55e',stripe:false,pair:'3-2'},
+  {pin:7,color:'White/Brown',  hex:'#e7d5b8',stripe:true, pair:'4-1'},
+  {pin:8,color:'Brown',        hex:'#92400e',stripe:false,pair:'4-2'},
+];
+
+function switchRJ45(name,btn){
+  document.querySelectorAll('.rj45-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.rj45-subtabs .rj45-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('rj45-'+name).classList.add('active');
+  btn.classList.add('active');
+  if(name==='visual'){ const a=document.getElementById('std-btn-a'); showStandard('A',a); }
+  if(name==='dragdrop'){ initDragDrop('B'); initDragDrop('A'); }
+  if(name==='quiz')initWireQuiz();
+}
+
+function showStandard(std,btn){
+  document.querySelectorAll('#rj45-visual .rj45-tab').forEach(t=>{t.classList.remove('active');t.style.background='';t.style.color='';t.style.borderColor='';});
+  btn.classList.add('active'); btn.style.background='var(--primary)'; btn.style.color='#fff'; btn.style.borderColor='var(--primary)';
+  const data=std==='A'?T568A:T568B;
+  document.getElementById('cable-visual-display').innerHTML=`<div class="cable-visual">${data.map(w=>`
+    <div class="wire-pin">
+      <div class="wire-block" style="background:${w.stripe?`repeating-linear-gradient(180deg,${w.hex} 0,${w.hex} 6px,#fff 6px,#fff 10px)`:w.hex}">${w.pin}</div>
+      <span class="wire-num">${w.pin}</span>
+    </div>`).join('')}</div>`;
+  document.getElementById('wire-legend').innerHTML=data.map(w=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg);border-radius:8px">
+      <div style="width:30px;height:30px;border-radius:5px;flex-shrink:0;border:1px solid rgba(0,0,0,0.15);background:${w.stripe?`repeating-linear-gradient(90deg,${w.hex} 0,${w.hex} 5px,#fff 5px,#fff 9px)`:w.hex}"></div>
+      <div>
+        <div style="font-weight:800;font-size:0.82rem;color:var(--navy)">Pin ${w.pin}: ${w.color}</div>
+        <div style="font-size:0.72rem;color:var(--text-muted)">Pair ${w.pair}</div>
+      </div>
+    </div>`).join('');
+}
+
+// DRAG & DROP — unified function for both standards
+function switchDDStd(std){
+  // Toggle button styles
+  document.getElementById('dd-btn-b').className = 'dd-toggle-btn' + (std==='B' ? ' active-b' : '');
+  document.getElementById('dd-btn-a').className = 'dd-toggle-btn' + (std==='A' ? ' active-a' : '');
+  // Show/hide sections
+  document.getElementById('dd-section-b').style.display = std==='B' ? '' : 'none';
+  document.getElementById('dd-section-a').style.display = std==='A' ? '' : 'none';
+}
+
+function initDragDrop(std){
+  const data = std==='A' ? T568A : T568B;
+  const suffix = std.toLowerCase();
+  const bankEl = document.getElementById('drag-bank-'+suffix);
+  const slotsEl = document.getElementById('drop-slots-'+suffix);
+  const fbEl = document.getElementById('dd-feedback-'+suffix);
+  if(!bankEl||!slotsEl) return;
+  if(fbEl) fbEl.textContent='';
+
+  const shuffled = shuffle([...data]);
+  bankEl.innerHTML = shuffled.map((w,i)=>`
+    <div class="drag-wire" id="dw-${suffix}-${i}" draggable="true" data-color="${w.color}" data-pin="${w.pin}"
+      style="background:${w.stripe?`repeating-linear-gradient(180deg,${w.hex} 0,${w.hex} 6px,#fff 6px,#fff 10px)`:w.hex};border-color:rgba(0,0,0,0.2)"
+      ondragstart="ddStart(event,'${suffix}',${i})" ondragend="ddEnd()">
+      <span style="font-size:0.52rem;text-align:center;padding:2px 3px;background:rgba(255,255,255,0.65);border-radius:3px;color:#000;max-width:36px;overflow:hidden">${w.color.replace('White/','W/')}</span>
+    </div>`).join('');
+
+  slotsEl.innerHTML = data.map((_,i)=>`
+    <div class="drop-slot" id="ds-${suffix}-${i}" data-idx="${i}" ondragover="ddOver(event)" ondrop="ddDrop(event,'${suffix}',${i})">
+      <span>${i+1}</span>
+    </div>`).join('');
+
+  addTouchDragForStd(suffix);
+}
+
+function ddStart(e, suffix, idx){
+  e.dataTransfer.setData('text/plain', JSON.stringify({suffix,idx}));
+  setTimeout(()=>document.getElementById(`dw-${suffix}-${idx}`)?.classList.add('dragging'),0);
+}
+function ddEnd(){ document.querySelectorAll('.drag-wire').forEach(w=>w.classList.remove('dragging')); }
+function ddOver(e){ e.preventDefault(); }
+function ddDrop(e, suffix, slotIdx){
+  e.preventDefault();
+  let payload; try{ payload=JSON.parse(e.dataTransfer.getData('text/plain')); }catch{ return; }
+  const{suffix:wSuffix,idx:wireIdx}=payload;
+  if(wSuffix!==suffix) return; // prevent cross-standard drops
+  const wire=document.getElementById(`dw-${suffix}-${wireIdx}`);
+  const slot=document.getElementById(`ds-${suffix}-${slotIdx}`);
+  if(!wire||!slot) return;
+  if(slot.firstElementChild&&slot.firstElementChild!==wire) document.getElementById(`drag-bank-${suffix}`).appendChild(slot.firstElementChild);
+  slot.innerHTML=''; slot.appendChild(wire); slot.classList.add('has-wire');
+}
+
+function checkDragDrop(std){
+  const data = std==='A' ? T568A : T568B;
+  const suffix = std.toLowerCase();
+  let correct=0;
+  data.forEach((w,i)=>{
+    const slot=document.getElementById(`ds-${suffix}-${i}`);
+    const wire=slot?slot.querySelector('.drag-wire'):null;
+    if(slot){ slot.classList.remove('correct-slot','wrong-slot'); }
+    if(wire){ if(parseInt(wire.dataset.pin)===w.pin){ slot.classList.add('correct-slot'); correct++; } else slot.classList.add('wrong-slot'); }
+  });
+  const fb=document.getElementById(`dd-feedback-${suffix}`);
+  if(correct===8){ fb.innerHTML=`<span style="color:#16A34A;font-weight:800"> Perfect! All 8 pins correct — T568-${std} mastered!</span>`; showToast('success',`🏆 Perfect RJ45 T568-${std} wiring!`); }
+  else fb.innerHTML=`<span style="color:#F97316;font-weight:700">⚠️ ${correct}/8 correct. 🟢=correct, 🔴=wrong pin.</span>`;
+}
+
+function addTouchDragForStd(suffix){
+  let touchWire=null;
+  document.querySelectorAll(`#drag-bank-${suffix} .drag-wire`).forEach(wire=>{
+    wire.addEventListener('touchstart',()=>{ touchWire=wire; },{passive:true});
+    wire.addEventListener('touchend',e=>{
+      if(!touchWire)return;
+      const touch=e.changedTouches[0];
+      const el=document.elementFromPoint(touch.clientX,touch.clientY);
+      const slot=el?.closest('.drop-slot');
+      if(slot){ if(slot.firstElementChild) document.getElementById(`drag-bank-${suffix}`).appendChild(slot.firstElementChild); slot.innerHTML=''; slot.appendChild(touchWire); slot.classList.add('has-wire'); }
+      touchWire=null;
+    });
+  });
+}
+
+// WIRE QUIZ
+const wireQuestions=[
+  {q:'In T568B, what color is Pin 1?',opts:['White/Orange','White/Green','Orange','Blue'],a:0,explain:'T568B starts with White/Orange on pin 1.'},
+  {q:'In T568B, what color is Pin 2?',opts:['Green','White/Orange','Orange','White/Green'],a:2,explain:'Pin 2 in T568B is solid Orange.'},
+  {q:'In T568A, what color is Pin 1?',opts:['White/Orange','White/Green','Green','Blue'],a:1,explain:'T568A starts with White/Green on pin 1.'},
+  {q:'Which pin is Blue in BOTH T568A and T568B?',opts:['Pin 3','Pin 4','Pin 5','Pin 6'],a:1,explain:'Pin 4 is solid Blue in both standards.'},
+  {q:'What color is Pin 6 in T568B?',opts:['White/Green','Orange','Green','Blue'],a:2,explain:'Pin 6 in T568B is solid Green.'},
+  {q:'In T568B, pins 1,2,3,6 are used for what?',opts:['PoE','10/100 Mbps Ethernet data','Telephone','USB signals'],a:1,explain:'Pins 1,2,3,6 carry data for 10/100 Mbps Ethernet.'},
+  {q:'What type of cable uses T568A on one end and T568B on the other?',opts:['Straight-through','Rollover','Crossover','Fiber optic'],a:2,explain:'A crossover cable uses different standards on each end.'},
+  {q:'What color is Pin 7 in both T568A and T568B?',opts:['White/Blue','Brown','White/Brown','Green'],a:2,explain:'Pin 7 is White/Brown in both standards.'},
+  {q:'A straight-through cable uses the SAME standard on:',opts:['Only one end','Both ends','Alternating ends','Neither end'],a:1,explain:'Straight-through cables use the same pinout on both ends.'},
+  {q:'In T568A, what color is Pin 3?',opts:['White/Orange','White/Green','Green','Orange'],a:0,explain:'Pin 3 in T568A is White/Orange.'},
+  {q:'How many wire pairs does an RJ45 connector use?',opts:['2 pairs','3 pairs','4 pairs','6 pairs'],a:2,explain:'RJ45 has 4 pairs (8 wires) total.'},
+  {q:'What color is Pin 8 in both standards?',opts:['White/Brown','Brown','Blue','Green'],a:1,explain:'Pin 8 is solid Brown in both T568A and T568B.'},
+  {q:'Which standard is most common in modern networks?',opts:['T568A','T568B','Both equally','EIA/TIA 232'],a:1,explain:'T568B is most widely deployed in commercial networks.'},
+  {q:'In T568B, what is Pin 4?',opts:['Green','Blue','White/Blue','Orange'],a:1,explain:'Pin 4 is solid Blue in T568B (same as T568A).'},
+  {q:'What does UTP stand for in UTP cable?',opts:['Universal Transfer Protocol','Unshielded Twisted Pair','Ultra Thin Polymer','Unified Termination Port'],a:1,explain:'UTP = Unshielded Twisted Pair — no metallic shielding.'},
+];
+let rjList=[],rjIdx=0,rjScore=0,rjAnswered=false;
+function initWireQuiz(){
+  rjList=shuffle(wireQuestions).slice(0,10); rjIdx=0; rjScore=0; rjAnswered=false;
+  document.getElementById('rj-score').textContent=0;
+  document.getElementById('rj-results').classList.remove('show');
+  document.getElementById('rj-feedback').textContent='';
+  loadWireQ();
+}
+function loadWireQ(){
+  if(rjIdx>=rjList.length){endWireQuiz();return;}
+  rjAnswered=false;
+  const q=rjList[rjIdx];
+  document.getElementById('rj-qnum').textContent=rjIdx+1;
+  document.getElementById('rj-question').textContent=q.q;
+  document.getElementById('rj-feedback').textContent='';
+  const colorMap={'White/Orange':'#fed7aa','Orange':'#f97316','White/Green':'#d4f5d4','Green':'#22c55e','Blue':'#3b82f6','White/Blue':'#bfdbfe','White/Brown':'#e7d5b8','Brown':'#92400e'};
+  document.getElementById('rj-opts').innerHTML=q.opts.map((opt,i)=>{
+    const dc=colorMap[opt]||'transparent'; const showDot=dc!=='transparent';
+    return `<button class="wire-opt" id="rjopt-${i}" onclick="answerWireQ(${i})">
+      ${showDot?`<div class="wire-dot" style="background:${opt.includes('White/')?`repeating-linear-gradient(90deg,${dc} 0,${dc} 4px,#fff 4px,#fff 8px)`:dc}"></div>`:''}
+      ${opt}</button>`;
+  }).join('');
+}
+function answerWireQ(i){
+  if(rjAnswered)return; rjAnswered=true;
+  const q=rjList[rjIdx];
+  document.querySelectorAll('.wire-opt').forEach(b=>b.style.pointerEvents='none');
+  document.getElementById('rjopt-'+i).classList.add(i===q.a?'correct-opt':'wrong-opt');
+  if(i!==q.a)document.getElementById('rjopt-'+q.a).classList.add('correct-opt');
+  if(i===q.a){rjScore++;document.getElementById('rj-score').textContent=rjScore;}
+  document.getElementById('rj-feedback').innerHTML=`<span style="color:${i===q.a?'#16A34A':'#DC2626'}">${i===q.a?'':''} ${q.explain}</span>`;
+  rjIdx++; setTimeout(loadWireQ,2000);
+}
+function endWireQuiz(){
+  const res=document.getElementById('rj-results'); res.classList.add('show');
+  const pct=Math.round(rjScore/10*100);
+  document.getElementById('rj-result-title').textContent=pct>=80?' Cable Expert!':pct>=60?' Good work!':' Review T568A/B!';
+  document.getElementById('rj-result-msg').textContent=`You scored ${rjScore}/10 (${pct}%). ${pct>=80?'You can crimp cables like a pro!':'Study the color charts and try again!'}`;
+  if(CSS_BUDDY&&CSS_BUDDY.isLoggedIn())CSS_BUDDY.saveGameScore('rj45Quiz',rjScore);
+}
+
+// INIT ON LOAD
+initScramble();
+initMemory();
+initTypeIt();
+(function(){ const t=localStorage.getItem('cssbuddy-theme'); if(t&&t!=='blue')document.documentElement.className='theme-'+t; })();
+setTimeout(()=>{
+  const a=document.getElementById('std-btn-a'); if(a)showStandard('A',a);
+  initDragDrop('B'); initDragDrop('A');
+  initWireQuiz();
+},120);
+</script>
+<script src="cssbuddy-shared.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  _cbInsertBackBtn('cb-back-btn', 'index.html', 'Back to Home');
+  CSS_BUDDY.buildThemePanel('cb-theme-panel-container');
+});
+window.onCBLogin = function(user, data) {
+  document.body.classList.remove('guest-mode');
+};
+window.onCBLogout = function() {
+  document.body.classList.add('guest-mode');
+};
+</script>
+</body>
+</html>
