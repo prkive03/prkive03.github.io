@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COC 4 – Maintain &amp; Repair Computer Systems and Networks | CSS Buddy</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #3B82F6; --primary-dark: #1D4ED8; --primary-light: #EFF6FF;
+    --navy: #1E293B; --bg: #E8EDF5; --text: #1E293B;
+    --text-muted: #64748B; --border: #E2E8F0; --card: #fff;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family:'Outfit',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+  nav {
+    background:var(--navy); padding:0 32px;
+    display:flex; align-items:center; justify-content:space-between;
+    height:68px; position:sticky; top:0; z-index:200;
+    box-shadow:0 2px 20px rgba(0,0,0,0.2);
+  }
+  .logo { font-size:1.6rem; font-weight:800; color:#fff; text-decoration:none; }
+  .logo span { color:var(--primary); transition:color .3s; }
+  .nav-links { display:flex; gap:4px; }
+  .nav-links a {
+    color:#94A3B8; text-decoration:none; padding:8px 14px;
+    border-radius:8px; font-weight:500; font-size:0.9rem; transition:all .2s;
+  }
+  .nav-links a:hover { color:#fff; background:rgba(255,255,255,.08); }
+
+  /* ── PAGE LOCK ── */
+  .page-lock {
+    display:none; position:fixed; inset:0; z-index:999;
+    background:rgba(5,18,45,0.60); backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    align-items:center; justify-content:center;
+  }
+  body.guest-mode .page-lock { display:flex; }
+  .page-lock-box {
+    background:#fff; border-radius:24px;
+    padding:44px 52px; text-align:center;
+    max-width:420px; width:90%;
+    box-shadow:0 24px 80px rgba(0,0,0,0.3);
+  }
+  .page-lock-box .lock-emoji { font-size:3.5rem; margin-bottom:14px; }
+  .page-lock-box h2 { font-size:1.4rem; font-weight:800; color:var(--navy); margin-bottom:8px; }
+  .page-lock-box p { color:var(--text-muted); font-size:0.9rem; line-height:1.65; margin-bottom:24px; }
+  .lock-divider { font-size:0.78rem; color:var(--text-muted); margin:4px 0; }
+  .lock-btn-primary {
+    width:100%; padding:13px 24px; background:var(--navy); color:#fff;
+    border:none; border-radius:12px; font-family:'Outfit',sans-serif;
+    font-weight:700; font-size:0.95rem; cursor:pointer; transition:all .2s;
+    margin-bottom:10px; display:block;
+  }
+  .lock-btn-primary:hover { background:var(--primary); }
+  .lock-btn-secondary {
+    width:100%; padding:11px 24px; background:transparent; color:var(--navy);
+    border:2px solid var(--navy); border-radius:12px; font-family:'Outfit',sans-serif;
+    font-weight:700; font-size:0.95rem; cursor:pointer; transition:all .2s; display:block;
+  }
+  .lock-btn-secondary:hover { background:#EFF6FF; border-color:var(--primary); color:var(--primary); }
+  .btn-login {
+    background:transparent; border:1.5px solid #fff; color:#fff;
+    padding:8px 20px; border-radius:20px; font-family:'Outfit',sans-serif;
+    font-weight:600; cursor:pointer; font-size:.9rem; transition:all .2s;
+  }
+  .btn-login:hover { background:#fff; color:var(--navy); }
+  .page-wrap { display:flex; max-width:1200px; margin:0 auto; padding:36px 24px; gap:28px; }
+  .main-col { flex:1; min-width:0; }
+  .toc-sidebar {
+    width:230px; flex-shrink:0;
+    position:sticky; top:88px; height:fit-content;
+    max-height:calc(100vh - 110px); overflow-y:auto;
+  }
+  .toc-card { background:var(--card); border-radius:16px; padding:18px; box-shadow:0 2px 12px rgba(0,0,0,.07); }
+  .toc-label { font-size:.75rem; font-weight:800; text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted); margin-bottom:12px; }
+  .toc-link {
+    display:block; padding:7px 10px; border-radius:9px; font-size:.83rem;
+    font-weight:600; color:var(--text-muted); cursor:pointer;
+    transition:all .2s; border-left:3px solid transparent;
+    margin-bottom:2px; text-decoration:none;
+  }
+  .toc-link:hover { background:var(--primary-light); color:var(--primary); border-left-color:var(--primary); }
+  .toc-link.active { background:var(--primary-light); color:var(--primary); border-left-color:var(--primary); }
+  .toc-sub { padding-left:22px; font-size:.79rem; }
+  .toc-divider { height:1px; background:var(--border); margin:8px 0; }
+  .hero {
+    background:linear-gradient(135deg, #1E293B 0%, #14532d 45%, #166534 100%);
+    border-radius:24px; padding:44px 48px; margin-bottom:28px;
+    position:relative; overflow:hidden;
+  }
+  .hero::after {
+    content:''; position:absolute; inset:0;
+    background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events:none;
+  }
+  .hero-badge {
+    display:inline-flex; align-items:center; gap:6px;
+    background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.2);
+    color:rgba(255,255,255,.9); padding:5px 14px; border-radius:20px;
+    font-size:.78rem; font-weight:700; letter-spacing:.5px; margin-bottom:16px;
+  }
+  .hero h1 { color:#fff; font-size:2.2rem; font-weight:900; line-height:1.25; margin-bottom:10px; }
+  .hero h1 span { color:#86EFAC; }
+  .hero-desc { color:rgba(255,255,255,.72); font-size:.97rem; line-height:1.7; max-width:580px; margin-bottom:28px; }
+  .obj-title { color:rgba(255,255,255,.55); font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:12px; }
+  .obj-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .obj-item {
+    background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12);
+    border-radius:12px; padding:12px 16px;
+    display:flex; align-items:flex-start; gap:10px;
+  }
+  .obj-icon { font-size:1.1rem; flex-shrink:0; margin-top:1px; }
+  .obj-text { color:rgba(255,255,255,.85); font-size:.84rem; font-weight:500; line-height:1.4; }
+  .hero-progress { margin-top:24px; }
+  .hp-row { display:flex; justify-content:space-between; color:rgba(255,255,255,.55); font-size:.78rem; font-weight:600; margin-bottom:6px; }
+  .hp-bar { background:rgba(255,255,255,.15); border-radius:20px; height:7px; }
+  .hp-fill { height:100%; border-radius:20px; background:linear-gradient(90deg,#4ADE80,#34D399); width:0%; transition:width 1.2s ease; }
+  .intro-note {
+    background:var(--card); border-radius:18px; padding:26px 28px;
+    border-left:5px solid #22C55E; margin-bottom:24px;
+    box-shadow:0 2px 12px rgba(0,0,0,.06);
+  }
+  .intro-note p { font-size:.95rem; line-height:1.8; color:var(--navy); }
+  .intro-note p + p { margin-top:10px; }
+  .section-card { background:var(--card); border-radius:20px; padding:32px; margin-bottom:24px; box-shadow:0 2px 12px rgba(0,0,0,.07); }
+  .section-header { display:flex; align-items:center; gap:14px; margin-bottom:24px; padding-bottom:18px; border-bottom:2px solid var(--border); }
+  .section-num {
+    width:44px; height:44px; border-radius:14px; background:var(--primary);
+    display:flex; align-items:center; justify-content:center;
+    color:#fff; font-weight:800; font-size:1.1rem; flex-shrink:0;
+  }
+  .section-num.green { background:#16A34A; }
+  .section-num.orange { background:#EA580C; }
+  .section-num.purple { background:#7C3AED; }
+  .section-num.teal { background:#0D9488; }
+  .section-num.red { background:#DC2626; }
+  .section-header-text h2 { font-size:1.25rem; font-weight:800; color:var(--navy); }
+  .section-header-text p { font-size:.83rem; color:var(--text-muted); margin-top:2px; }
+  .info-box { border-radius:14px; padding:16px 20px; margin:16px 0; display:flex; gap:14px; align-items:flex-start; }
+  .info-box.note  { background:#EFF6FF; border-left:4px solid #3B82F6; }
+  .info-box.tip   { background:#F0FDF4; border-left:4px solid #22C55E; }
+  .info-box.warn  { background:#FFFBEB; border-left:4px solid #F59E0B; }
+  .info-box.fun   { background:#FDF4FF; border-left:4px solid #A855F7; }
+  .info-box.danger{ background:#FEF2F2; border-left:4px solid #DC2626; }
+  .ib-icon { font-size:1.3rem; flex-shrink:0; margin-top:1px; }
+  .ib-body strong { display:block; font-size:.84rem; font-weight:700; margin-bottom:4px; }
+  .ib-body p, .ib-body ul { font-size:.87rem; line-height:1.65; }
+  .ib-body ul { margin-left:16px; }
+  .ib-body ul li { margin-bottom:3px; }
+  .comp-table { width:100%; border-collapse:collapse; border-radius:14px; overflow:hidden; margin-top:14px; }
+  .comp-table thead tr { background:var(--navy); }
+  .comp-table th { color:#fff; padding:13px 18px; text-align:left; font-size:.84rem; font-weight:700; }
+  .comp-table td { padding:12px 18px; font-size:.85rem; border-bottom:1px solid var(--border); vertical-align:top; line-height:1.5; }
+  .comp-table tbody tr:last-child td { border-bottom:none; }
+  .comp-table tbody tr:nth-child(even) td { background:#F8FAFC; }
+  .comp-table tbody tr:hover td { background:var(--primary-light); }
+  .td-label { font-weight:700; color:var(--navy); }
+  .step-list { list-style:none; margin:0; padding:0; }
+  .step-list li {
+    display:flex; gap:16px; align-items:flex-start;
+    padding:14px 0; border-bottom:1px solid var(--border); font-size:.93rem; line-height:1.6;
+  }
+  .step-list li:last-child { border-bottom:none; }
+  .step-num {
+    width:32px; height:32px; border-radius:50%; background:var(--primary);
+    color:#fff; font-weight:800; font-size:.82rem; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; margin-top:2px;
+  }
+  .step-num.green { background:#16A34A; }
+  .step-content { flex:1; }
+  .step-content strong { display:block; font-weight:700; color:var(--navy); margin-bottom:4px; }
+  .styled-list { list-style:none; margin:0; padding:0; }
+  .styled-list li {
+    padding:8px 0 8px 28px; border-bottom:1px solid var(--border);
+    font-size:.93rem; line-height:1.6; position:relative;
+  }
+  .styled-list li:last-child { border-bottom:none; }
+  .styled-list li::before { content:'›'; position:absolute; left:8px; color:var(--primary); font-weight:800; font-size:1.1rem; }
+  .checklist-table { width:100%; border-collapse:collapse; border-radius:14px; overflow:hidden; margin-top:14px; }
+  .checklist-table thead tr { background:var(--navy); }
+  .checklist-table th { color:#fff; padding:11px 18px; text-align:left; font-size:.84rem; font-weight:700; }
+  .checklist-table th:last-child, .checklist-table th:nth-last-child(2) { text-align:center; width:60px; }
+  .checklist-table td { padding:11px 18px; font-size:.88rem; border-bottom:1px solid var(--border); vertical-align:middle; }
+  .checklist-table tbody tr:nth-child(even) td { background:#F8FAFC; }
+  .checklist-table tbody tr:hover td { background:#F0FDF4; }
+  .check-yes { text-align:center; color:#16A34A; font-size:1.1rem; font-weight:800; }
+  .check-no  { text-align:center; color:#DC2626; font-size:1.1rem; font-weight:800; }
+  .check-empty { text-align:center; color:#CBD5E1; }
+  .done-row { display:flex; align-items:center; gap:10px; margin-top:18px; padding-top:16px; border-top:2px solid var(--border); }
+  .done-check { width:20px; height:20px; accent-color:#16A34A; cursor:pointer; }
+  .done-label { font-weight:600; font-size:.88rem; color:var(--text-muted); cursor:pointer; transition:color .2s; }
+  .done-label:hover { color:#16A34A; }
+  .cta-banner {
+    background:linear-gradient(135deg,#1E293B,#14532d);
+    border-radius:22px; padding:36px 40px; text-align:center; margin-top:8px;
+  }
+  .cta-banner h2 { color:#fff; font-size:1.5rem; font-weight:800; margin-bottom:8px; }
+  .cta-banner p { color:rgba(255,255,255,.65); margin-bottom:24px; font-size:.93rem; }
+  .cta-btns { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+  .btn-primary {
+    background:#16A34A; color:#fff; border:none;
+    padding:13px 28px; border-radius:14px; font-family:'Outfit',sans-serif;
+    font-weight:700; font-size:.95rem; cursor:pointer; transition:all .2s; text-decoration:none; display:inline-block;
+  }
+  .btn-primary:hover { background:#15803D; transform:translateY(-2px); box-shadow:0 8px 24px rgba(22,163,74,.35); }
+  .btn-secondary {
+    background:rgba(255,255,255,.1); color:#fff;
+    border:2px solid rgba(255,255,255,.3); padding:13px 28px; border-radius:14px;
+    font-family:'Outfit',sans-serif; font-weight:700; font-size:.95rem;
+    cursor:pointer; transition:all .2s; text-decoration:none; display:inline-block;
+  }
+  .btn-secondary:hover { background:rgba(255,255,255,.2); transform:translateY(-2px); }
+  .toast {
+    position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--navy); color:#fff; padding:12px 24px; border-radius:30px;
+    font-weight:600; font-size:.88rem; opacity:0; pointer-events:none;
+    transition:all .3s; z-index:9999;
+  }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+  .scroll-btns {
+    position:fixed; bottom:80px; right:24px;
+    display:flex; flex-direction:column; gap:8px; z-index:100;
+  }
+  .scroll-btn {
+    width:40px; height:40px; border-radius:50%; background:var(--navy); color:#fff;
+    border:none; cursor:pointer; font-size:1rem; box-shadow:0 2px 10px rgba(0,0,0,.25);
+    transition:all .2s;
+  }
+  .scroll-btn:hover { background:var(--primary); transform:scale(1.1); }
+
+  /* Video Card */
+  .video-grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:18px; }
+  .video-card {
+    border-radius:16px; overflow:hidden; border:2px solid var(--border);
+    box-shadow:0 2px 12px rgba(0,0,0,.07); background:var(--card);
+    transition:all .2s;
+  }
+  .video-card:hover { border-color:var(--primary); box-shadow:0 4px 20px rgba(59,130,246,.15); }
+  .video-thumb {
+    position:relative; padding-top:56.25%; background:#0F172A; cursor:pointer;
+    overflow:hidden;
+  }
+  .video-thumb iframe { position:absolute; top:0; left:0; width:100%; height:100%; border:none; }
+  .video-info { padding:14px 16px; }
+  .video-info h4 { font-size:.9rem; font-weight:700; color:var(--navy); margin-bottom:4px; line-height:1.4; }
+  .video-info p { font-size:.78rem; color:var(--text-muted); }
+  .video-tag {
+    display:inline-block; background:var(--primary-light); color:var(--primary-dark);
+    font-size:.72rem; font-weight:700; padding:2px 10px; border-radius:8px; margin-bottom:6px;
+  }
+
+  /* Definition cards */
+  .def-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:16px; }
+  .def-card {
+    background:#F8FAFC; border-radius:14px; padding:18px 20px;
+    border-top:4px solid var(--primary); transition:all .2s;
+  }
+  .def-card:hover { background:var(--primary-light); }
+  .def-card h4 { font-size:.92rem; font-weight:800; color:var(--navy); margin-bottom:6px; font-family:'JetBrains Mono',monospace; }
+  .def-card p { font-size:.84rem; line-height:1.6; color:#475569; }
+  .def-card.green { border-top-color:#16A34A; }
+  .def-card.orange { border-top-color:#EA580C; }
+  .def-card.purple { border-top-color:#7C3AED; }
+  .def-card.teal { border-top-color:#0D9488; }
+
+  /* Key term highlight */
+  .kw { background:#EFF6FF; color:var(--primary-dark); padding:1px 7px; border-radius:5px; font-weight:700; font-family:'JetBrains Mono',monospace; font-size:.85em; }
+  .kw.green { background:#F0FDF4; color:#15803D; }
+  .kw.orange { background:#FFF7ED; color:#C2410C; }
+
+  /* Flashcard-style reviewer */
+  .reviewer-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:16px; }
+  .reviewer-card {
+    border-radius:14px; padding:18px; border:2px solid var(--border);
+    cursor:pointer; transition:all .25s; background:var(--card); position:relative;
+  }
+  .reviewer-card:hover { border-color:var(--primary); transform:translateY(-2px); box-shadow:0 8px 20px rgba(0,0,0,.1); }
+  .rc-q { font-size:.88rem; font-weight:700; color:var(--navy); margin-bottom:8px; }
+  .rc-a { font-size:.84rem; color:var(--text-muted); line-height:1.55; }
+  .rc-badge { position:absolute; top:10px; right:12px; font-size:.68rem; font-weight:800; padding:2px 8px; border-radius:6px; }
+  .rc-badge.blue { background:var(--primary-light); color:var(--primary-dark); }
+  .rc-badge.green { background:#F0FDF4; color:#15803D; }
+
+  @media (max-width:860px) {
+    .page-wrap { flex-direction:column; }
+    .toc-sidebar { width:100%; position:static; max-height:none; }
+    .obj-grid, .def-grid, .reviewer-grid, .video-grid { grid-template-columns:1fr; }
+    .hero { padding:30px 24px; }
+  }
+
+  /* ── MOBILE RESPONSIVE ── */
+  @media(max-width:768px){
+    .page-wrap{flex-direction:column!important;padding:14px!important;gap:14px!important}
+    .toc-sidebar{width:100%!important;position:relative!important;top:0!important;max-height:220px;overflow-y:auto}
+    .hero{padding:22px 16px!important}
+    .hero h1{font-size:1.35rem!important}
+    .scroll-btns{bottom:80px!important;right:12px!important}
+    .card{padding:22px 16px}
+    .section-card-body{padding:14px 16px}
+  }
+  @media(max-width:480px){.hero h1{font-size:1.2rem!important}}
+</style>
+</head>
+<body class="guest-mode">
+
+<!-- ══ PAGE LOCK (Login gate) ══ -->
+<div class="page-lock" id="page-lock">
+  <div class="page-lock-box">
+    <div class="lock-emoji">🔒</div>
+    <h2>Login to Access COC 4</h2>
+    <p>Create a free account or login to access the COC 4 reviewer. You must also complete COC 3 first to unlock this module.</p>
+    <button class="lock-btn-primary" onclick="CSS_BUDDY.openModal('login')">Login to my account</button>
+    <div class="lock-divider">— or —</div>
+    <button class="lock-btn-secondary" onclick="CSS_BUDDY.openModal('register')">Register with Gmail</button>
+  </div>
+</div>
+
+<!-- ══ COC 3 REQUIRED LOCK (shown when logged in but COC 3 not done) ══ -->
+<div id="coc3-required-lock" style="display:none;position:fixed;inset:0;z-index:998;background:rgba(5,18,45,0.65);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:24px;padding:44px 52px;text-align:center;max-width:420px;width:90%;box-shadow:0 24px 80px rgba(0,0,0,0.3);">
+    <div style="font-size:3.5rem;margin-bottom:14px;">🔒</div>
+    <h2 style="font-size:1.4rem;font-weight:800;color:var(--navy);margin-bottom:8px;">COC 4 is Locked</h2>
+    <p id="coc3-lock-sub" style="color:var(--text-muted);font-size:0.9rem;line-height:1.65;margin-bottom:24px;">You need to complete the COC 3 reviewer (100%) first before unlocking COC 4.</p>
+    <a href="coc3.html" style="display:block;width:100%;padding:13px 24px;background:var(--navy);color:#fff;border:none;border-radius:12px;font-family:'Outfit',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;text-decoration:none;margin-bottom:10px;">Go to COC 3 Reviewer →</a>
+  </div>
+</div>
+
+<!-- ══ NAVIGATION ══ -->
+<nav>
+  <a class="logo" href="index.html">CSS<span>Buddy</span></a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="quiz.html">Quiz</a>
+    <a href="flashcards.html">Flashcards</a>
+    <a href="funfacts.html">Fun Facts</a>
+    <a href="icebreaker.html">Ice Breaker</a>
+  </div>
+  <div class="nav-coc-links" style="display:flex;gap:4px;margin-left:8px;">
+    <a href="coc1.html" style="display:flex;align-items:center;gap:5px;padding:5px 11px;border-radius:6px;font-size:.8rem;font-weight:700;background:rgba(255,255,255,.18);color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.25);">✅ COC 1</a>
+    <span id="nav-coc2-link" style="display:flex;align-items:center;gap:5px;padding:5px 11px;border-radius:6px;font-size:.8rem;font-weight:700;background:rgba(0,0,0,.25);color:rgba(255,255,255,.45);cursor:not-allowed;border:1px solid rgba(255,255,255,.1);">🔒 COC 2</span>
+    <span id="nav-coc3-link" style="display:flex;align-items:center;gap:5px;padding:5px 11px;border-radius:6px;font-size:.8rem;font-weight:700;background:rgba(0,0,0,.25);color:rgba(255,255,255,.45);cursor:not-allowed;border:1px solid rgba(255,255,255,.1);">🔒 COC 3</span>
+    <span id="nav-coc4-link" style="display:flex;align-items:center;gap:5px;padding:5px 11px;border-radius:6px;font-size:.8rem;font-weight:700;background:rgba(255,255,255,.18);color:#fff;cursor:default;border:1px solid rgba(255,255,255,.25);">📖 COC 4</span>
+  </div>
+  <button class="btn-login" id="loginBtn">Log In</button>
+</nav>
+
+<div class="page-wrap">
+
+  <!-- TABLE OF CONTENTS -->
+  <aside class="toc-sidebar">
+    <div class="toc-card">
+      <div class="toc-label">📋 On This Page</div>
+      <a class="toc-link" href="#overview">🏠 Overview</a>
+      <a class="toc-link" href="#lo5-overview">📌 LO 5 Summary</a>
+      <div class="toc-divider"></div>
+      <a class="toc-link" href="#quality-inspection">🔍 Quality Inspection</a>
+      <a class="toc-link toc-sub" href="#powering-on">Power & Devices</a>
+      <a class="toc-link toc-sub" href="#cables">Cable Check</a>
+      <div class="toc-divider"></div>
+      <a class="toc-link" href="#network-comms">🌐 Network Testing</a>
+      <a class="toc-link toc-sub" href="#tcpip">TCP/IP Settings</a>
+      <a class="toc-link toc-sub" href="#burnin">Burn In / Bathtub</a>
+      <div class="toc-divider"></div>
+      <a class="toc-link" href="#report">📝 Report Making</a>
+      <a class="toc-link" href="#checklist">✅ Job Checklist</a>
+      <div class="toc-divider"></div>
+      <a class="toc-link" href="#videos">🎬 Watch & Learn</a>
+      <a class="toc-link" href="#coc4-cta">🏁 Finish</a>
+    </div>
+    <div class="toc-card" style="margin-top:14px;">
+      <div class="toc-label">📊 My Progress</div>
+      <div class="hp-row" style="color:var(--text-muted)">
+        <span>COC 4 Progress</span>
+        <span id="progressPct">0%</span>
+      </div>
+      <div class="hp-bar">
+        <div class="hp-fill" id="progressFill"></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-col">
+
+    <!-- ══════════════════════════════
+         HERO
+    ══════════════════════════════ -->
+    <section class="hero" id="overview">
+      <div class="hero-badge">🛠️ COC 4 &nbsp;|&nbsp; LO 5 &nbsp;|&nbsp; Reviewer</div>
+      <h1>Maintain &amp; Repair<br><span>Computer Systems and Networks</span></h1>
+      <p class="hero-desc">
+        This module covers the knowledge, skills, and attitudes needed to maintain and service computer systems and networks — 40 hours nominal duration under TESDA CSS NC II.
+      </p>
+      <div class="obj-title">⚡ Learning Outcomes</div>
+      <div class="obj-grid">
+        <div class="obj-item"><span class="obj-icon">📋</span><span class="obj-text">Plan &amp; prepare for maintenance and repair</span></div>
+        <div class="obj-item"><span class="obj-icon">🖥️</span><span class="obj-text">Maintain computer systems and networks</span></div>
+        <div class="obj-item"><span class="obj-icon">🔎</span><span class="obj-text">Diagnose faults of computer systems and networks</span></div>
+        <div class="obj-item"><span class="obj-icon">🔧</span><span class="obj-text">Rectify/correct defects in systems and networks</span></div>
+        <div class="obj-item" style="grid-column:1/-1; border:2px solid rgba(134,239,172,.4);"><span class="obj-icon">✅</span><span class="obj-text"><strong>LO 5 — Inspect and Test the computer systems and networks</strong> (focus of this reviewer)</span></div>
+      </div>
+      <div class="hero-progress">
+        <div class="hp-row"><span>Your Progress</span><span id="progressPct2">0%</span></div>
+        <div class="hp-bar"><div class="hp-fill" id="progressFill2"></div></div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════
+         LO5 OVERVIEW
+    ══════════════════════════════ -->
+    <section class="section-card" id="lo5-overview">
+      <div class="section-header">
+        <div class="section-num green">📌</div>
+        <div class="section-header-text">
+          <h2>Learning Outcome 5 — At a Glance</h2>
+          <p>Assessment criteria, conditions, and methodologies from the module</p>
+        </div>
+      </div>
+
+      <div class="info-box note">
+        <span class="ib-icon">📖</span>
+        <div class="ib-body">
+          <strong>Module Context</strong>
+          <p>LO 5 is the <em>final</em> learning outcome in COC 4. By the time you reach this stage, you should have already completed LOs 1–4. This LO serves as a final inspection checklist to confirm you can properly inspect and test the configured/repaired computer system and networks.</p>
+        </div>
+      </div>
+
+      <h3 style="font-size:1rem;font-weight:800;color:var(--navy);margin:20px 0 10px;">📋 Contents of LO 5</h3>
+      <ol class="step-list">
+        <li>
+          <div class="step-num green">1</div>
+          <div class="step-content">
+            <strong>Possible Computer Systems and Networks Faults and Problems</strong>
+            Identifying common issues encountered during maintenance and after repair.
+          </div>
+        </li>
+        <li>
+          <div class="step-num green">2</div>
+          <div class="step-content">
+            <strong>Diagnostic Procedures</strong>
+            Systematic methods for testing and verifying system and network functionality.
+          </div>
+        </li>
+        <li>
+          <div class="step-num green">3</div>
+          <div class="step-content">
+            <strong>Computer Hardware Issues</strong>
+            Recognizing hardware-level faults and addressing them appropriately.
+          </div>
+        </li>
+      </ol>
+
+      <h3 style="font-size:1rem;font-weight:800;color:var(--navy);margin:20px 0 10px;">🎯 Assessment Criteria</h3>
+      <ul class="styled-list">
+        <li>Undertake final inspections to ensure testing conforms with the manufacturer's instruction/manual</li>
+        <li>Check/Test computer systems and networks to ensure safe operation</li>
+        <li>Follow OHS standards and 5S principles according to enterprise policies</li>
+        <li>Clean and clear work site of all debris in accordance with company procedures</li>
+        <li>Dispose of excess components based on WEEE directives and 3Rs waste management program</li>
+        <li>Prepare and complete a report according to company requirements</li>
+      </ul>
+
+      <h3 style="font-size:1rem;font-weight:800;color:var(--navy);margin:20px 0 10px;">🧰 Required Equipment / Tools</h3>
+      <table class="comp-table">
+        <thead><tr><th>#</th><th>Equipment / Tool</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td class="td-label">Personal Protective Equipment (PPE)</td><td>Safety during repair and maintenance</td></tr>
+          <tr><td>2</td><td class="td-label">Laptop / Desktop / Server Computer</td><td>Device under test</td></tr>
+          <tr><td>3</td><td class="td-label">Routers &amp; Access Point</td><td>Network connectivity testing</td></tr>
+          <tr><td>4</td><td class="td-label">Printer</td><td>Verify network printing capability</td></tr>
+          <tr><td>5</td><td class="td-label">Multi-meter</td><td>Electrical/voltage testing</td></tr>
+          <tr><td>6</td><td class="td-label">Calibrators</td><td>Calibration of instruments</td></tr>
+          <tr><td>7</td><td class="td-label">Screw drivers (assorted)</td><td>Hardware access and reassembly</td></tr>
+          <tr><td>8</td><td class="td-label">LAN Tester</td><td>Test cable continuity and wiring</td></tr>
+          <tr><td>9</td><td class="td-label">Appropriate software</td><td>Diagnostic and testing tools</td></tr>
+          <tr><td>10</td><td class="td-label">Flashlight</td><td>Inspecting dark/enclosed areas</td></tr>
+        </tbody>
+      </table>
+
+      <div class="done-row">
+        <input type="checkbox" class="done-check" id="chk-lo5" onchange="markDone('lo5',this)">
+        <label class="done-label" for="chk-lo5">✅ I understand the scope and assessment criteria of LO 5</label>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════
+         QUALITY INSPECTION
+    ══════════════════════════════ -->
+    <section class="section-card" id="quality-inspection">
+      <div class="section-header">
+        <div class="section-num">🔍</div>
+        <div class="section-header-text">
+          <h2>Quality Inspection of Computer Systems</h2>
+          <p>Steps to ensure a maintained computer is fully functional</p>
+        </div>
+      </div>
+
+      <div class="info-box tip">
+        <span class="ib-icon">💡</span>
+        <div class="ib-body">
+          <strong>Key Principle</strong>
+          <p>The effectiveness of checking maintained computers depends on the <strong>quality of inspection</strong>. A thorough inspection ensures the repaired system is safe and fully operational before returning it to the user.</p>
+        </div>
+      </div>
+
+      <!-- Powering On -->
+      <h3 id="powering-on" style="font-size:1rem;font-weight:800;color:var(--navy);margin:24px 0 12px;">⚡ Power On &amp; Device Check</h3>
+      <ol class="step-list">
+        <li>
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <strong>Power On the Computer</strong>
+            Press the power button and listen for POST (Power-On Self-Test) beeps. Confirm the system boots without error messages.
+          </div>
+        </li>
+        <li>
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <strong>Test All Computer Devices</strong>
+            Verify all connected peripherals respond correctly.
+          </div>
+        </li>
+        <li>
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <strong>Check Monitor, Keyboard, and Mouse</strong>
+            Confirm the display shows correctly, keyboard inputs are registered, and the mouse cursor moves smoothly.
+          </div>
+        </li>
+        <li>
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <strong>Check the Computer's Performance</strong>
+            Open Task Manager or a performance tool to verify CPU, RAM, and Disk are operating at normal levels.
+          </div>
+        </li>
+        <li>
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <strong>Confirm the Computer is Performing at its Best</strong>
+            No unusual lag, overheating, or error pop-ups during normal use.
+          </div>
+        </li>
+      </ol>
+
+      <!-- Cable Check -->
+      <h3 id="cables" style="font-size:1rem;font-weight:800;color:var(--navy);margin:24px 0 12px;">🔌 Cable Inspection</h3>
+      <div class="info-box warn">
+        <span class="ib-icon">⚠️</span>
+        <div class="ib-body">
+          <strong>Check All Cable Connections</strong>
+          <p>Inspect each cable type below and ensure they are <strong>fixed properly</strong> — no loose connectors, bent pins, or damaged insulation.</p>
+        </div>
+      </div>
+      <table class="comp-table">
+        <thead><tr><th>Cable Type</th><th>What to Check</th><th>Common Issues</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="td-label">⚡ Power Cables</td>
+            <td>Securely seated in PSU and motherboard connectors (24-pin, 8-pin CPU, SATA power)</td>
+            <td>Loose connector causing no power or random shutdowns</td>
+          </tr>
+          <tr>
+            <td class="td-label">🌐 LAN Cables</td>
+            <td>RJ-45 connector clicks into port; no physical damage on the cable</td>
+            <td>Crimped poorly, wrong wiring standard (T568A vs T568B)</td>
+          </tr>
+          <tr>
+            <td class="td-label">🔗 USB Cables</td>
+            <td>Peripheral devices recognized by the OS; no error in Device Manager</td>
+            <td>Bent pins, faulty USB ports</td>
+          </tr>
+          <tr>
+            <td class="td-label">🖥️ Monitor Cables</td>
+            <td>HDMI/VGA/DisplayPort seated firmly; display shows correct resolution</td>
+            <td>Flickering screen, no signal, wrong resolution</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="done-row">
+        <input type="checkbox" class="done-check" id="chk-inspect" onchange="markDone('inspect',this)">
+        <label class="done-label" for="chk-inspect">✅ I can perform a full quality inspection of a computer system</label>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════
+         NETWORK COMMS TESTING
+    ══════════════════════════════ -->
+    <section class="section-card" id="network-comms">
+      <div class="section-header">
+        <div class="section-num orange">🌐</div>
+        <div class="section-header-text">
+          <h2>Computer-to-Computer Communications Testing</h2>
+          <p>Verifying network connectivity and proper data sharing</p>
+        </div>
+      </div>
+
+      <div class="info-box tip">
+        <span class="ib-icon">🌐</span>
+        <div class="ib-body">
+          <strong>Why Run Network Tests?</strong>
+          <p>Running computer-to-computer communication checks ensures all computers in a network are <strong>connected properly</strong> for effective and easier file and information sharing.</p>
+        </div>
+      </div>
+
+      <!-- Pinging -->
+      <h3 style="font-size:1rem;font-weight:800;color:var(--navy);margin:20px 0 10px;">📡 Pinging</h3>
+      <div class="info-box note">
+        <span class="ib-icon">💻</span>
+        <div class="ib-body">
+          <strong>What is Ping?</strong>
+          <p>The <span class="kw">ping</span> command is the <em>basic tool for testing TCP/IP connectivity</em>. It sends a special packet called <span class="kw orange">ICMP Echo</span> to a particular IP address and looks for a reply. If a reply is received, the network path to that device is working correctly.</p>
+        </div>
+      </div>
+
+      <!-- TCP/IP -->
+      <h3 id="tcpip" style="font-size:1rem;font-weight:800;color:var(--navy);margin:24px 0 10px;">⚙️ TCP/IP Settings — Key Terms</h3>
+      <div class="def-grid">
+        <div class="def-card">
+          <h4>IP Address</h4>
+          <p>A unique address assigned to a network adapter. A computer with multiple network adapters has one IP address for each, and each must be on a different subnet.</p>
+        </div>
+        <div class="def-card green">
+          <h4>Subnet Mask</h4>
+          <p>Used together with the IP address to determine which subnet an adapter belongs to. It separates the network portion from the host portion of the address.</p>
+        </div>
+        <div class="def-card orange">
+          <h4>Default Gateway</h4>
+          <p>The IP address of a router or computer on the local area network that knows how to communicate with subnets not present on this computer.</p>
+        </div>
+        <div class="def-card purple">
+          <h4>DHCP Server</h4>
+          <p>If an adapter is set to obtain an IP address automatically, the DHCP Server is the address of the server that provides it.</p>
+        </div>
+        <div class="def-card teal">
+          <h4>DNS Servers</h4>
+          <p>IP address of one or more Domain Name Server computers. DNS translates human-readable domain names (e.g., google.com) into IP addresses.</p>
+        </div>
+        <div class="def-card" style="border-top-color:#94A3B8;">
+          <h4 style="font-family:'Outfit',sans-serif;">How to Check TCP/IP</h4>
+          <p>Open <strong>Command Prompt</strong> and type <span class="kw">ipconfig /all</span> to see all TCP/IP settings for each adapter.</p>
+        </div>
+      </div>
+
+      <!-- Burn In -->
+      <h3 id="burnin" style="font-size:1rem;font-weight:800;color:var(--navy);margin:24px 0 10px;">🔥 Burn In &amp; Bathtub Curve</h3>
+      <div class="reviewer-grid">
+        <div class="reviewer-card">
+          <span class="rc-badge blue">Definition</span>
+          <div class="rc-q">🔥 What is Burn In?</div>
+          <div class="rc-a">Running a system or device for a period of time to ensure all components are working properly. The goal is to detect components likely to fail during the <em>initial high-failure rate</em> portion of the bathtub curve.</div>
+        </div>
+        <div class="reviewer-card">
+          <span class="rc-badge green">Definition</span>
+          <div class="rc-q">📉 What is the Bathtub Curve?</div>
+          <div class="rc-a">An equipment failure-rate curve with:
+            <ol style="margin-left:18px;margin-top:6px;font-size:.84rem;line-height:1.6;">
+              <li><strong>Initial period</strong> — sharply <em>declining</em> failure rate (early failures)</li>
+              <li><strong>Middle period</strong> — prolonged <em>constant-average</em> failure rate (useful life)</li>
+              <li><strong>End period</strong> — failure rate <em>increases sharply</em> again (wear out)</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-box fun">
+        <span class="ib-icon">🛁</span>
+        <div class="ib-body">
+          <strong>Why It's Called "Bathtub"</strong>
+          <p>The shape of the failure-rate curve — high at the start, flat in the middle, high at the end — resembles the cross-section of a bathtub! If Burn In is made sufficiently long (and artificially stressful), the system can be trusted to be mostly free of early failures afterward.</p>
+        </div>
+      </div>
+
+      <div class="done-row">
+        <input type="checkbox" class="done-check" id="chk-network-test" onchange="markDone('network-test',this)">
+        <label class="done-label" for="chk-network-test">✅ I understand pinging, TCP/IP settings, Burn In, and the Bathtub Curve</label>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════
+         REPORT MAKING
+    ══════════════════════════════ -->
+    <section class="section-card" id="report">
+      <div class="section-header">
+        <div class="section-num purple">📝</div>
+        <div class="section-header-text">
+          <h2>Report Making</h2>
+          <p>Documentation after inspection and testing</p>
+        </div>
+      </div>
+
+      <div class="def-grid">
+        <div class="def-card purple">
+          <h4 style="font-family:'Outfit',sans-serif;">What is a Report?</h4>
+          <p>A piece of information <strong>describing or giving an account of certain events</strong>, given or presented to someone (e.g., a supervisor or client).</p>
+        </div>
+        <div class="def-card green">
+          <h4 style="font-family:'Outfit',sans-serif;">Why is a Report Important?</h4>
+          <p>It enables you to practice skills of <strong>presentation, argument, evaluation, and calculation</strong>, and provides a <em>permanent record</em> of your work for accountability and future reference.</p>
+        </div>
+      </div>
+
+      <div class="info-box tip" style="margin-top:16px;">
+        <span class="ib-icon">📋</span>
+        <div class="ib-body">
+          <strong>What Should a Repair/Maintenance Report Include?</strong>
+          <ul>
+            <li>Date and time of work performed</li>
+            <li>Description of the problem or fault found</li>
+            <li>Actions taken (parts replaced, settings changed, tests run)</li>
+            <li>Test results (ping responses, device check status)</li>
+            <li>Recommendation for further action if needed</li>
+            <li>Technician's name and signature</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="done-row">
+        <input type="checkbox" class="done-check" id="chk-report" onchange="markDone('report',this)">
+        <label class="done-label" for="chk-report">✅ I know the purpose and content of a maintenance/repair report</label>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════
+         JOB PERFORMANCE CHECKLIST
+    ══════════════════════════════ -->
+    <section class="section-card" id="checklist">
+      <div class="section-header">
+        <div class="section-num teal">✅</div>
+        <div class="section-header-text">
+          <h2>Job Performance Criteria Checklist 4.5-1</h2>
+          <p>Inspect and Test Configured/Repaired Computer System and Networks</p>
+        </div>
+      </div>
+
+      <div class="info-box note">
+        <span class="ib-icon">📌</span>
+        <div class="ib-body">
+          <strong>How to Use This Checklist</strong>
+          <p>This is the official performance checklist from the module. Use it to self-assess before your competency evaluation. All items must be marked <strong>YES</strong> to pass.</p>
+        </div>
+      </div>
+
+      <h3 style="font-size:.95rem;font-weight:800;color:var(--navy);margin:20px 0 10px;">🔍 Inspect and Test the Computer Systems and Networks</h3>
+      <table class="checklist-table">
+        <thead>
+          <tr><th>Task / Criteria</th><th>YES</th><th>NO</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Undertake Final Inspections</strong><br><span style="font-size:.8rem;color:var(--text-muted)">Checked/Tested computer systems and networks to ensure safe operation</span></td><td class="check-empty">○</td><td class="check-empty">○</td></tr>
+        </tbody>
+      </table>
+
+      <h3 style="font-size:.95rem;font-weight:800;color:var(--navy);margin:20px 0 10px;">🖥️ Check and Test Computer Systems and Networks</h3>
+      <table class="checklist-table">
+        <thead>
+          <tr><th>Task / Criteria</th><th>YES</th><th>NO</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Can print through the network</td><td class="check-empty">○</td><td class="check-empty">○</td></tr>
+          <tr><td>Can access the shared folder on the server</td><td class="check-empty">○</td><td class="check-empty">○</td></tr>
+          <tr><td>Can log in with a domain user account</td><td class="check-empty">○</td><td class="check-empty">○</td></tr>
+        </tbody>
+      </table>
+
+      <h3 style="font-size:.95rem;font-weight:800;color:var(--navy);margin:20px 0 10px;">🧹 Clear Work Site from All Wastes</h3>
+      <table class="checklist-table">
+        <thead>
+          <tr><th>Task / Criteria</th><th>YES</th><th>NO</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Cleaned and cleared work site of all debris and left in safe condition in accordance with company procedures</td><td class="check-empty">○</td><td class="check-empty">○</td></tr>
+        </tbody>
+      </table>
+
+      <h3 style="font-size:.95rem;font-weight:800;color:var(--navy);margin:20px 0 10px;">♻️ Follow 5S and 4Rs According to Environmental Policies</h3>
+      <table class="checklist-table">
+        <thead>
+          <tr><th>Task / Criteria</th><th>YES</th><th>NO</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Disposed of excess components and materials based on <strong>WEEE directives</strong> and <strong>3Rs waste management program</strong></td><td class="check-empty">○</td><td class="check-empty">○</td></tr>
+        </tbody>
+      </table>
+
+      <div class="info-box warn" style="margin-top:18px;">
+        <span class="ib-icon">⚠️</span>
+        <div class="ib-body">
+          <strong>Assessment Methods for LO 5</strong>
+          <p>Your competency in LO 5 will be evaluated using: <strong>Observation</strong>, <strong>Written Test</strong>, and <strong>Oral Questioning</strong>.</p>
+        </div>
+      </div>
+
+      <div class="done-row">
+        <input type="checkbox" class="done-check" id="chk-jpc" onchange="markDone('jpc',this)">
+        <label class="done-label" for="chk-jpc">✅ I have reviewed all job performance criteria for LO 5</label>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════
+         QUICK REVIEWER CARDS
+    ══════════════════════════════ -->
+    <section class="section-card" id="reviewer-cards">
+      <div class="section-header">
+        <div class="section-num red">🧠</div>
+        <div class="section-header-text">
+          <h2>Quick Reviewer — Key Concepts</h2>
+          <p>Study these cards before your Written Test or Oral Questioning</p>
+        </div>
+      </div>
+
+      <div class="reviewer-grid">
+        <div class="reviewer-card">
+          <span class="rc-badge blue">Term</span>
+          <div class="rc-q">What does the ping command do?</div>
+          <div class="rc-a">Sends an ICMP Echo packet to an IP address and waits for a reply — used to test basic TCP/IP connectivity between devices.</div>
+        </div>
+        <div class="reviewer-card">
+          <span class="rc-badge green">Term</span>
+          <div class="rc-q">What is the purpose of a Subnet Mask?</div>
+          <div class="rc-a">Used with the IP address to determine which subnet an adapter belongs to — separates the network portion from the host portion.</div>
+        </div>
+        <div class="reviewer-card">
+          <span class="rc-badge blue">Term</span>
+          <div class="rc-q">What is a Default Gateway?</div>
+          <div class="rc-a">The IP address of a router/computer on the local network that routes traffic to subnets not present on the local machine.</div>
+        </div>
+        <div class="reviewer-card">
+          <span class="rc-badge green">Term</span>
+          <div class="rc-q">What is DHCP Server?</div>
+          <div class="rc-a">The server that automatically assigns IP addresses to network adapters configured to receive one automatically.</div>
+        </div>
+        <div class="reviewer-card">
+          <span class="rc-badge blue">Concept</span>
+          <div class="rc-q">What is Burn In testing?</div>
+          <div class="rc-a">Running a system under normal or stressful conditions for a period of time to detect early component failures before releasing it to the user.</div>
+        </div>
+        <div class="reviewer-card">
+          <span class="rc-badge green">Concept</span>
+          <div class="rc-q">What are the 3 phases of the Bathtub Curve?</div>
+          <div class="rc-a">1. Early failure (declining rate) → 2. Useful life (constant rate) → 3. Wear-out (rising rate again).</div>
+        </div>
+        <div class="reviewer-card">
+          <span class="rc-badge blue">Concept</span>
+          <div class="rc-q">What cables must be checked during inspection?</div>
+          <div class="rc-a">Power Cables, LAN Cables, USB Cables, and Monitor Cables — all must be properly fixed with no damage.</div>
+        </div>
+        <div class="reviewer-card">
+          <span class="rc-badge green">Concept</span>
+          <div class="rc-q">What is the 5S principle?</div>
+          <div class="rc-a">Sort, Set in order, Shine, Standardize, Sustain — a workplace organization methodology to maintain safe and clean work environments.</div>
+        </div>
+        <div class="reviewer-card">
+          <span class="rc-badge blue">Concept</span>
+          <div class="rc-q">What is WEEE?</div>
+          <div class="rc-a">Waste Electrical and Electronic Equipment directive — guidelines for the proper disposal of electronic components to minimize environmental harm.</div>
+        </div>
+        <div class="reviewer-card">
+          <span class="rc-badge green">Concept</span>
+          <div class="rc-q">What is the 3Rs waste management program?</div>
+          <div class="rc-a">Reduce, Reuse, Recycle — applied to electronic components and materials generated during computer maintenance and repair.</div>
+        </div>
+      </div>
+
+      <div class="done-row">
+        <input type="checkbox" class="done-check" id="chk-review" onchange="markDone('review',this)">
+        <label class="done-label" for="chk-review">✅ I've studied all Quick Reviewer cards</label>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════
+         VIDEO RESOURCES
+    ══════════════════════════════ -->
+    <section class="section-card" id="videos">
+      <div class="section-header">
+        <div class="section-num" style="background:#DC2626;">🎬</div>
+        <div class="section-header-text">
+          <h2>Watch &amp; Learn — Troubleshooting Videos</h2>
+          <p>Recommended videos to reinforce your understanding of LO 5</p>
+        </div>
+      </div>
+
+      <div class="info-box tip">
+        <span class="ib-icon">📺</span>
+        <div class="ib-body">
+          <strong>How to use these videos</strong>
+          <p>Watch the videos below to see real-world applications of the concepts covered in LO 5. Take note of key steps that match the Job Performance Criteria Checklist.</p>
+        </div>
+      </div>
+
+      <div class="video-grid">
+
+        <div class="video-card">
+          <div class="video-thumb">
+            <iframe src="https://youtu.be/A6m1p8QWfKc?si=NwzXyBqvyQlOhOdD" title="Basic Computer Troubleshooting" allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="video-info">
+            <span class="video-tag">Hardware Troubleshooting</span>
+            <h4>Basic Computer Troubleshooting Tips &amp; Tricks</h4>
+            <p>Covers fundamental hardware checks, POST errors, and initial inspection steps.</p>
+          </div>
+        </div>
+
+        <div class="video-card">
+          <div class="video-thumb">
+            <iframe src=https://youtu.be/IIicPE38O-s?si=FDCUZH6t-4B9FPFk" title="Network Troubleshooting" allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="video-info">
+            <span class="video-tag">Network Testing</span>
+            <h4>Network Troubleshooting: ipconfig, ping, tracert</h4>
+            <p>Step-by-step guide on using CMD tools to test TCP/IP connectivity and diagnose network issues.</p>
+          </div>
+        </div>
+
+        <div class="video-card">
+          <div class="video-thumb">
+            <iframe src="https://youtu.be/IIicPE38O-s?si=VU-z-HVJistYibIw" title="LAN Cable Testing" allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="video-info">
+            <span class="video-tag">Cable Testing</span>
+            <h4>How to Test a LAN Cable Using a LAN Tester</h4>
+            <p>Practical demo on verifying LAN cable wiring and continuity using a LAN tester tool.</p>
+          </div>
+        </div>
+
+        <div class="video-card">
+          <div class="video-thumb">
+            <iframe src=https://youtu.be/X7dl-h-0t5A?si=-E-7GpuAr-fS6Q4-" title="Computer Maintenance and Inspection" allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="video-info">
+            <span class="video-tag">Final Inspection</span>
+            <h4>Computer Maintenance, Cleaning &amp; Final Inspection</h4>
+            <p>Demonstrates proper cleanup, 5S application, and post-repair inspection checklist procedures.</p>
+          </div>
+        </div>
+
+        <div class="video-card">
+          <div class="video-thumb">
+            <iframe src="https://youtu.be/mpQZVYPuDGU?si=yawQvuhlvEM7cEdn" title="Windows Server Network Test" allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="video-info">
+            <span class="video-tag">Domain / Server</span>
+            <h4>Testing Domain Login, Shared Folder &amp; Network Printing</h4>
+            <p>Verifying the three critical network tests: domain login, shared folder access, and network printing.</p>
+          </div>
+        </div>
+
+        <div class="video-card">
+          <div class="video-thumb">
+            <iframe src="https://youtu.be/7ff0xZU8LyU?si=qcdMymt_a3EhagDW" title="WEEE and Proper Disposal" allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="video-info">
+            <span class="video-tag">WEEE / 3Rs</span>
+            <h4>Proper Disposal of Electronic Waste (WEEE &amp; 3Rs)</h4>
+            <p>Understanding proper disposal of old components and materials following WEEE directives and 3Rs.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="done-row">
+        <input type="checkbox" class="done-check" id="chk-videos" onchange="markDone('videos',this)">
+        <label class="done-label" for="chk-videos">✅ I've watched the troubleshooting video resources</label>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════
+         CTA
+    ══════════════════════════════ -->
+    <div class="cta-banner" id="coc4-cta">
+      <h2>🎉 COC 4 Reviewer Complete!</h2>
+      <p>You've reviewed LO 5 — Inspect and Test Computer Systems and Networks. You're ready for your Assessment!</p>
+      <div class="cta-btns">
+        <a class="btn-primary" href="quiz.html">🧠 Take the Quiz</a>
+        <a class="btn-secondary" href="flashcards.html">🃏 Study Flashcards</a>
+        <a class="btn-secondary" href="coc1.html">🔄 Review COC 1</a>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  let completedSections = new Set();
+  const TOTAL_SECTIONS = 6;
+
+  function markDone(section, checkbox) {
+    if (checkbox.checked) {
+      completedSections.add(section);
+      showToast('✅ Section marked as done!');
+    } else {
+      completedSections.delete(section);
+    }
+    updateProgress();
+    if (typeof CSS_BUDDY !== 'undefined' && CSS_BUDDY.saveProgress) {
+      CSS_BUDDY.saveProgress('coc4_sections', Array.from(completedSections));
+    }
+  }
+
+  function updateProgress() {
+    const pct = Math.round((completedSections.size / TOTAL_SECTIONS) * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressFill2').style.width = pct + '%';
+    document.getElementById('progressPct').textContent = pct + '%';
+    document.getElementById('progressPct2').textContent = pct + '%';
+    if (typeof CSS_BUDDY !== 'undefined' && CSS_BUDDY.saveProgress) {
+      CSS_BUDDY.saveProgress('coc4', pct);
+    }
+  }
+
+  const tocLinks = document.querySelectorAll('.toc-link');
+  const sectionIds = ['overview','lo5-overview','quality-inspection','network-comms','report','checklist','reviewer-cards','videos','coc4-cta'];
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sectionIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.getBoundingClientRect().top <= 100) current = id;
+    });
+    tocLinks.forEach(link => {
+      link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+    });
+  });
+
+  setTimeout(() => {
+    document.getElementById('progressFill').style.width = '0%';
+    document.getElementById('progressFill2').style.width = '0%';
+  }, 100);
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+</script>
+<script src="cssbuddy-shared.js"></script>
+<script>
+function updateNavLocks(progress) {
+  var coc1done = (progress.coc1 || 0) >= 100;
+  var coc2done = (progress.coc2 || 0) >= 100;
+  var coc3done = (progress.coc3 || 0) >= 100;
+  var makeLink = function(id, href, label, unlocked) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (unlocked) {
+      el.outerHTML = '<a id="'+id+'" href="'+href+'" style="display:flex;align-items:center;gap:5px;padding:5px 11px;border-radius:6px;font-size:.8rem;font-weight:700;background:rgba(255,255,255,.18);color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.25);">✅ '+label+'</a>';
+    } else {
+      el.outerHTML = '<span id="'+id+'" style="display:flex;align-items:center;gap:5px;padding:5px 11px;border-radius:6px;font-size:.8rem;font-weight:700;background:rgba(0,0,0,.25);color:rgba(255,255,255,.45);cursor:not-allowed;border:1px solid rgba(255,255,255,.1);">🔒 '+label+'</span>';
+    }
+  };
+  makeLink('nav-coc2-link', 'coc2.html', 'COC 2', coc1done);
+  makeLink('nav-coc3-link', 'coc3.html', 'COC 3', coc2done);
+}
+
+window.onCBLogin = function(user, data) {
+  document.body.classList.remove('guest-mode');
+  var progress = (data && data.progress) ? data.progress : {};
+  updateNavLocks(progress);
+
+  // Check if COC 3 is complete — if not, show the COC 3 required lock
+  var coc3pct = progress.coc3 || 0;
+  var lockEl = document.getElementById('coc3-required-lock');
+  if (coc3pct < 100) {
+    lockEl.style.display = 'flex';
+    var subEl = document.getElementById('coc3-lock-sub');
+    if (subEl) subEl.textContent = 'COC 3 reviewer: ' + coc3pct + '% / 100% — finish it first to access COC 4!';
+  } else {
+    lockEl.style.display = 'none';
+    // Restore progress checkboxes
+    var savedSections = progress.coc4_sections || [];
+    savedSections.forEach(function(s) {
+      completedSections.add(s);
+      var chk = document.getElementById('chk-' + s);
+      if (chk) chk.checked = true;
+    });
+    updateProgress();
+  }
+};
+
+window.onCBLogout = function() {
+  document.body.classList.add('guest-mode');
+  updateNavLocks({});
+  var lockEl = document.getElementById('coc3-required-lock');
+  if (lockEl) lockEl.style.display = 'none';
+};
+</script>
+
+<div class="scroll-btns">
+  <button class="scroll-btn" onclick="window.scrollBy({top:-300,behavior:'smooth'})" title="Scroll Up">▲</button>
+  <button class="scroll-btn" onclick="window.scrollBy({top:300,behavior:'smooth'})" title="Scroll Down">▼</button>
+</div>
+
+<!-- ══ SITE FOOTER ══ -->
+<footer style="
+  background:#0b3d8d;
+  color:#fff;
+  text-align:center;
+  padding:22px 24px 18px;
+  margin-top:auto;
+  font-family:'Outfit',sans-serif;
+  font-size:0.82rem;
+  letter-spacing:0.01em;
+  line-height:1.7;
+">
+  <div style="max-width:860px;margin:0 auto;">
+    <p style="margin:0 0 4px;font-weight:700;font-size:0.9rem;color:#93C5FD;letter-spacing:0.04em;text-transform:uppercase;">
+      CSS Buddy &mdash; Interactive Learning Platform
+    </p>
+    <p style="margin:0 0 6px;color:#CBD5E1;">
+      Developed by <strong style="color:#fff;">Group 2 &mdash; Matiyaga</strong> &middot;
+      Grade 12 CSS &middot;
+      <em>National College of Science and Technology &ndash; Institute of Industrial Research and Training (NCST-IIRT)</em>
+    </p>
+    <p style="margin:0 0 4px;color:#94A3B8;font-size:0.78rem;">
+      Learning content aligned with
+      <strong style="color:#93C5FD;">TESDA Training Regulation for Computer Systems Servicing (CSS) NC II</strong>
+    </p>
+    <p style="margin:6px 0 0;color:#64748B;font-size:0.76rem;">
+      &copy; 2025 Group 2 Matiyaga &middot; NCST-IIRT &middot; Dasma&ntilde;ari&ntilde;as City, Cavite &middot;
+      All rights reserved. Content used for academic and educational purposes.
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

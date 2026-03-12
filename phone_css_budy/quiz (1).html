@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz – CSS Buddy</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary:#3B82F6; --primary-dark:#1D4ED8; --primary-light:#EFF6FF;
+  --navy:#1E293B; --bg:#E8EDF5; --text:#1E293B;
+  --text-muted:#64748B; --border:#E2E8F0; --card:#fff;
+  --green:#22C55E; --green-dark:#16A34A; --green-light:#F0FDF4;
+  --red:#EF4444; --red-light:#FEF2F2;
+  --yellow:#F59E0B; --yellow-light:#FFFBEB;
+  --purple:#8B5CF6; --purple-light:#F5F3FF;
+}
+.theme-teal{--primary:#14B8A6;--primary-dark:#0D9488;--primary-light:#F0FDFA;}
+.theme-green{--primary:#22C55E;--primary-dark:#16A34A;--primary-light:#F0FDF4;}
+.theme-gray{--primary:#64748B;--primary-dark:#475569;--primary-light:#F8FAFC;}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* NAV */
+nav{background:var(--navy);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:68px;position:sticky;top:0;z-index:200;box-shadow:0 2px 20px rgba(0,0,0,.2);}
+.logo{font-size:1.6rem;font-weight:800;color:#fff;text-decoration:none;}
+.logo span{color:var(--primary);}
+.nav-links{display:flex;gap:4px;}
+.nav-links a{color:#94A3B8;text-decoration:none;padding:8px 14px;border-radius:8px;font-weight:500;font-size:.9rem;transition:all .2s;}
+.nav-links a:hover,.nav-links a.active{color:#fff;background:rgba(255,255,255,.08);}
+.btn-login{background:transparent;border:1.5px solid #fff;color:#fff;padding:8px 20px;border-radius:20px;font-family:'Outfit',sans-serif;font-weight:600;cursor:pointer;font-size:.9rem;transition:all .2s;}
+.btn-login:hover{background:#fff;color:var(--navy);}
+
+/* ═══════════════════════════════════════
+   PAGE LOCK OVERLAY (only addition)
+═══════════════════════════════════════ */
+.page-lock{
+  display:none;
+  position:fixed;inset:0;z-index:999;
+  background:rgba(5,18,45,0.60);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  align-items:center;justify-content:center;
+}
+body.guest-mode .page-lock{display:flex;}
+.page-lock-box{
+  background:#fff;border-radius:24px;
+  padding:44px 52px;text-align:center;
+  max-width:420px;width:90%;
+  box-shadow:0 24px 80px rgba(0,0,0,0.3);
+}
+.page-lock-box .lock-emoji{font-size:3.5rem;margin-bottom:14px;}
+.page-lock-box h2{font-size:1.4rem;font-weight:800;color:var(--navy);margin-bottom:8px;}
+.page-lock-box p{color:var(--text-muted);font-size:0.9rem;line-height:1.65;margin-bottom:24px;}
+.lock-divider{font-size:0.78rem;color:var(--text-muted);margin:4px 0;}
+.lock-btn-primary{
+  width:100%;padding:13px 24px;background:var(--navy);color:#fff;
+  border:none;border-radius:12px;font-family:'Outfit',sans-serif;
+  font-weight:700;font-size:0.95rem;cursor:pointer;transition:all .2s;
+  margin-bottom:10px;display:block;
+}
+.lock-btn-primary:hover{background:var(--primary);}
+.lock-btn-secondary{
+  width:100%;padding:11px 24px;background:transparent;color:var(--navy);
+  border:2px solid var(--navy);border-radius:12px;font-family:'Outfit',sans-serif;
+  font-weight:700;font-size:0.95rem;cursor:pointer;transition:all .2s;display:block;
+}
+.lock-btn-secondary:hover{background:#EFF6FF;border-color:var(--primary);color:var(--primary);}
+/* ═══════════════════════════════════════ */
+
+/* ═══ SCREENS ═══ */
+.screen{display:none;animation:fadeIn .35s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══ HUB SCREEN ═══ */
+.hub-wrap{max-width:1000px;margin:0 auto;padding:40px 24px;}
+.hub-hero{
+  background:linear-gradient(135deg,#1E293B 0%,#1e3a5f 55%,#1D4ED8 100%);
+  border-radius:24px;padding:44px 48px;margin-bottom:32px;position:relative;overflow:hidden;
+}
+.hub-hero::after{
+  content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events:none;
+}
+.hub-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.9);padding:5px 14px;border-radius:20px;font-size:.78rem;font-weight:700;letter-spacing:.5px;margin-bottom:16px;}
+.hub-hero h1{color:#fff;font-size:2.2rem;font-weight:900;line-height:1.25;margin-bottom:10px;}
+.hub-hero h1 span{color:#93C5FD;}
+.hub-hero p{color:rgba(255,255,255,.72);font-size:.97rem;line-height:1.7;max-width:560px;}
+.hub-stats{display:flex;gap:24px;margin-top:24px;}
+.hub-stat{text-align:center;}
+.hub-stat-num{font-size:2rem;font-weight:900;color:#fff;}
+.hub-stat-label{font-size:.75rem;color:rgba(255,255,255,.55);font-weight:600;text-transform:uppercase;letter-spacing:1px;}
+
+.section-label{font-size:.75rem;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:16px;}
+.coc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;margin-bottom:36px;}
+
+.coc-card{
+  background:var(--card);border-radius:20px;padding:24px;cursor:pointer;
+  border:2px solid var(--border);transition:all .3s;position:relative;overflow:hidden;
+  box-shadow:0 2px 12px rgba(0,0,0,.06);
+}
+.coc-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.12);border-color:var(--card-accent,var(--primary));}
+.coc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--card-accent,var(--primary));}
+.coc-card-icon{font-size:2.2rem;margin-bottom:12px;}
+.coc-card-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--card-accent,var(--primary));margin-bottom:6px;}
+.coc-card h3{font-size:1.05rem;font-weight:800;color:var(--navy);margin-bottom:6px;line-height:1.3;}
+.coc-card p{font-size:.82rem;color:var(--text-muted);line-height:1.6;margin-bottom:16px;}
+.coc-card-meta{display:flex;gap:8px;flex-wrap:wrap;}
+.meta-chip{display:inline-flex;align-items:center;gap:4px;background:#F1F5F9;color:var(--text-muted);padding:4px 10px;border-radius:8px;font-size:.72rem;font-weight:600;}
+.coc-card-arrow{position:absolute;top:50%;right:20px;transform:translateY(-50%);font-size:1.4rem;opacity:.25;transition:all .3s;}
+.coc-card:hover .coc-card-arrow{opacity:.7;right:14px;}
+.coc-best{position:absolute;top:14px;right:14px;background:var(--card-accent,var(--primary));color:#fff;font-size:.65rem;font-weight:700;padding:3px 8px;border-radius:6px;}
+
+/* ═══ MODE SELECT SCREEN ═══ */
+.mode-wrap{max-width:700px;margin:0 auto;padding:40px 24px;}
+.back-btn{display:inline-flex;align-items:center;gap:8px;background:none;border:none;color:var(--text-muted);font-family:'Outfit',sans-serif;font-weight:600;font-size:.9rem;cursor:pointer;padding:8px 0;margin-bottom:24px;transition:color .2s;}
+.back-btn:hover{color:var(--primary);}
+.mode-header{background:var(--card);border-radius:20px;padding:28px;margin-bottom:24px;border:2px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,.06);}
+.mode-header-inner{display:flex;align-items:center;gap:16px;}
+.mode-icon{font-size:2.4rem;}
+.mode-title{font-size:1.3rem;font-weight:800;color:var(--navy);}
+.mode-subtitle{font-size:.84rem;color:var(--text-muted);margin-top:3px;}
+.modes-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.mode-btn{
+  background:var(--card);border:2px solid var(--border);border-radius:18px;padding:24px 20px;
+  cursor:pointer;text-align:left;transition:all .25s;font-family:'Outfit',sans-serif;
+  display:flex;flex-direction:column;gap:8px;
+}
+.mode-btn:hover{border-color:var(--mode-color,var(--primary));box-shadow:0 6px 24px rgba(0,0,0,.1);transform:translateY(-2px);}
+.mode-btn-icon{font-size:1.8rem;}
+.mode-btn-name{font-size:.98rem;font-weight:800;color:var(--navy);}
+.mode-btn-desc{font-size:.78rem;color:var(--text-muted);line-height:1.5;}
+.mode-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;}
+.mode-chip{font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:6px;background:var(--primary-light);color:var(--primary);}
+.next-coc-section{margin-top:20px;}
+.next-coc-btn{
+  width:100%;background:linear-gradient(135deg,var(--green),#059669);
+  border:none;border-radius:18px;padding:20px 24px;cursor:pointer;
+  font-family:'Outfit',sans-serif;display:flex;align-items:center;gap:16px;
+  transition:all .25s;box-shadow:0 4px 16px rgba(34,197,94,.25);
+}
+.next-coc-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(34,197,94,.35);}
+.next-coc-icon{font-size:2rem;}
+.next-coc-text{text-align:left;}
+.next-coc-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.7);margin-bottom:3px;}
+.next-coc-title{font-size:1.05rem;font-weight:800;color:#fff;}
+.next-coc-arrow{margin-left:auto;font-size:1.5rem;color:rgba(255,255,255,.8);}
+
+/* ═══ QUIZ SCREEN ═══ */
+.quiz-wrap{max-width:760px;margin:0 auto;padding:28px 24px;}
+
+/* TOP BAR */
+.quiz-topbar{display:flex;align-items:center;gap:14px;margin-bottom:20px;}
+.quiz-exit{background:none;border:2px solid var(--border);border-radius:10px;padding:8px 14px;font-family:'Outfit',sans-serif;font-weight:600;font-size:.85rem;cursor:pointer;color:var(--text-muted);transition:all .2s;}
+.quiz-exit:hover{border-color:var(--red);color:var(--red);}
+.quiz-title-bar{flex:1;}
+.quiz-name{font-size:.95rem;font-weight:800;color:var(--navy);}
+.quiz-mode-tag{font-size:.7rem;color:var(--text-muted);font-weight:600;}
+
+/* TIMER */
+.timer-ring{position:relative;width:52px;height:52px;flex-shrink:0;}
+.timer-ring svg{transform:rotate(-90deg);}
+.timer-ring circle{fill:none;stroke:var(--border);stroke-width:4;}
+.timer-ring .timer-fill{stroke:var(--primary);stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset .95s linear,stroke .3s;}
+.timer-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.88rem;font-weight:800;color:var(--navy);font-family:'JetBrains Mono',monospace;}
+.timer-ring.warn .timer-fill{stroke:var(--yellow);}
+.timer-ring.danger .timer-fill{stroke:var(--red);}
+.timer-ring.danger .timer-text{color:var(--red);}
+
+/* PROGRESS BAR */
+.quiz-prog-bar{height:6px;background:var(--border);border-radius:4px;margin-bottom:24px;overflow:hidden;}
+.quiz-prog-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--purple));border-radius:4px;transition:width .4s ease;}
+
+/* QUESTION CARD */
+.question-card{background:var(--card);border-radius:22px;padding:32px;margin-bottom:18px;box-shadow:0 4px 24px rgba(0,0,0,.08);border:2px solid var(--border);}
+.q-meta{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+.q-num{font-size:.75rem;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);}
+.q-type-badge{font-size:.65rem;font-weight:700;padding:3px 10px;border-radius:8px;background:var(--primary-light);color:var(--primary);}
+.q-diff{font-size:.65rem;font-weight:700;padding:3px 10px;border-radius:8px;}
+.q-diff.easy{background:#DCFCE7;color:#166534;}
+.q-diff.medium{background:#FEF3C7;color:#92400E;}
+.q-diff.hard{background:#FEE2E2;color:#991B1B;}
+
+.question-text{font-size:1.15rem;font-weight:700;line-height:1.6;color:var(--navy);margin-bottom:8px;}
+.question-hint{font-size:.82rem;color:var(--text-muted);margin-bottom:6px;font-style:italic;}
+
+/* OPTIONS */
+.options-grid{display:flex;flex-direction:column;gap:10px;margin-top:20px;}
+.option-btn{
+  width:100%;padding:16px 20px;border-radius:14px;border:2px solid var(--border);
+  background:#fff;font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:600;
+  cursor:pointer;text-align:left;transition:all .2s;display:flex;align-items:center;gap:14px;
+  color:var(--navy);
+}
+.option-btn:hover:not(:disabled){border-color:var(--primary);background:var(--primary-light);transform:translateX(4px);}
+.option-btn.correct{border-color:var(--green)!important;background:var(--green-light)!important;color:var(--green-dark)!important;}
+.option-btn.wrong{border-color:var(--red)!important;background:var(--red-light)!important;color:var(--red)!important;}
+.option-btn.reveal{border-color:#94A3B8!important;background:#F8FAFC!important;color:#94A3B8!important;}
+.option-btn:disabled{cursor:not-allowed;}
+.opt-letter{width:28px;height:28px;border-radius:8px;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:800;flex-shrink:0;transition:all .2s;}
+.option-btn.correct .opt-letter{background:var(--green);color:#fff;}
+.option-btn.wrong .opt-letter{background:var(--red);color:#fff;}
+.option-btn:hover:not(:disabled) .opt-letter{background:var(--primary);color:#fff;}
+
+/* TRUE/FALSE */
+.tf-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px;}
+.tf-btn{
+  padding:24px;border-radius:16px;border:2px solid var(--border);background:#fff;
+  font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:800;cursor:pointer;
+  transition:all .2s;text-align:center;
+}
+.tf-btn:hover:not(:disabled){transform:scale(1.03);}
+.tf-btn[data-val="true"]:hover:not(:disabled){border-color:var(--green);background:var(--green-light);color:var(--green-dark);}
+.tf-btn[data-val="false"]:hover:not(:disabled){border-color:var(--red);background:var(--red-light);color:var(--red);}
+.tf-btn.correct{border-color:var(--green)!important;background:var(--green-light)!important;color:var(--green-dark)!important;}
+.tf-btn.wrong{border-color:var(--red)!important;background:var(--red-light)!important;color:var(--red)!important;}
+.tf-btn:disabled{cursor:not-allowed;}
+
+/* FILL IN BLANK */
+.fib-wrap{margin-top:20px;}
+.fib-input{
+  width:100%;padding:16px 20px;border-radius:14px;border:2px solid var(--border);
+  font-family:'Outfit',sans-serif;font-size:1rem;font-weight:600;color:var(--navy);
+  transition:all .2s;outline:none;background:#fff;
+}
+.fib-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(59,130,246,.1);}
+.fib-input.correct{border-color:var(--green);background:var(--green-light);}
+.fib-input.wrong{border-color:var(--red);background:var(--red-light);}
+.fib-submit{
+  margin-top:12px;padding:14px 28px;border-radius:12px;border:none;
+  background:var(--primary);color:#fff;font-family:'Outfit',sans-serif;
+  font-size:.95rem;font-weight:700;cursor:pointer;transition:all .2s;
+}
+.fib-submit:hover{background:var(--primary-dark);}
+.fib-submit:disabled{background:var(--border);color:var(--text-muted);cursor:not-allowed;}
+
+/* FEEDBACK */
+.feedback-box{
+  border-radius:14px;padding:16px 20px;margin-top:14px;display:none;
+  animation:slideUp .3s ease;
+}
+.feedback-box.show{display:block;}
+@keyframes slideUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.feedback-box.correct-fb{background:var(--green-light);border:2px solid var(--green);}
+.feedback-box.wrong-fb{background:var(--red-light);border:2px solid var(--red);}
+.feedback-box.timeout-fb{background:var(--yellow-light);border:2px solid var(--yellow);}
+.fb-head{font-weight:800;font-size:.95rem;margin-bottom:4px;}
+.feedback-box.correct-fb .fb-head{color:var(--green-dark);}
+.feedback-box.wrong-fb .fb-head{color:var(--red);}
+.feedback-box.timeout-fb .fb-head{color:#92400E;}
+.fb-body{font-size:.85rem;line-height:1.6;color:var(--navy);}
+
+/* NEXT BTN */
+.next-q-btn{
+  width:100%;padding:16px;border-radius:14px;border:none;
+  background:var(--primary);color:#fff;font-family:'Outfit',sans-serif;
+  font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:12px;
+  display:none;
+}
+.next-q-btn.show{display:block;animation:slideUp .3s ease;}
+.next-q-btn:hover{background:var(--primary-dark);transform:translateY(-1px);}
+
+/* STREAK */
+.streak-bar{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+.streak-badge{display:flex;align-items:center;gap:5px;background:var(--card);border:2px solid var(--border);border-radius:12px;padding:7px 14px;}
+.streak-fire{font-size:1rem;}
+.streak-num{font-size:.88rem;font-weight:800;color:var(--navy);}
+.streak-label{font-size:.72rem;color:var(--text-muted);}
+.combo-badge{background:linear-gradient(135deg,#F59E0B,#EF4444);color:#fff;border-radius:12px;padding:7px 14px;font-size:.82rem;font-weight:800;display:none;}
+.combo-badge.show{display:block;animation:popIn .4s ease;}
+@keyframes popIn{0%{transform:scale(0.5)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+.score-live{margin-left:auto;background:var(--card);border:2px solid var(--border);border-radius:12px;padding:7px 14px;font-size:.88rem;font-weight:800;color:var(--primary);}
+
+/* ═══ RESULTS SCREEN ═══ */
+.results-wrap{max-width:700px;margin:0 auto;padding:40px 24px;}
+.results-hero{border-radius:24px;padding:40px;text-align:center;margin-bottom:24px;position:relative;overflow:hidden;}
+.results-hero.excellent{background:linear-gradient(135deg,#059669,#22C55E);}
+.results-hero.good{background:linear-gradient(135deg,#2563EB,#3B82F6);}
+.results-hero.okay{background:linear-gradient(135deg,#D97706,#F59E0B);}
+.results-hero.poor{background:linear-gradient(135deg,#DC2626,#EF4444);}
+.results-grade{font-size:5rem;margin-bottom:8px;}
+.results-score{font-size:3rem;font-weight:900;color:#fff;margin-bottom:4px;}
+.results-label{font-size:1rem;color:rgba(255,255,255,.8);font-weight:600;}
+.results-msg{font-size:1.3rem;font-weight:800;color:#fff;margin-top:12px;}
+
+.results-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+.rs-item{background:var(--card);border-radius:16px;padding:18px;text-align:center;border:2px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.05);}
+.rs-num{font-size:1.8rem;font-weight:900;}
+.rs-label{font-size:.72rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+
+.results-breakdown{background:var(--card);border-radius:20px;padding:24px;margin-bottom:24px;border:2px solid var(--border);}
+.rb-title{font-size:1rem;font-weight:800;margin-bottom:16px;color:var(--navy);}
+.rb-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+.rb-item:last-child{border-bottom:none;}
+.rb-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;margin-top:1px;}
+.rb-icon.c{background:#DCFCE7;color:#166534;}
+.rb-icon.w{background:#FEE2E2;color:#991B1B;}
+.rb-icon.t{background:#FEF3C7;color:#92400E;}
+.rb-q{font-size:.88rem;font-weight:600;color:var(--navy);line-height:1.5;}
+.rb-a{font-size:.78rem;color:var(--text-muted);margin-top:3px;}
+.rb-user{font-size:.78rem;color:var(--red);margin-top:2px;}
+
+.results-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.ra-btn{
+  padding:16px;border-radius:16px;border:none;font-family:'Outfit',sans-serif;
+  font-size:.95rem;font-weight:700;cursor:pointer;transition:all .25s;
+}
+.ra-btn.primary{background:var(--primary);color:#fff;}
+.ra-btn.primary:hover{background:var(--primary-dark);transform:translateY(-2px);}
+.ra-btn.secondary{background:var(--card);border:2px solid var(--border);color:var(--navy);}
+.ra-btn.secondary:hover{border-color:var(--primary);color:var(--primary);}
+.ra-btn.next-coc{background:linear-gradient(135deg,var(--green),#059669);color:#fff;grid-column:1/-1;}
+.ra-btn.next-coc:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(34,197,94,.3);}
+
+/* TOAST */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--navy);color:#fff;padding:12px 24px;border-radius:30px;font-weight:600;font-size:.9rem;z-index:300;transition:transform .3s;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+/* RESPONSIVE */
+@media(max-width:640px){
+  .hub-hero{padding:28px 24px;} .hub-hero h1{font-size:1.6rem;}
+  .coc-grid{grid-template-columns:1fr;}
+  .modes-grid{grid-template-columns:1fr;}
+  .results-stats{grid-template-columns:1fr 1fr;}
+  .results-actions{grid-template-columns:1fr;}
+  .tf-grid{grid-template-columns:1fr;}
+}
+
+/* CONFETTI */
+.confetti-piece{position:fixed;width:10px;height:10px;border-radius:2px;animation:confettiFall 3s ease-in forwards;pointer-events:none;z-index:999;}
+@keyframes confettiFall{
+  0%{transform:translateY(-20px) rotate(0deg);opacity:1;}
+  100%{transform:translateY(100vh) rotate(720deg);opacity:0;}
+}
+  /* ── LOCK FLASH OVERLAY ── */
+  #lock-flash-overlay {
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:99999;
+    pointer-events:none;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+  }
+  #lock-flash-overlay.show { display:flex; animation: lockFlash 0.9s ease forwards; }
+  @keyframes lockFlash {
+    0%   { background:rgba(239,68,68,0); }
+    15%  { background:rgba(239,68,68,0.45); }
+    40%  { background:rgba(239,68,68,0.3); }
+    100% { background:rgba(239,68,68,0); }
+  }
+  #lock-flash-msg {
+    background:rgba(0,0,0,0.82);
+    border:2px solid #ef4444;
+    border-radius:18px;
+    padding:28px 40px;
+    text-align:center;
+    box-shadow:0 0 60px rgba(239,68,68,0.6);
+    animation: lockMsgPop 0.9s ease forwards;
+  }
+  @keyframes lockMsgPop {
+    0%   { transform:scale(0.7); opacity:0; }
+    25%  { transform:scale(1.08); opacity:1; }
+    60%  { transform:scale(1); opacity:1; }
+    100% { transform:scale(0.95); opacity:0; }
+  }
+  #lock-flash-msg .lf-icon  { font-size:3rem; display:block; margin-bottom:10px; }
+  #lock-flash-msg .lf-title { color:#ef4444; font-size:1.3rem; font-weight:800; margin-bottom:6px; }
+  #lock-flash-msg .lf-sub   { color:#cbd5e1; font-size:0.92rem; line-height:1.6; }
+
+/* ── MOBILE RESPONSIVE ── */
+  @media(max-width:768px){
+    .page-wrap{padding:14px!important}
+    .page-header h1{font-size:1.5rem!important}
+    .quiz-wrap{padding:14px!important}
+    .q-text{font-size:1rem!important}
+    .opt-btn{padding:12px 14px!important;font-size:0.88rem!important}
+    .result-card{padding:24px 16px!important}
+    .topic-tabs{gap:6px}
+    .tab-btn{padding:8px 14px!important;font-size:0.8rem!important}
+    .page-lock-box{padding:28px 20px!important}
+    .q-counter-row{flex-direction:column;gap:8px}
+  }
+  @media(max-width:480px){
+    .topic-tabs{gap:4px}
+    .tab-btn{padding:7px 10px!important;font-size:0.75rem!important}
+    .q-text{font-size:0.95rem!important}
+  }
+</style>
+</head>
+<body class="guest-mode">
+
+<!-- LOCK FLASH OVERLAY -->
+<div id="lock-flash-overlay">
+  <div id="lock-flash-msg">
+    <span class="lf-icon">🔒</span>
+    <div class="lf-title" id="lf-title">COC Locked!</div>
+    <div class="lf-sub"   id="lf-sub">Complete the previous COC first to unlock this.</div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a class="logo" href="index.html"><span>CSS</span> Buddy</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="quiz.html" class="active">Quiz</a>
+    <a href="flashcards.html">Flashcards</a>
+    <a href="funfacts.html">Fun Facts</a>
+    <a href="icebreaker.html">Ice Breaker</a>
+    <a href="games.html">Games</a>
+  </div>
+  <div class="nav-right"></div>
+</nav>
+
+<!-- ════════ PAGE LOCK (only addition) ════════ -->
+<div class="page-lock" id="page-lock">
+  <div class="page-lock-box">
+    <div class="lock-emoji">🔒</div>
+    <h2>Login to Access the Quiz</h2>
+    <p>Create a free account or login to take quizzes, track your scores, and unlock all 4 COC modules.</p>
+    <button class="lock-btn-primary" onclick="CSS_BUDDY.openModal('login')">Login to my account</button>
+    <div class="lock-divider">— or —</div>
+    <button class="lock-btn-secondary" onclick="CSS_BUDDY.openModal('register')">Register with Gmail</button>
+  </div>
+</div>
+
+<!-- ════════ SCREEN 1: HUB ════════ -->
+<div id="screen-hub" class="screen active">
+  <div class="hub-wrap">
+    <div id="quiz-back-btn"></div>
+    <div class="hub-hero">
+      <div class="hub-badge"> CSS Buddy Quiz</div>
+      <h1>Test Your <span>Knowledge</span><br>Challenge Yourself!</h1>
+      <p>Choose a COC module, pick your quiz mode, and race against the clock. Each question has a live timer — stay sharp!</p>
+      <div class="hub-stats">
+        <div class="hub-stat"><div class="hub-stat-num" id="totalAttempts">0</div><div class="hub-stat-label">Quizzes Taken</div></div>
+        <div class="hub-stat"><div class="hub-stat-num" id="bestScore">—</div><div class="hub-stat-label">Best Score</div></div>
+        <div class="hub-stat"><div class="hub-stat-num">4</div><div class="hub-stat-label">COC Modules</div></div>
+        <div class="hub-stat"><div class="hub-stat-num">120+</div><div class="hub-stat-label">Questions</div></div>
+      </div>
+    </div>
+
+    <div class="section-label"> Choose a COC Module</div>
+    <div class="coc-grid" id="cocGrid">
+
+      <div class="coc-card" style="--card-accent:#3B82F6" onclick="openMode(0)">
+        <div class="coc-card-icon"></div>
+        <div class="coc-card-label">Core Competency 1</div>
+        <h3>Install and Configure Computer System</h3>
+        <p>Computer parts, OHS, 5S, tools, PC assembly & disassembly, BIOS, and OS installation.</p>
+        <div class="coc-card-meta">
+          <span class="meta-chip"> 20s/question</span>
+          <span class="meta-chip"> 30 questions</span>
+          <span class="meta-chip"> Blue</span>
+        </div>
+        <span class="coc-card-arrow">→</span>
+        <span class="coc-best" id="best-0" style="display:none"></span>
+      </div>
+
+      <div class="coc-card" id="quiz-card-coc2" style="--card-accent:#8B5CF6;position:relative;" onclick="openMode(1)">
+        <div id="quiz-lock-coc2" style="display:none;position:absolute;inset:0;background:rgba(15,23,42,0.82);border-radius:inherit;z-index:10;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;">
+          <div style="font-size:2rem;margin-bottom:8px;">🔒</div>
+          <div style="color:#f59e0b;font-weight:800;font-size:.95rem;margin-bottom:4px;">COC 2 Quiz Locked</div>
+          <div id="quiz-lock-sub-coc2" style="color:#94a3b8;font-size:.8rem;line-height:1.5;margin-bottom:12px;">Complete COC 1 reviewer (100%) first</div>
+          <a href="coc1.html" style="padding:7px 16px;background:#f59e0b;color:#000;border-radius:8px;font-weight:700;font-size:.82rem;text-decoration:none;">Go to COC 1 →</a>
+        </div>
+        <div class="coc-card-icon"></div>
+        <div class="coc-card-label">Core Competency 2</div>
+        <h3>Set up Computer Networks</h3>
+        <p>IP addresses, DNS, DHCP, routers, switches, network topologies, protocols, and Wi-Fi.</p>
+        <div class="coc-card-meta">
+          <span class="meta-chip"> 20s/question</span>
+          <span class="meta-chip"> 30 questions</span>
+          <span class="meta-chip"> Purple</span>
+        </div>
+        <span class="coc-card-arrow">→</span>
+        <span class="coc-best" id="best-1" style="display:none"></span>
+      </div>
+
+      <div class="coc-card" id="quiz-card-coc3" style="--card-accent:#F59E0B;position:relative;" onclick="openMode(2)">
+        <div id="quiz-lock-coc3" style="display:none;position:absolute;inset:0;background:rgba(15,23,42,0.82);border-radius:inherit;z-index:10;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;">
+          <div style="font-size:2rem;margin-bottom:8px;">🔒</div>
+          <div style="color:#f59e0b;font-weight:800;font-size:.95rem;margin-bottom:4px;">COC 3 Quiz Locked</div>
+          <div id="quiz-lock-sub-coc3" style="color:#94a3b8;font-size:.8rem;line-height:1.5;margin-bottom:12px;">Complete COC 2 reviewer (100%) first</div>
+          <a href="coc2.html" style="padding:7px 16px;background:#f59e0b;color:#000;border-radius:8px;font-weight:700;font-size:.82rem;text-decoration:none;">Go to COC 2 →</a>
+        </div>
+        <div class="coc-card-icon"></div>
+        <div class="coc-card-label">Core Competency 3</div>
+        <h3>Set up Computer Servers</h3>
+        <p>BSoD, diagnostic tools, safe mode, driver issues, boot errors, and hardware faults.</p>
+        <div class="coc-card-meta">
+          <span class="meta-chip"> 20s/question</span>
+          <span class="meta-chip"> 30 questions</span>
+          <span class="meta-chip"> Amber</span>
+        </div>
+        <span class="coc-card-arrow">→</span>
+        <span class="coc-best" id="best-2b" style="display:none"></span>
+      </div>
+
+      <div class="coc-card" id="quiz-card-coc4" style="--card-accent:#22C55E;position:relative;" onclick="openMode(3)">
+        <div id="quiz-lock-coc4" style="display:none;position:absolute;inset:0;background:rgba(15,23,42,0.82);border-radius:inherit;z-index:10;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;">
+          <div style="font-size:2rem;margin-bottom:8px;">🔒</div>
+          <div style="color:#f59e0b;font-weight:800;font-size:.95rem;margin-bottom:4px;">COC 4 Quiz Locked</div>
+          <div id="quiz-lock-sub-coc4" style="color:#94a3b8;font-size:.8rem;line-height:1.5;margin-bottom:12px;">Complete COC 3 reviewer (100%) first</div>
+          <a href="coc3.html" style="padding:7px 16px;background:#f59e0b;color:#000;border-radius:8px;font-weight:700;font-size:.82rem;text-decoration:none;">Go to COC 3 →</a>
+        </div>
+        <div class="coc-card-icon"></div>
+        <div class="coc-card-label">Core Competency 4</div>
+        <h3>Maintenance & Repair Computer Systems and Networks</h3>
+        <p>Preventive maintenance, backups, antivirus, disk cleanup, and system security.</p>
+        <div class="coc-card-meta">
+          <span class="meta-chip"> 20s/question</span>
+          <span class="meta-chip"> 30 questions</span>
+          <span class="meta-chip"> Green</span>
+        </div>
+        <span class="coc-card-arrow">→</span>
+        <span class="coc-best" id="best-3" style="display:none"></span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SCREEN 2: MODE SELECT ════════ -->
+<div id="screen-mode" class="screen">
+  <div class="mode-wrap">
+    <button class="back-btn" onclick="showHub()">← Back to Hub</button>
+    <div class="mode-header">
+      <div class="mode-header-inner">
+        <div class="mode-icon" id="modeIcon"></div>
+        <div>
+          <div class="mode-title" id="modeTitle">COC 1 — Computer Hardware</div>
+          <div class="mode-subtitle" id="modeSubtitle">Pick your quiz mode below</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-label"> Choose Quiz Mode</div>
+    <div class="modes-grid">
+      <button class="mode-btn" style="--mode-color:#3B82F6" onclick="startQuiz('mcq')">
+        <div class="mode-btn-icon"></div>
+        <div class="mode-btn-name">Multiple Choice</div>
+        <div class="mode-btn-desc">4 options per question. Classic format, great for thorough review.</div>
+        <div class="mode-chips">
+          <span class="mode-chip">4 Options</span>
+          <span class="mode-chip">20s timer</span>
+        </div>
+      </button>
+      <button class="mode-btn" style="--mode-color:#22C55E" onclick="startQuiz('tf')">
+        <div class="mode-btn-icon"></div>
+        <div class="mode-btn-name">True or False</div>
+        <div class="mode-btn-desc">Quick fire! Fast-paced true/false statements to test your recall.</div>
+        <div class="mode-chips">
+          <span class="mode-chip">2 Options</span>
+          <span class="mode-chip">15s timer</span>
+        </div>
+      </button>
+      <button class="mode-btn" style="--mode-color:#8B5CF6" onclick="startQuiz('fib')">
+        <div class="mode-btn-icon"></div>
+        <div class="mode-btn-name">Fill in the Blank</div>
+        <div class="mode-btn-desc">Type the missing word or acronym. Tests deep understanding.</div>
+        <div class="mode-chips">
+          <span class="mode-chip">Type answer</span>
+          <span class="mode-chip">30s timer</span>
+        </div>
+      </button>
+      <button class="mode-btn" style="--mode-color:#F59E0B" onclick="startQuiz('blitz')">
+        <div class="mode-btn-icon"></div>
+        <div class="mode-btn-name">Speed Blitz</div>
+        <div class="mode-btn-desc">All question types mixed! Only 10 seconds per question. Go!</div>
+        <div class="mode-chips">
+          <span class="mode-chip">Mixed types</span>
+          <span class="mode-chip">10s timer</span>
+        </div>
+      </button>
+    </div>
+
+    <div class="next-coc-section">
+      <div class="section-label" style="margin-top:20px;"> Skip Ahead</div>
+      <button class="next-coc-btn" id="nextCocBtn" onclick="goToNextCoc()">
+        <span class="next-coc-icon"></span>
+        <div class="next-coc-text">
+          <div class="next-coc-label">Already Know This?</div>
+          <div class="next-coc-title" id="nextCocTitle">Continue to COC 2 →</div>
+        </div>
+        <span class="next-coc-arrow">→</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SCREEN 3: QUIZ ════════ -->
+<div id="screen-quiz" class="screen">
+  <div class="quiz-wrap">
+    <div class="quiz-topbar">
+      <button class="quiz-exit" onclick="confirmExit()">✕ Exit</button>
+      <div class="quiz-title-bar">
+        <div class="quiz-name" id="quizName">COC 1 — Multiple Choice</div>
+        <div class="quiz-mode-tag" id="quizModeTag">Question <span id="qNumDisplay">1</span> of <span id="qTotalDisplay">10</span></div>
+      </div>
+      <div class="timer-ring" id="timerRing">
+        <svg width="52" height="52" viewBox="0 0 52 52">
+          <circle cx="26" cy="26" r="22"/>
+          <circle class="timer-fill" id="timerCircle" cx="26" cy="26" r="22" stroke-dasharray="138.2" stroke-dashoffset="0"/>
+        </svg>
+        <div class="timer-text" id="timerText">20</div>
+      </div>
+    </div>
+
+    <div class="quiz-prog-bar">
+      <div class="quiz-prog-fill" id="quizProgFill" style="width:0%"></div>
+    </div>
+
+    <div class="streak-bar">
+      <div class="streak-badge">
+        <span class="streak-fire">🔥</span>
+        <span class="streak-num" id="streakNum">0</span>
+        <span class="streak-label">streak</span>
+      </div>
+      <div class="combo-badge" id="comboBadge">🔥 COMBO x<span id="comboNum">2</span></div>
+      <div class="score-live">⭐ <span id="liveScore">0</span> pts</div>
+    </div>
+
+    <!-- QUESTION CARD -->
+    <div class="question-card" id="questionCard">
+      <div class="q-meta">
+        <span class="q-num" id="qNumBadge">Q1</span>
+        <span class="q-type-badge" id="qTypeBadge">Multiple Choice</span>
+        <span class="q-diff" id="qDiffBadge">Easy</span>
+      </div>
+      <div class="question-text" id="questionText">Loading question...</div>
+      <div class="question-hint" id="questionHint" style="display:none"></div>
+
+      <!-- MCQ Options -->
+      <div class="options-grid" id="optionsGrid" style="display:none"></div>
+      <!-- True/False -->
+      <div class="tf-grid" id="tfGrid" style="display:none">
+        <button class="tf-btn" data-val="true" onclick="answerTF('true')"> TRUE</button>
+        <button class="tf-btn" data-val="false" onclick="answerTF('false')"> FALSE</button>
+      </div>
+      <!-- Fill in Blank -->
+      <div class="fib-wrap" id="fibWrap" style="display:none">
+        <input type="text" class="fib-input" id="fibInput" placeholder="Type your answer here..." autocomplete="off">
+        <button class="fib-submit" id="fibSubmit" onclick="answerFIB()">Submit Answer →</button>
+      </div>
+
+      <div class="feedback-box" id="feedbackBox">
+        <div class="fb-head" id="fbHead"></div>
+        <div class="fb-body" id="fbBody"></div>
+      </div>
+    </div>
+
+    <button class="next-q-btn" id="nextQBtn" onclick="nextQuestion()">Next Question →</button>
+  </div>
+</div>
+
+<!-- ════════ SCREEN 4: RESULTS ════════ -->
+<div id="screen-results" class="screen">
+  <div class="results-wrap">
+    <div class="results-hero" id="resultsHero">
+      <div class="results-grade" id="resultsGrade">🏆</div>
+      <div class="results-score" id="resultsScore">0/10</div>
+      <div class="results-label" id="resultsLabel">Questions Correct</div>
+      <div class="results-msg" id="resultsMsg">Well done!</div>
+    </div>
+
+    <div class="results-stats">
+      <div class="rs-item">
+        <div class="rs-num" id="rsCorrect" style="color:var(--green)">0</div>
+        <div class="rs-label"> Nice, correct! </div>
+      </div>
+      <div class="rs-item">
+        <div class="rs-num" id="rsWrong" style="color:var(--red)">0</div>
+        <div class="rs-label"> Wrong! Sorry, try it again. </div>
+      </div>
+      <div class="rs-item">
+        <div class="rs-num" id="rsTimeout" style="color:var(--yellow)">0</div>
+        <div class="rs-label"> Timeout</div>
+      </div>
+      <div class="rs-item">
+        <div class="rs-num" id="rsPoints" style="color:var(--primary)">0</div>
+        <div class="rs-label">⭐ Points</div>
+      </div>
+    </div>
+
+    <div class="results-breakdown" id="resultsBreakdown">
+      <div class="rb-title"> Question Review</div>
+      <div id="breakdownList"></div>
+    </div>
+
+    <div class="results-actions">
+      <button class="ra-btn primary" onclick="retryQuiz()"> Try Again</button>
+      <button class="ra-btn secondary" onclick="showHub()"> Quiz Hub</button>
+      <button class="ra-btn next-coc" id="resultsNextCoc" onclick="goToNextCoc()"> Next COC Module →</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ════════════════════════════════════════════════════════════════
+// QUESTION BANK
+// ════════════════════════════════════════════════════════════════
+const QUESTION_BANK = {
+  0: { // COC 1 — Hardware & Assembly
+    icon:'', name:'COC 1 — Computer Hardware & Assembly',
+    nextCoc: { title:'Continue to COC 2 — Networking →', url:'coc2.html' },
+    mcq:[
+      {q:"What does CPU stand for?", opts:["Central Processing Unit","Computer Power Unit","Core Processing Utility","Central Program Unit"], ans:0, diff:'easy', exp:"CPU = Central Processing Unit — the brain of the computer that executes all instructions."},
+      {q:"What is the primary function of RAM?", opts:["Permanent data storage","Temporary working memory","Converting AC to DC power","Cooling the processor"], ans:1, diff:'easy', exp:"RAM (Random Access Memory) is volatile, temporary memory used while the computer is running. It is cleared when powered off."},
+      {q:"What does PSU stand for?", opts:["Processing System Unit","Power Supply Unit","Peripheral System Utility","Primary Storage Unit"], ans:1, diff:'easy', exp:"PSU = Power Supply Unit. It converts AC power from the wall outlet into DC power for computer components."},
+      {q:"Which of these is the FIRST step in assembling a PC?", opts:["Install the motherboard","Connect the CPU","Open the case","Install the power supply"], ans:2, diff:'easy', exp:"The first assembly step is to open the case by removing the screws from the left side panel and sliding it off."},
+      {q:"What is thermal paste used for?", opts:["Lubricating hard drives","Improving heat transfer between CPU and cooler","Securing RAM modules","Preventing static electricity"], ans:1, diff:'easy', exp:"Thermal paste (thermal compound) fills microscopic gaps between the CPU and heatsink for better heat transfer."},
+      {q:"What type of connector powers the motherboard (main power)?", opts:["4-pin Molex","SATA power","24-pin ATX","6-pin PCIe"], ans:2, diff:'medium', exp:"The ATX 24-pin connector is the main power connector from the PSU to the motherboard."},
+      {q:"What does ESD stand for?", opts:["Electronic System Damage","Electrostatic Discharge","External Storage Device","Ethernet Speed Data"], ans:1, diff:'easy', exp:"ESD = Electrostatic Discharge — a sudden flow of static electricity that can permanently damage sensitive computer components."},
+      {q:"Which tool protects you from ESD while working inside a PC?", opts:["Anti-static wrist strap","Phillips screwdriver","Compressed air","Thermal paste"], ans:0, diff:'easy', exp:"An anti-static wrist strap grounds you to the case, preventing static electricity from building up and damaging components."},
+      {q:"How many ATX PSU screws typically hold it in the case?", opts:["2","3","4","6"], ans:2, diff:'medium', exp:"There are typically 4 screws that attach the power supply unit to the computer case."},
+      {q:"What is the purpose of motherboard standoffs?", opts:["Improve airflow","Prevent short circuits between PCB and case","Hold RAM in place","Connect PSU to motherboard"], ans:1, diff:'medium', exp:"Standoffs raise the motherboard off the case metal, preventing direct contact which would cause short circuits."},
+      {q:"What does POST stand for?", opts:["Power On System Test","Primary Operating Software Test","Power On Self Test","Peripheral Output System Test"], ans:2, diff:'easy', exp:"POST = Power On Self Test — runs when the PC starts to verify that all hardware is working correctly."},
+      {q:"What cable connects an HDD to the motherboard for data transfer?", opts:["Molex","SATA data cable","PCIe","ATX cable"], ans:1, diff:'easy', exp:"A SATA data cable connects the hard disk drive to the motherboard for data transfer. The power comes from a separate PSU cable."},
+      {q:"Which step comes AFTER installing the motherboard?", opts:["Install the PSU","Install internal drives","Attach CPU to motherboard","Open the case"], ans:1, diff:'medium', exp:"The assembly sequence is: Open case → PSU → Attach components to mobo → Install mobo → Install internal drives → Connect cables → Power connections → External cables → Boot."},
+      {q:"What does BIOS stand for?", opts:["Basic Input Output System","Binary Input Operating Software","Boot Initialization Operating System","Basic Interface Output System"], ans:0, diff:'easy', exp:"BIOS = Basic Input/Output System — firmware stored on a chip that initializes hardware during the boot process."},
+      {q:"What is the 'S' in the 5S method that means to keep the workspace clean?", opts:["Seiri","Seiton","Seiso","Seiketsu"], ans:2, diff:'medium', exp:"Seiso means 'Shine' — keeping the workspace clean and tidy, which also helps identify problems like equipment malfunctions."},
+      {q:"What does OHS stand for in computer servicing?", opts:["Operational Hardware Standards","Occupational Health and Safety","Official Hardware Specifications","Organized Hardware System"], ans:1, diff:'easy', exp:"OHS = Occupational Health and Safety — policies and procedures that protect the health, safety and welfare of people at the workplace."},
+      {q:"What is PCIe primarily used for?", opts:["Connecting the monitor","Installing GPUs and expansion cards","Powering the CPU","Storing data permanently"], ans:1, diff:'medium', exp:"PCIe (PCI Express) is a high-speed interface slot on the motherboard used primarily for graphics cards and other expansion cards."},
+      {q:"Which Japanese word in 5S means 'Sort'?", opts:["Seiton","Seiso","Seiri","Shitsuke"], ans:2, diff:'medium', exp:"Seiri means 'Sort' — removing unnecessary items from the workspace and keeping only what is needed."},
+      {q:"What is the last step in disassembling a PC?", opts:["Remove the RAM","Remove expansion cards","Disconnect the fan","Remove the motherboard"], ans:3, diff:'medium', exp:"The motherboard is the last component to be removed during disassembly — everything else must be disconnected first."},
+      {q:"What form factor does a standard full-size motherboard use?", opts:["Mini-ITX","Micro-ATX","ATX","E-ATX"], ans:2, diff:'medium', exp:"ATX (Advanced Technology Extended) is the standard form factor for full-size motherboards and is the most common in desktop builds."},
+      {q:"Which component is called the 'brain' of the computer?", opts:["RAM","Motherboard","CPU","GPU"], ans:2, diff:'easy', exp:"The CPU (Central Processing Unit) is called the brain because it executes all instructions and performs calculations."},
+      {q:"What should you do FIRST before disassembling a PC?", opts:["Remove the RAM","Unplug the power cord and all peripherals","Open the case side panel","Disconnect the SATA cables"], ans:1, diff:'easy', exp:"The first disassembly step is to unplug the power cord from the PC and disconnect all peripherals (keyboard, mouse, monitor)."},
+      {q:"What type of cooling uses both a metal block and a spinning fan?", opts:["Liquid cooling","Passive cooling","Heat Sink and Fan (HSF)","Thermal compound only"], ans:2, diff:'easy', exp:"HSF = Heat Sink and Fan — an active cooling solution that uses a metal heatsink to absorb heat and a fan to dissipate it."},
+      {q:"What is a CMOS battery used for?", opts:["Powering the GPU when idle","Maintaining BIOS settings and clock when powered off","Charging USB devices","Providing backup for the RAM"], ans:1, diff:'medium', exp:"The CMOS battery on the motherboard maintains BIOS settings and the system clock even when the computer is completely powered off."},
+      {q:"The '5S' method originated from which country?", opts:["China","Germany","United States","Japan"], ans:3, diff:'easy', exp:"The 5S method originated in Japan as part of the Toyota Production System. The five words all start with 'S' in Japanese."},
+      {q:"What does SSD stand for?", opts:["Super Speed Drive","Serial Storage Device","Solid State Drive","System Storage Disc"], ans:2, diff:'easy', exp:"SSD = Solid State Drive — flash-based storage with no moving parts, much faster and more durable than HDDs."},
+      {q:"Which port is used to connect a monitor to an older desktop computer?", opts:["HDMI","DisplayPort","VGA","USB-C"], ans:2, diff:'easy', exp:"VGA (Video Graphics Array) is a legacy connector used to connect monitors to older desktop computers and graphics cards."},
+      {q:"What does RAM lose when the computer is powered off?", opts:["Nothing — it keeps all data","All stored data (it's volatile)","Only the most recent files","The operating system"], ans:1, diff:'easy', exp:"RAM is volatile memory — all data in RAM is lost when the computer is powered off. This is why storage drives are needed for persistence."},
+      {q:"During assembly, where is thermal paste applied?", opts:["Between the RAM and motherboard slot","On the GPU chip","On the center of the CPU surface","On the hard drive connector"], ans:2, diff:'easy', exp:"A small pea-sized amount of thermal paste is applied to the center of the CPU surface before mounting the heatsink."},
+      {q:"What is the FIFTH principle of 5S (Shitsuke)?", opts:["Sort","Shine","Standardize","Sustain"], ans:3, diff:'medium', exp:"Shitsuke = Sustain — making the 5S practices a permanent habit and part of company culture. It ensures the other four principles are maintained."},
+    ],
+    tf:[
+      {q:"The CPU is installed directly on the motherboard using a CPU socket.", ans:true, exp:"Correct! The CPU socket uses pins to connect the CPU to the motherboard's processor socket."},
+      {q:"RAM keeps all its data even after the computer is turned off.", ans:false, exp:"False! RAM is volatile — all data in RAM is lost when the computer is powered off. Permanent storage uses HDD or SSD."},
+      {q:"Thermal paste improves heat transfer between the CPU and heatsink.", ans:true, exp:"Correct! Thermal paste fills microscopic air gaps between the CPU and heatsink, dramatically improving heat conduction."},
+      {q:"The PSU converts DC power from the wall into AC power for components.", ans:false, exp:"False! The PSU does the opposite — it converts AC (Alternating Current) from the wall into DC (Direct Current) for components."},
+      {q:"Motherboard standoffs are used to prevent short circuits.", ans:true, exp:"Correct! Standoffs raise the motherboard off the metal case to prevent short circuits between the PCB traces and the case."},
+      {q:"The SSD is faster than the HDD.", ans:true, exp:"Correct! SSDs use flash memory with no moving parts, achieving speeds far higher than mechanical HDDs."},
+      {q:"You should work on a computer while it is still plugged in.", ans:false, exp:"False! Always unplug the power cord before opening or working inside a computer to prevent electrocution and component damage."},
+      {q:"The 5S method consists of five Japanese words all starting with the letter 'S'.", ans:true, exp:"Correct! The 5 S's are: Seiri (Sort), Seiton (Set in order), Seiso (Shine), Seiketsu (Standardize), Shitsuke (Sustain)."},
+      {q:"The ATX 24-pin connector connects the PSU to the RAM modules.", ans:false, exp:"False! The ATX 24-pin connector connects the PSU to the MOTHERBOARD — RAM connects directly into RAM slots."},
+      {q:"An anti-static wrist strap helps protect components from Electrostatic Discharge.", ans:true, exp:"Correct! An ESD wrist strap grounds you to the case, preventing the build-up and discharge of static electricity."},
+      {q:"The motherboard is the last component removed during PC disassembly.", ans:true, exp:"Correct! All other components must be removed first — the motherboard is removed last after all cables, cards, and drives are out."},
+      {q:"OHS stands for Occupational Hardware Safety.", ans:false, exp:"False! OHS stands for Occupational HEALTH and Safety — policies that protect health, safety and welfare in the workplace."},
+      {q:"A GPU is used for graphical and visual processing.", ans:true, exp:"Correct! The GPU (Graphics Processing Unit) handles all graphical processing, rendering images, videos, and 3D graphics."},
+      {q:"Seiso in the 5S method means to 'Standardize'.", ans:false, exp:"False! Seiso means 'Shine' (clean). Seiketsu means 'Standardize'. Learning the Japanese names helps distinguish them."},
+      {q:"During disassembly, you should photograph cable connections before removing them.", ans:true, exp:"Correct! Taking photos before disconnecting cables is a professional best practice to ensure correct reassembly."},
+    ],
+    fib:[
+      {q:"The CPU is also known as the ___ of the computer.", ans:["brain"], exp:"The CPU (Central Processing Unit) is often called the 'brain' of the computer because it executes all instructions."},
+      {q:"___ is a compound applied between the CPU and cooler to improve heat transfer.", ans:["thermal paste","thermal compound"], exp:"Thermal paste / thermal compound fills microscopic gaps between the CPU surface and the heatsink base."},
+      {q:"ESD stands for Electrostatic ___.", ans:["discharge"], exp:"ESD = Electrostatic Discharge — sudden static electricity that can permanently damage computer components."},
+      {q:"The main circuit board that connects all computer components is called the ___.", ans:["motherboard"], exp:"The motherboard is the primary circuit board that everything else connects to."},
+      {q:"___ is volatile, temporary memory used while the computer runs.", ans:["ram","random access memory"], exp:"RAM (Random Access Memory) is volatile — it stores active data temporarily but loses it on power off."},
+      {q:"The PSU converts ___ power to ___ power for computer components. (Answer: AC or DC)", ans:["ac","dc","alternating","direct"], exp:"The PSU converts AC (Alternating Current) from the wall to DC (Direct Current) for computer components."},
+      {q:"The first step in assembling a PC is to ___ the case.", ans:["open"], exp:"Step 1 of PC assembly is to open the case by removing the left side panel screws and sliding it off."},
+      {q:"POST stands for Power On ___ Test.", ans:["self"], exp:"POST = Power On Self Test — a diagnostic check that runs every time you turn on your computer."},
+      {q:"The 5S method originates from ___.", ans:["japan"], exp:"The 5S methodology originates from Japan as part of the Toyota Production System for workplace organization."},
+      {q:"Seiri, Seiton, Seiso, Seiketsu, and Shitsuke are the five words of the ___ method.", ans:["5s","5-s","five s"], exp:"These are the 5S method: Seiri (Sort), Seiton (Set), Seiso (Shine), Seiketsu (Standardize), Shitsuke (Sustain)."},
+    ]
+  },
+  1: { // COC 2 — Networking
+    icon:'', name:'COC 2 — Networking & Connectivity',
+    nextCoc:{ title:'Continue to COC 3 — Troubleshooting →', url:'coc3.html' },
+    mcq:[
+      {q:"What does IP stand for in IP address?", opts:["Internet Protocol","Internal Port","Interface Protocol","Internet Prefix"], ans:0, diff:'easy', exp:"IP = Internet Protocol. An IP address is a unique numerical label assigned to every device on a network."},
+      {q:"What does DNS stand for?", opts:["Dynamic Network System","Domain Name System","Data Network Service","Digital Network Standard"], ans:1, diff:'easy', exp:"DNS = Domain Name System — translates human-readable domain names (like google.com) into IP addresses computers can use."},
+      {q:"What is DHCP?", opts:["Dynamic Host Configuration Protocol","Data Hub Connection Protocol","Direct Hardware Control Port","Digital Host Coding Protocol"], ans:0, diff:'easy', exp:"DHCP = Dynamic Host Configuration Protocol — automatically assigns IP addresses to devices on a network."},
+      {q:"What does LAN stand for?", opts:["Large Area Network","Local Application Network","Local Area Network","Linked Access Node"], ans:2, diff:'easy', exp:"LAN = Local Area Network — a network within a limited area like a home, school, or office building."},
+      {q:"Which device directs data packets between different networks?", opts:["Switch","Hub","Router","Repeater"], ans:2, diff:'easy', exp:"A router connects multiple networks and directs (routes) data packets between them to reach their destination."},
+      {q:"What is a MAC address?", opts:["A type of IP address for wireless","Media Access Control address — unique hardware ID","Maximum Address Count","Mobile Application Code"], ans:1, diff:'medium', exp:"MAC (Media Access Control) address is a unique hardware identifier burned into every network interface card (NIC)."},
+      {q:"Which layer of the OSI model handles IP addressing?", opts:["Physical Layer","Data Link Layer","Network Layer","Transport Layer"], ans:2, diff:'hard', exp:"Layer 3 (Network Layer) of the OSI model handles IP addressing and routing of packets between networks."},
+      {q:"What does WAN stand for?", opts:["Wireless Access Node","Wide Area Network","Web Application Network","Wired Area Node"], ans:1, diff:'easy', exp:"WAN = Wide Area Network — a network spanning large geographic areas, like the internet itself."},
+      {q:"A switch connects devices within a network using what?", opts:["IP addresses","MAC addresses","DNS names","Subnet masks"], ans:1, diff:'medium', exp:"Switches operate at Layer 2 and use MAC addresses to direct frames to the correct port on the local network."},
+      {q:"What is a subnet mask used for?", opts:["Encrypting network traffic","Dividing an IP address into network and host portions","Assigning MAC addresses","Blocking unauthorized access"], ans:1, diff:'medium', exp:"A subnet mask determines which part of an IP address identifies the network and which part identifies the specific host device."},
+      {q:"What does Wi-Fi stand for?", opts:["Wireless Fidelity","Wide Frequency","Wireless Fiber","Web Interface"], ans:0, diff:'easy', exp:"Wi-Fi stands for Wireless Fidelity — it's the technology for wireless local area networking using radio waves."},
+      {q:"What is a firewall?", opts:["A physical barrier in server rooms","Software/hardware that monitors and controls network traffic","A type of network cable","A wireless router protocol"], ans:1, diff:'easy', exp:"A firewall is a security system that monitors and controls incoming/outgoing network traffic based on defined security rules."},
+      {q:"Which protocol is used to send emails?", opts:["HTTP","FTP","SMTP","SSH"], ans:2, diff:'medium', exp:"SMTP = Simple Mail Transfer Protocol — the protocol used for sending emails between servers."},
+      {q:"What network topology connects all devices in a single continuous loop?", opts:["Star","Bus","Ring","Mesh"], ans:2, diff:'medium', exp:"In a Ring topology, each device connects to exactly two others, forming a circular chain. Data travels in one direction around the ring."},
+      {q:"What is the default port number for HTTPS?", opts:["80","21","443","3389"], ans:2, diff:'hard', exp:"HTTPS uses port 443 by default. Regular HTTP uses port 80. These are registered port numbers for web traffic."},
+      {q:"What does TCP stand for?", opts:["Transfer Control Protocol","Transmission Control Protocol","Trusted Computing Protocol","Terminal Connection Port"], ans:1, diff:'medium', exp:"TCP = Transmission Control Protocol — a reliable, connection-based protocol that ensures data packets arrive in order."},
+      {q:"What type of IP address starts with 192.168?", opts:["Public IP","External IP","Private IP","Static IP"], ans:2, diff:'medium', exp:"192.168.x.x is a private IP address range used within local networks. Private IPs are not routable on the internet."},
+      {q:"A hub differs from a switch because a hub:", opts:["Uses MAC addresses for routing","Broadcasts to all ports","Connects different networks","Assigns IP addresses"], ans:1, diff:'medium', exp:"A hub broadcasts incoming data to ALL connected ports, while a switch intelligently directs data only to the destination port."},
+      {q:"What does VPN stand for?", opts:["Virtual Private Network","Very Public Node","Verified Protocol Network","Virtual Port Number"], ans:0, diff:'easy', exp:"VPN = Virtual Private Network — creates an encrypted, secure tunnel over the internet to protect privacy and security."},
+      {q:"Which device is used to extend a Wi-Fi signal's range?", opts:["Switch","Access Point / Repeater","Firewall","Modem"], ans:1, diff:'easy', exp:"A wireless access point or repeater extends the reach of an existing Wi-Fi network to cover larger areas."},
+      {q:"What is latency in networking?", opts:["Network speed in Mbps","The delay between sending and receiving data","The number of connected devices","The encryption strength"], ans:1, diff:'medium', exp:"Latency is the time delay between sending a data request and receiving a response — measured in milliseconds (ms). Lower is better."},
+      {q:"What does the 'ping' command test?", opts:["DNS resolution","Network connectivity and response time","IP address assignment","Wi-Fi signal strength"], ans:1, diff:'easy', exp:"Ping tests network connectivity by sending ICMP echo request packets to a target and measuring the response time."},
+      {q:"What is an IPv4 address?", opts:["A 6-byte hardware address","A 128-bit hexadecimal address","A 32-bit dotted decimal address","A 64-bit binary address"], ans:2, diff:'medium', exp:"IPv4 uses 32-bit addresses written in dotted decimal notation (e.g., 192.168.1.1) allowing about 4.3 billion unique addresses."},
+      {q:"What is the purpose of a modem?", opts:["Connect devices on a LAN","Modulate/demodulate signals to connect to the ISP","Assign IP addresses","Filter malicious traffic"], ans:1, diff:'medium', exp:"A modem (modulator-demodulator) converts digital signals to analog for transmission over telephone/cable lines and vice versa."},
+      {q:"What Wi-Fi standard is also known as 802.11ax?", opts:["Wi-Fi 4","Wi-Fi 5","Wi-Fi 6","Wi-Fi 7"], ans:2, diff:'hard', exp:"Wi-Fi 6 uses the 802.11ax standard. Wi-Fi 5 = 802.11ac, Wi-Fi 4 = 802.11n. Wi-Fi 6 offers improved speed and efficiency."},
+      {q:"Which command displays the network configuration in Windows?", opts:["netstat","ping","ipconfig","tracert"], ans:2, diff:'easy', exp:"ipconfig (IP Configuration) is a Windows command that displays network adapter configuration including IP address, subnet mask, and gateway."},
+      {q:"What is the loopback IP address?", opts:["192.168.0.1","10.0.0.1","127.0.0.1","172.16.0.1"], ans:2, diff:'medium', exp:"127.0.0.1 is the loopback address (also called localhost). Pinging it tests the TCP/IP stack on the local machine."},
+      {q:"What does NIC stand for?", opts:["Network Interface Card","Numeric IP Code","Node Identification Chip","Network Input Controller"], ans:0, diff:'easy', exp:"NIC = Network Interface Card — the hardware component (card or chip) that allows a computer to connect to a network."},
+      {q:"Which topology is most fault-tolerant because every device connects to every other?", opts:["Star","Ring","Bus","Mesh"], ans:3, diff:'hard', exp:"In a Mesh topology, every device connects to every other device, providing multiple paths and the highest redundancy/fault tolerance."},
+      {q:"What is the maximum speed of Fast Ethernet?", opts:["10 Mbps","100 Mbps","1 Gbps","10 Gbps"], ans:1, diff:'medium', exp:"Fast Ethernet (100BASE-TX) runs at 100 Mbps. Regular Ethernet is 10 Mbps, Gigabit is 1000 Mbps/1 Gbps."},
+      {q:"What does DHCP stand for?", opts:["Dynamic Host Configuration Protocol","Direct Hardware Connection Port","Data Host Control Protocol","Dynamic Host Control Program"], ans:0, diff:'easy', exp:"DHCP = Dynamic Host Configuration Protocol — automatically assigns IP addresses to devices when they connect to a network."},
+      {q:"Which network type covers a small area like a school or home?", opts:["WAN","MAN","LAN","PAN"], ans:2, diff:'easy', exp:"LAN (Local Area Network) covers a limited area like a home, school, or office building. Devices connect via cables or Wi-Fi."},
+      {q:"What is the default LAN IP address for most routers?", opts:["10.0.0.1","172.16.0.1","192.168.0.1","255.255.255.0"], ans:2, diff:'easy', exp:"The default LAN IP address is typically 192.168.0.1 — the address used to access the router and represents the network gateway."},
+      {q:"What problem can occur if DHCP is disabled on a network?", opts:["Computers run faster","Two devices might receive the same IP address causing a conflict","The network becomes more secure","Bandwidth increases automatically"], ans:1, diff:'medium', exp:"Without DHCP, IP addresses must be assigned manually. Human error can cause two devices to receive the same IP, creating a network conflict."},
+      {q:"Which network security tool removes malware from a computer?", opts:["Firewall","VPN","Antivirus","Subnet Mask"], ans:2, diff:'easy', exp:"Antivirus software detects and removes malware — including viruses, worms, and Trojans — from a computer system."},
+      {q:"What is a Proxy Firewall?", opts:["A firewall that works at the IP packet level","A firewall that acts as an intermediary between networks","A firewall that filters only email traffic","A hardware-only firewall device"], ans:1, diff:'medium', exp:"A Proxy Firewall acts as an intermediary — both sides of the connection must go through the proxy, which can block or allow traffic based on rules."},
+      {q:"Which Windows network location type hides your computer from others on the network?", opts:["Home Network","Work Network","Domain Network","Public Network"], ans:3, diff:'medium', exp:"Public Network is the most secure setting — it hides your computer from others and turns off sharing. Used in cafés and airports."},
+      {q:"What type of attack overwhelms a system to make it unavailable to users?", opts:["Identity Theft","Zero-day Attack","Denial of Service (DoS)","Spyware"], ans:2, diff:'medium', exp:"A Denial of Service (DoS) attack floods a system with traffic or requests to make it unavailable to legitimate users."},
+      {q:"What does a Network Layer Firewall operate as?", opts:["An IP-packet filter at the TCP/IP stack","An application-level traffic controller","A proxy server for web requests","A wireless access controller"], ans:0, diff:'hard', exp:"Network Layer Firewalls operate at the TCP/IP protocol stack level as IP-packet filters, only allowing packets that match defined rules."},
+      {q:"Inbound firewall rules apply to traffic that is:", opts:["Leaving your computer to the internet","Coming from the network into your computer","Moving between two network switches","Encrypted by a VPN"], ans:1, diff:'medium', exp:"Inbound rules filter traffic arriving FROM the network or internet INTO your Windows computer — for example, incoming file downloads."},
+    ],
+    tf:[
+      {q:"A router connects different networks together.", ans:true, exp:"Correct! Routers operate at Layer 3 and connect different networks, directing traffic between them."},
+      {q:"DNS converts IP addresses into domain names.", ans:false, exp:"DNS converts domain names (like google.com) INTO IP addresses, not the other way around."},
+      {q:"192.168.x.x is a private IP address range.", ans:true, exp:"Correct! 192.168.x.x (along with 10.x.x.x and 172.16-31.x.x) are private IP ranges used within local networks."},
+      {q:"A hub is smarter than a switch.", ans:false, exp:"False! A switch is smarter — it uses MAC addresses to direct traffic only to the right port. A hub broadcasts to all ports."},
+      {q:"Wi-Fi 6 uses the 802.11ax standard.", ans:true, exp:"Correct! Wi-Fi 6 (802.11ax) is the 6th generation of Wi-Fi, offering improved speed and efficiency over Wi-Fi 5 (802.11ac)."},
+      {q:"The ping command tests network connectivity.", ans:true, exp:"Correct! ping sends ICMP packets to test if a remote host is reachable and measures round-trip time."},
+      {q:"DHCP manually assigns IP addresses to network devices.", ans:false, exp:"False! DHCP automatically (dynamically) assigns IP addresses. Manual assignment is called static IP configuration."},
+      {q:"A MAC address can be changed through software.", ans:true, exp:"Technically true — MAC addresses can be 'spoofed' (changed) through software, though the hardware address burned in is permanent."},
+      {q:"HTTPS uses port 443.", ans:true, exp:"Correct! HTTPS (HTTP Secure) uses TCP port 443 by default. HTTP uses port 80."},
+      {q:"VPN creates an encrypted tunnel for secure internet communication.", ans:true, exp:"Correct! VPN (Virtual Private Network) encrypts your internet connection, providing privacy and security."},
+      {q:"A LAN (Local Area Network) can connect computers across different countries.", ans:false, exp:"False! A LAN only covers a small area like a home, school, or office. Connecting across countries is a WAN (Wide Area Network)."},
+      {q:"DHCP automatically assigns IP addresses to devices on a network.", ans:true, exp:"Correct! DHCP (Dynamic Host Configuration Protocol) automatically provides IP addresses to devices when they connect to the network."},
+      {q:"A Proxy Firewall allows direct connections between both sides of a firewall.", ans:false, exp:"False! A Proxy Firewall PREVENTS direct connections. Both sides must conduct the session through the proxy, which controls traffic based on rules."},
+      {q:"A Public Network in Windows is the most secure network location type.", ans:true, exp:"Correct! Public Network hides your computer from others and disables sharing — ideal for use in cafés, airports, and other public spaces."},
+      {q:"TCP/IP (IPv4) is the protocol language computers use to communicate on a network.", ans:true, exp:"Correct! TCP/IP (IPv4) is the fundamental communication protocol that allows computers to send and receive data across a network."},
+    ],
+    fib:[
+      {q:"DNS stands for ___ Name System.", ans:["domain"], exp:"DNS = Domain Name System — translates domain names into IP addresses for network routing."},
+      {q:"A ___ connects multiple networks and routes packets between them.", ans:["router"], exp:"A router is the device that connects different networks and directs (routes) data packets to their destinations."},
+      {q:"The IP address 127.0.0.1 is called the ___ address.", ans:["loopback","localhost"], exp:"127.0.0.1 is the loopback/localhost address used to test the local TCP/IP stack."},
+      {q:"DHCP stands for Dynamic Host ___ Protocol.", ans:["configuration"], exp:"DHCP = Dynamic Host Configuration Protocol — automatically assigns IP addresses to network devices."},
+      {q:"In a ___ topology, every device connects to every other device.", ans:["mesh"], exp:"Mesh topology is the most redundant because every node connects to every other node, providing multiple paths."},
+      {q:"The Internet is the biggest example of a ___.", ans:["wan","wide area network"], exp:"The Internet is the largest WAN (Wide Area Network), connecting computers and networks across the entire globe."},
+      {q:"A firewall acts as a ___ for your network, checking and filtering all incoming and outgoing data.", ans:["security guard","guard"], exp:"A firewall is like a security guard — it inspects traffic, allows safe data, and blocks dangerous or unauthorized connections."},
+      {q:"DHCP stands for Dynamic Host ___ Protocol.", ans:["configuration"], exp:"DHCP = Dynamic Host Configuration Protocol — automatically assigns IP addresses to network devices."},
+      {q:"The default subnet mask for a home LAN is ___.", ans:["255.255.255.0"], exp:"The default subnet mask is 255.255.255.0, which defines the network portion of a standard Class C IP address like 192.168.x.x."},
+    ]
+  },
+  2: { // COC 3 — Troubleshooting
+    icon:'', name:'COC 3 — Troubleshooting & Diagnostics',
+    nextCoc:{ title:'Continue to COC 4 — Maintenance →', url:'coc4.html' },
+    mcq:[
+      {q:"What does BSoD stand for?", opts:["Blue Screen of Death","Boot System of Diagnostics","Basic System Dump","Blue Software of Default"], ans:0, diff:'easy', exp:"BSoD = Blue Screen of Death — a critical Windows error screen that appears when the system encounters a fatal error and must restart."},
+      {q:"What is the chkdsk command used for?", opts:["Checking network connectivity","Checking file system and disk surface for errors","Checking RAM usage","Checking CPU temperature"], ans:1, diff:'easy', exp:"chkdsk (Check Disk) scans the file system and disk surface for errors and can attempt to fix them."},
+      {q:"What does Safe Mode do?", opts:["Speeds up Windows","Loads Windows with minimal drivers only","Backs up your files","Resets BIOS settings"], ans:1, diff:'easy', exp:"Safe Mode is a diagnostic startup mode that loads Windows with only the minimum essential drivers and services needed to run."},
+      {q:"What causes a 'No Boot Device Found' error?", opts:["Wrong screen resolution","Incorrect boot order in BIOS or failed boot drive","Insufficient RAM","Overheating CPU"], ans:1, diff:'easy', exp:"'No Boot Device' typically means either the boot order in BIOS is wrong, the boot drive is disconnected, or the drive has failed."},
+      {q:"What does SMART monitor?", opts:["CPU temperatures","Hard drive health and failure prediction","RAM errors","Network traffic"], ans:1, diff:'medium', exp:"SMART (Self-Monitoring Analysis and Reporting Technology) is built into drives to monitor drive health and predict impending failures."},
+      {q:"What does 'reseating' a component mean?", opts:["Replacing it with a new one","Removing and firmly re-inserting it","Formatting the drive","Resetting BIOS"], ans:1, diff:'easy', exp:"Reseating means removing a component (like RAM or GPU) and firmly re-inserting it to fix poor electrical contact issues."},
+      {q:"What common tool tests if RAM has errors?", opts:["chkdsk","ipconfig","Windows Memory Diagnostic","Device Manager"], ans:2, diff:'medium', exp:"Windows Memory Diagnostic is a built-in tool that tests your RAM modules for errors and reports any issues found."},
+      {q:"What is a device driver?", opts:["A person who maintains computers","Software that lets OS communicate with hardware","A type of storage device","A BIOS update program"], ans:1, diff:'easy', exp:"A device driver is software that allows the operating system to communicate with and control a specific hardware device."},
+      {q:"What does the 'ping' command help diagnose?", opts:["CPU usage","Network connectivity issues","Disk errors","Memory leaks"], ans:1, diff:'easy', exp:"Ping sends ICMP packets to a target to test if the host is reachable and measures round-trip response time in milliseconds."},
+      {q:"What causes most computer overheating issues?", opts:["Too many USB devices","Dust buildup and failing fans","Outdated software","Too much RAM"], ans:1, diff:'easy', exp:"The most common cause is dust accumulation blocking fans and heatsinks, combined with dried-out thermal paste on the CPU."},
+      {q:"What is a POST beep code?", opts:["A startup sound for Windows","An audio code indicating hardware failure during POST","A notification sound","A BIOS update alert"], ans:1, diff:'medium', exp:"POST beep codes are sequences of beeps during startup that indicate specific hardware failures. Each BIOS manufacturer has its own codes."},
+      {q:"What does 'ipconfig /release' do?", opts:["Releases RAM memory","Releases the current IP address from DHCP","Deletes network drivers","Resets the firewall"], ans:1, diff:'medium', exp:"'ipconfig /release' releases the current IP address leased from DHCP, allowing it to be returned to the available pool."},
+      {q:"Which log viewer in Windows helps diagnose system errors?", opts:["Task Manager","Device Manager","Event Viewer","Registry Editor"], ans:2, diff:'medium', exp:"Event Viewer records system events, warnings, and errors. It's invaluable for diagnosing crashes, failed services, and hardware issues."},
+      {q:"What does a yellow exclamation mark in Device Manager indicate?", opts:["Device is working normally","Device driver issue or hardware conflict","Device needs charging","Device is disabled"], ans:1, diff:'easy', exp:"A yellow exclamation mark (!) in Device Manager indicates a device driver problem, hardware conflict, or malfunctioning device."},
+      {q:"What is a kernel panic in Linux?", opts:["A virus attack","The Linux equivalent of BSoD — a fatal system error","A CPU stress test","A memory optimization process"], ans:1, diff:'hard', exp:"A kernel panic is Linux's equivalent of the Windows BSoD — an unrecoverable fatal error in the kernel that causes the system to halt."},
+      {q:"When a computer doesn't POST, what is the best first step?", opts:["Reinstall Windows","Check all power connections and reseat RAM","Replace the motherboard","Install new drivers"], ans:1, diff:'medium', exp:"First check all power connections and reseat RAM, GPU, and CPU. Many POST failures are caused by loose connections or poor contact."},
+      {q:"What does SFC /scannow do?", opts:["Scans for viruses","Scans and repairs corrupted Windows system files","Scans the hard drive for errors","Scans the network for threats"], ans:1, diff:'medium', exp:"SFC (System File Checker) scans Windows system files for corruption and automatically repairs them using cached copies."},
+      {q:"What is the most likely cause if a computer turns on but shows no display?", opts:["Bad hard drive","Loose RAM or GPU / display cable issue","Virus infection","Corrupted OS"], ans:1, diff:'medium', exp:"No display usually points to loose RAM (try reseating), a disconnected GPU, a bad display cable, or the monitor not being on."},
+      {q:"What does 'BSOD IRQL_NOT_LESS_OR_EQUAL' typically indicate?", opts:["Hard drive failure","Driver or memory access violation","Overheating","Virus infection"], ans:1, diff:'hard', exp:"This BSOD stop code usually indicates a driver issue or a program trying to access memory at an incorrect interrupt request level."},
+      {q:"To diagnose overheating, which type of software would you use?", opts:["Antivirus","Disk defragmenter","Temperature monitoring software (e.g., HWMonitor)","Registry cleaner"], ans:2, diff:'easy', exp:"Temperature monitoring tools like HWMonitor, Core Temp, or SpeedFan let you check real-time CPU, GPU, and system temperatures."},
+      {q:"What is a 'clean boot' in Windows?", opts:["Reinstalling Windows from scratch","Starting Windows with minimal startup programs to isolate issues","Formatting the drive","Resetting BIOS to defaults"], ans:1, diff:'medium', exp:"A clean boot starts Windows with a minimal set of drivers and startup programs, helping isolate whether a startup program is causing issues."},
+      {q:"If a printer works but prints blank pages, what is MOST likely wrong?", opts:["Driver not installed","Ink cartridge is empty or clogged","Cable is disconnected","Hard drive is full"], ans:1, diff:'easy', exp:"If the printer is detected but printing blank pages, the most likely cause is an empty or clogged ink/toner cartridge."},
+      {q:"What does 'tracert' (traceroute) show?", opts:["Disk errors","The path packets take to reach a destination","Virus infections","RAM usage"], ans:1, diff:'medium', exp:"tracert (traceroute) shows each network hop packets take to reach a destination, helping identify where network slowdowns or failures occur."},
+      {q:"What is the first thing to check when a computer won't turn on?", opts:["Replace the motherboard","Check power cable and outlet","Reinstall the OS","Update BIOS"], ans:1, diff:'easy', exp:"Always start with the simplest checks: verify the power cable is plugged in, the outlet has power, and the power strip/UPS is switched on."},
+      {q:"What does a continuous long beep during POST usually indicate?", opts:["Successful startup","RAM problem","CPU overheating","Hard drive failure"], ans:1, diff:'medium', exp:"A continuous or long beep during POST typically indicates a RAM problem — the memory may be missing, unseated, or faulty."},
+      {q:"When should you use 'Last Known Good Configuration' in Windows?", opts:["After installing a new SSD","After a bad driver or registry change causes boot failure","When the internet stops working","When files are deleted"], ans:1, diff:'hard', exp:"'Last Known Good Configuration' restores registry settings from the last successful boot, useful when a bad driver caused boot failure."},
+      {q:"What utility lets you see which programs start with Windows?", opts:["Device Manager","Event Viewer","Task Manager > Startup tab","Disk Management"], ans:2, diff:'easy', exp:"Task Manager's Startup tab (or msconfig) shows all programs configured to launch at startup, letting you disable unwanted ones."},
+      {q:"If a USB device is not recognized, the first step is:", opts:["Buy a replacement","Try a different USB port or cable","Reinstall Windows","Format the USB drive"], ans:1, diff:'easy', exp:"First try a different USB port or cable. This rules out a bad port/cable before assuming the device itself is faulty."},
+      {q:"What could cause a computer to restart randomly?", opts:["Too many browser tabs open","Power supply failure or overheating","Screen resolution set too high","Too many fonts installed"], ans:1, diff:'medium', exp:"Random restarts are often caused by PSU failure (unable to deliver stable power) or CPU/GPU overheating triggering thermal shutdown."},
+      {q:"Which Windows tool lets you view and manage disk partitions?", opts:["Task Manager","Disk Management","Device Manager","Control Panel"], ans:1, diff:'easy', exp:"Disk Management (diskmgmt.msc) is a built-in Windows tool for creating, deleting, formatting, and managing disk partitions."},
+    ],
+    tf:[
+      {q:"Safe Mode loads Windows with all drivers and applications.", ans:false, exp:"False! Safe Mode loads Windows with MINIMAL drivers and services — just enough to run. This helps isolate problematic drivers."},
+      {q:"A BSoD (Blue Screen of Death) indicates a critical Windows error.", ans:true, exp:"Correct! BSoD occurs when Windows encounters a fatal error it cannot recover from and must stop to prevent damage."},
+      {q:"The chkdsk command can repair file system errors.", ans:true, exp:"Correct! chkdsk /f can repair file system errors, and chkdsk /r can locate bad sectors and recover readable data."},
+      {q:"Reseating RAM means replacing it with new RAM.", ans:false, exp:"False! Reseating means removing and firmly re-inserting the existing RAM to ensure proper electrical contact."},
+      {q:"SMART technology is built into hard drives to monitor their health.", ans:true, exp:"Correct! SMART (Self-Monitoring Analysis and Reporting Technology) monitors drive attributes to predict potential failures."},
+      {q:"A yellow exclamation mark in Device Manager means everything is working fine.", ans:false, exp:"False! A yellow exclamation mark indicates a problem — usually a missing or corrupted driver, or a hardware conflict."},
+      {q:"'tracert' shows the path data packets take across the network.", ans:true, exp:"Correct! tracert (traceroute on Linux/Mac) shows each hop packets take to reach a destination, revealing network bottlenecks."},
+      {q:"'ipconfig' is a command that shows network configuration on Windows.", ans:true, exp:"Correct! ipconfig displays network adapter information including IP address, subnet mask, and default gateway."},
+    ],
+    fib:[
+      {q:"BSoD stands for Blue Screen of ___.", ans:["death"], exp:"BSoD = Blue Screen of Death — Windows' critical error screen indicating a fatal system failure."},
+      {q:"___ is a Windows mode that loads with minimal drivers for diagnostic purposes.", ans:["safe mode","safemode"], exp:"Safe Mode starts Windows with only essential drivers, helping isolate whether a third-party driver is causing problems."},
+      {q:"The Windows ___ Diagnostic tool tests RAM for errors.", ans:["memory"], exp:"Windows Memory Diagnostic is a built-in tool that tests RAM modules for hardware errors."},
+      {q:"SFC /scannow stands for ___ File Checker.", ans:["system"], exp:"SFC = System File Checker — scans and repairs corrupted Windows system files."},
+      {q:"SMART stands for Self-Monitoring Analysis and ___ Technology.", ans:["reporting"], exp:"SMART = Self-Monitoring Analysis and Reporting Technology — built into drives to predict potential failures."},
+    ]
+  },
+  3: { // COC 4 — Maintenance
+    icon:'', name:'COC 4 — Maintenance & Security',
+    nextCoc:{ title:'You\'ve completed all COCs! Back to Hub →', url:'quiz.html' },
+    mcq:[
+      {q:"What is preventive maintenance?", opts:["Fixing problems after they occur","Regular cleaning and inspection to prevent future failures","Installing new software","Upgrading hardware components"], ans:1, diff:'easy', exp:"Preventive maintenance involves regular, scheduled cleaning and inspection to prevent hardware failures before they happen."},
+      {q:"How often is it generally recommended to clean the inside of a PC?", opts:["Every week","Every month","Every 6–12 months","Every 5 years"], ans:2, diff:'easy', exp:"Cleaning a PC internally every 6–12 months removes dust buildup that can cause overheating and hardware failures."},
+      {q:"What does UPS stand for in computing?", opts:["Universal Port System","Uninterruptible Power Supply","Unified Program Software","User Protection System"], ans:1, diff:'easy', exp:"UPS = Uninterruptible Power Supply — provides battery backup power during electrical outages to prevent data loss and hardware damage."},
+      {q:"What is disk defragmentation?", opts:["Deleting unnecessary files","Reorganizing fragmented files on HDD for faster access","Scanning for viruses","Compressing files to save space"], ans:1, diff:'easy', exp:"Defragmentation reorganizes fragmented files on an HDD so they're stored contiguously, improving read/write speeds."},
+      {q:"What is the 3-2-1 backup rule?", opts:["3 drives, 2 USBs, 1 cloud","3 copies, on 2 different media, with 1 stored offsite","3 backups per day, 2 per week, 1 per month","3 file types, 2 formats, 1 archive"], ans:1, diff:'medium', exp:"The 3-2-1 rule: Keep 3 copies of data, on 2 different types of media, with 1 copy stored offsite (or in the cloud)."},
+      {q:"What is antivirus software?", opts:["Software that speeds up your PC","Software that detects, prevents, and removes malware","Software for backing up files","Software for network monitoring"], ans:1, diff:'easy', exp:"Antivirus software scans for, detects, and removes malicious programs (malware) including viruses, trojans, spyware, and ransomware."},
+      {q:"What should you always do before opening a PC for maintenance?", opts:["Download all updates","Power it down and unplug it","Make a backup","Run disk cleanup"], ans:1, diff:'easy', exp:"Always completely power down the PC and unplug it from the power source before opening it for any internal maintenance."},
+      {q:"What is Disk Cleanup?", opts:["A third-party antivirus tool","A Windows utility that removes temporary files","A command to format drives","A network cleaning tool"], ans:1, diff:'easy', exp:"Disk Cleanup is a built-in Windows utility that identifies and removes temporary files, cache, and other unnecessary data to free disk space."},
+      {q:"What is a CMOS battery?", opts:["A battery that powers the GPU when gaming","A small battery maintaining BIOS settings and clock when off","A backup battery for the hard drive","A USB charging battery"], ans:1, diff:'medium', exp:"The CMOS battery (typically a CR2032 coin cell) on the motherboard maintains BIOS settings and the real-time clock when the PC is unplugged."},
+      {q:"Which of these is NOT a sign of malware infection?", opts:["Slow performance","Unexpected pop-ups","Fast startup time","Browser redirects"], ans:2, diff:'medium', exp:"Fast startup time is a positive, not a malware sign. Malware typically causes slowdowns, strange pop-ups, browser hijacking, and unexpected network activity."},
+      {q:"What is 'imaging' a drive?", opts:["Taking a photo of the drive","Creating a bit-for-bit clone of the entire drive","Formatting and reinstalling","Scanning for bad sectors"], ans:1, diff:'medium', exp:"Imaging creates a complete, exact bit-for-bit copy of an entire drive including the OS, files, and settings — for backup or deployment."},
+      {q:"Why should software be regularly updated?", opts:["To change the interface design","To patch security vulnerabilities and fix bugs","To increase file sizes","To slow down older hardware"], ans:1, diff:'easy', exp:"Software updates patch security vulnerabilities that attackers could exploit, fix bugs, and often improve performance and add features."},
+      {q:"What is ransomware?", opts:["Legitimate backup software","Malware that encrypts your files and demands payment","A type of firewall","An antivirus program"], ans:1, diff:'easy', exp:"Ransomware is malicious software that encrypts your files, making them inaccessible, then demands a ransom payment for decryption."},
+      {q:"What is the purpose of a screensaver from a maintenance perspective?", opts:["Improves graphics performance","Prevents screen burn-in on older CRT monitors","Speeds up startup","Saves backup files"], ans:1, diff:'medium', exp:"Screensavers were originally designed to prevent screen burn-in on old CRT phosphor screens by keeping pixels moving when idle."},
+      {q:"What does 'system restore' do?", opts:["Reinstalls Windows from scratch","Reverts system files and registry to a previous restore point","Formats the hard drive","Clears the BIOS"], ans:1, diff:'easy', exp:"System Restore reverts Windows system files, registry settings, and installed programs to a previous snapshot (restore point) without affecting personal files."},
+      {q:"What is phishing?", opts:["A type of computer virus","A deceptive attempt to obtain sensitive information by pretending to be trustworthy","A network speed test","A backup method"], ans:1, diff:'easy', exp:"Phishing is a social engineering attack where criminals impersonate legitimate entities (banks, companies) to steal passwords, credit card numbers, etc."},
+      {q:"Which file extension is commonly associated with malware?", opts:[".jpg",".txt",".exe",".mp3"], ans:2, diff:'easy', exp:".exe (executable) files can run code and are commonly used to deliver malware. Other dangerous extensions include .bat, .vbs, .js, and .scr."},
+      {q:"What is two-factor authentication (2FA)?", opts:["Using two antivirus programs","Requiring two forms of verification to log in","Having two passwords","Using two different browsers"], ans:1, diff:'easy', exp:"2FA requires two separate forms of verification (e.g., password + SMS code) making accounts far more secure against unauthorized access."},
+      {q:"What is the most effective way to clean dust from inside a PC?", opts:["Vacuum cleaner","Damp cloth","Compressed air can / air blower","Dry tissue paper"], ans:2, diff:'easy', exp:"Compressed air (canned air or electric blower) safely removes dust from components without static risk or moisture damage."},
+      {q:"What is a 'system image' backup?", opts:["A screenshot of your desktop","An exact copy of everything on a drive for disaster recovery","A photo backup","A virus scan result"], ans:1, diff:'medium', exp:"A system image is an exact copy of the entire OS drive including Windows, drivers, settings, and applications — used for full disaster recovery."},
+      {q:"What does SSL/TLS do for websites?", opts:["Speeds up page loading","Encrypts data between the browser and server","Blocks advertisements","Compresses images"], ans:1, diff:'medium', exp:"SSL/TLS (shown as HTTPS with a padlock) encrypts communication between your browser and the web server, protecting your data from eavesdropping."},
+      {q:"How can you tell if a website uses HTTPS?", opts:["It loads faster","There is a padlock icon in the browser address bar","It has a '.com' domain","The text is green"], ans:1, diff:'easy', exp:"HTTPS websites show a padlock icon in the browser's address bar, indicating the connection is encrypted using SSL/TLS."},
+      {q:"What is the recommended action when you receive a suspicious email?", opts:["Open all attachments to check","Click links to see where they go","Do not click links or attachments; report it","Forward it to friends"], ans:2, diff:'easy', exp:"Never click links or attachments in suspicious emails. Report them as phishing to your email provider and delete them immediately."},
+      {q:"What does defragging an SSD do compared to an HDD?", opts:["Makes the SSD much faster","Has no benefit and can reduce SSD lifespan","Fixes file corruption","Recovers deleted files"], ans:1, diff:'hard', exp:"Defragmentation is designed for HDDs and has no benefit for SSDs. Defragging an SSD unnecessarily writes to cells, reducing lifespan."},
+      {q:"What Windows service keeps the system clock accurate?", opts:["Windows Defender","Windows Time Service (w32tm)","Task Scheduler","Disk Defragmenter"], ans:1, diff:'hard', exp:"Windows Time Service (w32tm) automatically synchronizes the system clock with internet time servers to keep it accurate."},
+      {q:"What is a strong password?", opts:["Your birthdate","Your pet's name","A mix of uppercase, lowercase, numbers, and symbols (12+ chars)","The word 'password'"], ans:2, diff:'easy', exp:"A strong password uses 12+ characters mixing uppercase, lowercase, numbers, and symbols. Avoid personal info and use a password manager."},
+      {q:"What is the purpose of Windows Firewall?", opts:["To speed up internet browsing","To block unauthorized network access to/from your computer","To clean temporary files","To update drivers automatically"], ans:1, diff:'easy', exp:"Windows Firewall monitors and controls incoming and outgoing network traffic, blocking unauthorized connections to protect your computer."},
+      {q:"What does 'quarantine' mean in antivirus software?", opts:["Deleting a file permanently","Isolating a suspicious file so it cannot cause harm","Encrypting a file","Backing up a file"], ans:1, diff:'easy', exp:"Quarantine isolates a suspicious or infected file in a secure location where it cannot execute or spread, letting you review it before deletion."},
+      {q:"What is a major risk of using public Wi-Fi without a VPN?", opts:["Faster internet speed","Your data can be intercepted by others on the same network","Better battery life","Improved DNS resolution"], ans:1, diff:'medium', exp:"On public Wi-Fi, attackers can intercept unencrypted traffic (man-in-the-middle attack). A VPN encrypts your traffic to prevent this."},
+      {q:"What should you check before downloading software from the internet?", opts:["That it has many reviews","That it comes from the official/trusted source and check digital signature","That the file size is large","That the website has advertisements"], ans:1, diff:'easy', exp:"Always download from official or verified sources, check digital signatures when available, and scan downloads with antivirus before running."},
+    ],
+    tf:[
+      {q:"SSD drives should be defragmented regularly like HDDs.", ans:false, exp:"False! Defragmentation is for HDDs only. SSDs access data differently and defragging them causes unnecessary write cycles, reducing lifespan."},
+      {q:"A UPS provides backup power during electrical outages.", ans:true, exp:"Correct! A UPS (Uninterruptible Power Supply) provides battery power when the main power fails, giving time to save work and shut down safely."},
+      {q:"The 3-2-1 backup rule recommends keeping 3 copies on 3 different devices.", ans:false, exp:"False! The 3-2-1 rule: 3 copies, on 2 DIFFERENT TYPES of media, with 1 copy stored offsite or in the cloud."},
+      {q:"Ransomware encrypts your files and demands payment.", ans:true, exp:"Correct! Ransomware encrypts files making them inaccessible, then demands cryptocurrency payment for the decryption key."},
+      {q:"Using HTTPS means the website connection is encrypted.", ans:true, exp:"Correct! HTTPS (HTTP Secure) uses SSL/TLS encryption to secure the connection between your browser and the web server."},
+      {q:"You should click on links in suspicious emails to verify if they are safe.", ans:false, exp:"False! NEVER click links in suspicious emails. They could lead to phishing sites or trigger malware downloads."},
+      {q:"Two-factor authentication makes accounts more secure.", ans:true, exp:"Correct! 2FA adds a second verification step, so even if a password is stolen, attackers cannot access the account without the second factor."},
+      {q:"Disk Cleanup is a Windows utility that removes temporary files.", ans:true, exp:"Correct! Disk Cleanup removes temporary files, cached data, recycle bin contents, and other unnecessary files to free disk space."},
+    ],
+    fib:[
+      {q:"UPS stands for Uninterruptible ___ Supply.", ans:["power"], exp:"UPS = Uninterruptible Power Supply — provides battery backup when main power fails."},
+      {q:"The ___ backup rule states: 3 copies, on 2 media types, with 1 stored offsite.", ans:["3-2-1","321","three two one"], exp:"The 3-2-1 backup rule is the gold standard for data backup strategy, ensuring data survives any single point of failure."},
+      {q:"Malware that encrypts your files and demands payment is called ___.", ans:["ransomware"], exp:"Ransomware is a type of malware that encrypts victim's files and demands a ransom payment for the decryption key."},
+      {q:"___ is a deceptive attack to steal sensitive info by impersonating a trusted entity.", ans:["phishing"], exp:"Phishing attacks impersonate legitimate organizations to trick users into revealing passwords, financial info, or installing malware."},
+      {q:"Software should be regularly updated to ___ security vulnerabilities.", ans:["patch","fix","address"], exp:"Regular updates patch (fix) security vulnerabilities that could be exploited by attackers to compromise your system."},
+    ]
+  }
+};
+
+// ════════════════════════════════════════════════════════════════
+// QUIZ STATE
+// ════════════════════════════════════════════════════════════════
+let currentCOC = 0;
+let currentMode = 'mcq';
+let questions = [];
+let qIndex = 0;
+let score = 0;
+let streak = 0;
+let points = 0;
+let timeLeft = 20;
+let timerInterval = null;
+let timerMax = 20;
+let results = [];
+let answered = false;
+let savedScores = JSON.parse(localStorage.getItem('cssbuddy-quiz-scores') || '{}');
+
+// ════════════════════════════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function showHub() {
+  stopTimer();
+  updateHubStats();
+  showScreen('screen-hub');
+}
+
+function showLockFlash(reqNum) {
+  var overlay = document.getElementById('lock-flash-overlay');
+  var title   = document.getElementById('lf-title');
+  var sub     = document.getElementById('lf-sub');
+  if (!overlay) return;
+  title.textContent = '🔒 COC ' + (reqNum + 1) + ' Quiz is Locked!';
+  sub.innerHTML     = 'You need to finish <strong>COC ' + reqNum + ' reviewer</strong> (100%) before you can take this quiz.';
+  overlay.classList.remove('show');
+  void overlay.offsetWidth;
+  overlay.classList.add('show');
+  setTimeout(function() { overlay.classList.remove('show'); }, 950);
+}
+
+function openMode(cocIdx) {
+  // Check prerequisite for COC 2/3/4
+  if (cocIdx > 0 && typeof CSS_BUDDY !== 'undefined' && CSS_BUDDY.isLoggedIn()) {
+    const reqKey = 'coc' + cocIdx;
+    const reqPct = CSS_BUDDY.getProgress(reqKey);
+    if (reqPct < 100) {
+      showLockFlash(cocIdx);
+      return;
+    }
+  }
+  currentCOC = cocIdx;
+  const data = QUESTION_BANK[cocIdx];
+  document.getElementById('modeIcon').textContent = data.icon;
+  document.getElementById('modeTitle').textContent = data.name;
+  document.getElementById('modeSubtitle').textContent = 'Choose your quiz mode below';
+  document.getElementById('nextCocTitle').textContent = data.nextCoc.title;
+  showScreen('screen-mode');
+}
+
+function goToNextCoc() {
+  const url = QUESTION_BANK[currentCOC].nextCoc.url;
+  if (url === 'quiz.html') { showHub(); return; }
+  showToast(' Navigating to next COC...');
+  setTimeout(() => { window.location.href = url; }, 1000);
+}
+
+function updateHubStats() {
+  const attempts = parseInt(localStorage.getItem('cssbuddy-quiz-attempts') || '0');
+  document.getElementById('totalAttempts').textContent = attempts;
+  const all = Object.values(savedScores);
+  if (all.length > 0) {
+    const best = Math.max(...all.map(s => s.pct || 0));
+    document.getElementById('bestScore').textContent = best + '%';
+  }
+  Object.keys(savedScores).forEach(k => {
+    const el = document.getElementById('best-' + k);
+    if (el && savedScores[k]) {
+      el.textContent = '🏆 ' + savedScores[k].pct + '%';
+      el.style.display = 'block';
+    }
+  });
+}
+
+// ════════════════════════════════════════════════════════════════
+// QUIZ START
+// ════════════════════════════════════════════════════════════════
+function startQuiz(mode) {
+  currentMode = mode;
+  const bank = QUESTION_BANK[currentCOC];
+
+  if (mode === 'mcq') {
+    questions = shuffle([...bank.mcq]).slice(0, 15);
+    timerMax = 20;
+  } else if (mode === 'tf') {
+    questions = shuffle([...bank.tf]).slice(0, 12);
+    timerMax = 15;
+  } else if (mode === 'fib') {
+    questions = shuffle([...bank.fib]).slice(0, 8);
+    timerMax = 30;
+  } else if (mode === 'blitz') {
+    const mcqQ = shuffle([...bank.mcq]).slice(0, 6).map(q => ({...q, _type:'mcq'}));
+    const tfQ = shuffle([...bank.tf]).slice(0, 4).map(q => ({...q, _type:'tf'}));
+    const fibQ = shuffle([...bank.fib]).slice(0, 4).map(q => ({...q, _type:'fib'}));
+    questions = shuffle([...mcqQ, ...tfQ, ...fibQ]);
+    timerMax = 10;
+  }
+
+  if (mode !== 'blitz') {
+    questions = questions.map(q => ({...q, _type: mode}));
+  }
+
+  qIndex = 0; score = 0; streak = 0; points = 0; results = [];
+  answered = false;
+
+  const modeNames = {mcq:'Multiple Choice', tf:'True or False', fib:'Fill in the Blank', blitz:'⚡ Speed Blitz'};
+  document.getElementById('quizName').textContent = bank.name;
+  document.getElementById('quizModeTag').innerHTML = `${modeNames[mode]} &nbsp;·&nbsp; Question <span id="qNumDisplay">1</span> of <span id="qTotalDisplay">${questions.length}</span>`;
+  document.getElementById('qTotalDisplay').textContent = questions.length;
+  document.getElementById('liveScore').textContent = '0';
+  document.getElementById('streakNum').textContent = '0';
+  document.getElementById('comboBadge').classList.remove('show');
+
+  showScreen('screen-quiz');
+  loadQuestion();
+}
+
+// ════════════════════════════════════════════════════════════════
+// QUESTION RENDERING
+// ════════════════════════════════════════════════════════════════
+function loadQuestion() {
+  answered = false;
+  const q = questions[qIndex];
+  const type = q._type;
+
+  document.getElementById('quizProgFill').style.width = ((qIndex / questions.length) * 100) + '%';
+  document.getElementById('qNumDisplay').textContent = qIndex + 1;
+  document.getElementById('qNumBadge').textContent = 'Q' + (qIndex + 1);
+  document.getElementById('questionText').textContent = q.q;
+  document.getElementById('questionHint').style.display = 'none';
+
+  const typeBadge = {mcq:'Multiple Choice', tf:'True or False', fib:'Fill in the Blank'};
+  document.getElementById('qTypeBadge').textContent = typeBadge[type] || 'Question';
+
+  const diffEl = document.getElementById('qDiffBadge');
+  if (q.diff) {
+    diffEl.textContent = q.diff.charAt(0).toUpperCase() + q.diff.slice(1);
+    diffEl.className = 'q-diff ' + q.diff;
+    diffEl.style.display = '';
+  } else { diffEl.style.display = 'none'; }
+
+  document.getElementById('feedbackBox').classList.remove('show','correct-fb','wrong-fb','timeout-fb');
+  const nb = document.getElementById('nextQBtn');
+  nb.classList.remove('show');
+  nb.textContent = qIndex < questions.length - 1 ? 'Next Question →' : 'See Results 🏁';
+
+  document.getElementById('optionsGrid').style.display = 'none';
+  document.getElementById('tfGrid').style.display = 'none';
+  document.getElementById('fibWrap').style.display = 'none';
+
+  if (type === 'mcq') { renderMCQ(q); }
+  else if (type === 'tf') { renderTF(); }
+  else if (type === 'fib') { renderFIB(); }
+
+  startTimer(timerMax);
+}
+
+function renderMCQ(q) {
+  const grid = document.getElementById('optionsGrid');
+  grid.style.display = 'flex';
+  const letters = ['A','B','C','D'];
+  grid.innerHTML = q.opts.map((opt, i) => `
+    <button class="option-btn" id="opt-${i}" onclick="answerMCQ(${i})">
+      <span class="opt-letter">${letters[i]}</span>
+      <span>${opt}</span>
+    </button>
+  `).join('');
+}
+
+function renderTF() {
+  const grid = document.getElementById('tfGrid');
+  grid.style.display = 'grid';
+  grid.querySelectorAll('.tf-btn').forEach(btn => {
+    btn.disabled = false;
+    btn.className = 'tf-btn';
+  });
+}
+
+function renderFIB() {
+  const wrap = document.getElementById('fibWrap');
+  wrap.style.display = 'block';
+  const input = document.getElementById('fibInput');
+  input.value = '';
+  input.className = 'fib-input';
+  input.disabled = false;
+  document.getElementById('fibSubmit').disabled = false;
+  setTimeout(() => input.focus(), 100);
+  input.onkeydown = (e) => { if (e.key === 'Enter') answerFIB(); };
+}
+
+// ════════════════════════════════════════════════════════════════
+// ANSWER HANDLERS
+// ════════════════════════════════════════════════════════════════
+function answerMCQ(selected) {
+  if (answered) return;
+  answered = true;
+  stopTimer();
+  const q = questions[qIndex];
+  const correct = selected === q.ans;
+
+  document.querySelectorAll('.option-btn').forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.ans) btn.classList.add('correct');
+    else if (i === selected && !correct) btn.classList.add('wrong');
+    else btn.classList.add('reveal');
+  });
+
+  processResult(correct, q.exp, '', q.opts[selected]);
+}
+
+function answerTF(val) {
+  if (answered) return;
+  answered = true;
+  stopTimer();
+  const q = questions[qIndex];
+  const userBool = val === 'true';
+  const correct = userBool === q.ans;
+
+  document.querySelectorAll('.tf-btn').forEach(btn => {
+    btn.disabled = true;
+    if (btn.getAttribute('data-val') === String(q.ans)) btn.classList.add('correct');
+    else if (btn.getAttribute('data-val') === val && !correct) btn.classList.add('wrong');
+  });
+
+  processResult(correct, q.exp, '', val.toUpperCase());
+}
+
+function answerFIB() {
+  if (answered) return;
+  const input = document.getElementById('fibInput');
+  const userAns = input.value.trim().toLowerCase();
+  if (!userAns) { showToast('Please type an answer!'); return; }
+  answered = true;
+  stopTimer();
+  const q = questions[qIndex];
+  const correct = q.ans.some(a => userAns === a.toLowerCase());
+
+  input.className = 'fib-input ' + (correct ? 'correct' : 'wrong');
+  input.disabled = true;
+  document.getElementById('fibSubmit').disabled = true;
+
+  processResult(correct, q.exp, 'Correct answer: ' + q.ans[0], userAns);
+}
+
+// ════════════════════════════════════════════════════════════════
+// RESULT PROCESSING
+// ════════════════════════════════════════════════════════════════
+function processResult(correct, explanation, extraHint, userAns) {
+  const q = questions[qIndex];
+
+  if (correct) {
+    score++;
+    streak++;
+    const timeBonus = Math.round(timeLeft * 2);
+    const streakBonus = streak >= 3 ? streak * 5 : 0;
+    const basePoints = currentMode === 'blitz' ? 150 : 100;
+    points += basePoints + timeBonus + streakBonus;
+    document.getElementById('liveScore').textContent = points;
+    document.getElementById('streakNum').textContent = streak;
+    if (streak >= 3) {
+      document.getElementById('comboNum').textContent = streak;
+      document.getElementById('comboBadge').classList.add('show');
+    }
+    showFeedback('correct', '✅ Correct! ' + (streak > 2 ? '🔥 '+streak+' in a row!' : 'Nice!'), explanation);
+  } else {
+    streak = 0;
+    document.getElementById('streakNum').textContent = '0';
+    document.getElementById('comboBadge').classList.remove('show');
+    const correctAnsText = extraHint || getCorrectText(q);
+    showFeedback('wrong', '❌ Incorrect!', explanation + (extraHint ? '\n' + extraHint : ''));
+  }
+
+  results.push({ q: q.q, correct, timeout: false, userAns, correctAns: getCorrectText(q), exp: q.exp });
+  document.getElementById('nextQBtn').classList.add('show');
+}
+
+function handleTimeout() {
+  if (answered) return;
+  answered = true;
+  streak = 0;
+  document.getElementById('streakNum').textContent = '0';
+  document.getElementById('comboBadge').classList.remove('show');
+  const q = questions[qIndex];
+
+  document.querySelectorAll('.option-btn, .tf-btn').forEach(b => { b.disabled = true; });
+  document.getElementById('fibInput').disabled = true;
+  document.getElementById('fibSubmit').disabled = true;
+
+  if (q._type === 'mcq') {
+    const btns = document.querySelectorAll('.option-btn');
+    btns.forEach((b, i) => { if (i === q.ans) b.classList.add('correct'); else b.classList.add('reveal'); });
+  } else if (q._type === 'tf') {
+    document.querySelectorAll('.tf-btn').forEach(b => {
+      if (b.getAttribute('data-val') === String(q.ans)) b.classList.add('correct');
+    });
+  }
+
+  showFeedback('timeout', "⏰ Time's up!", 'The correct answer: ' + getCorrectText(q) + '\n' + (q.exp || ''));
+  results.push({ q: q.q, correct: false, timeout: true, userAns: '—', correctAns: getCorrectText(q), exp: q.exp });
+  document.getElementById('nextQBtn').classList.add('show');
+}
+
+function getCorrectText(q) {
+  if (q._type === 'mcq') return q.opts[q.ans];
+  if (q._type === 'tf') return q.ans ? 'TRUE' : 'FALSE';
+  if (q._type === 'fib') return q.ans[0];
+  return '';
+}
+
+function showFeedback(type, head, body) {
+  const fb = document.getElementById('feedbackBox');
+  fb.className = 'feedback-box show ' + type + '-fb';
+  document.getElementById('fbHead').textContent = head;
+  document.getElementById('fbBody').textContent = body;
+}
+
+function nextQuestion() {
+  qIndex++;
+  if (qIndex >= questions.length) { showResults(); }
+  else {
+    document.getElementById('nextQBtn').classList.remove('show');
+    loadQuestion();
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+// TIMER
+// ════════════════════════════════════════════════════════════════
+function startTimer(seconds) {
+  stopTimer();
+  timeLeft = seconds;
+  const circle = document.getElementById('timerCircle');
+  const text = document.getElementById('timerText');
+  const ring = document.getElementById('timerRing');
+  const circumference = 138.2;
+
+  ring.className = 'timer-ring';
+  text.textContent = seconds;
+  circle.style.strokeDashoffset = '0';
+
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    text.textContent = timeLeft;
+    const progress = (seconds - timeLeft) / seconds;
+    circle.style.strokeDashoffset = (progress * circumference).toFixed(2);
+
+    if (timeLeft <= Math.floor(seconds * 0.3)) ring.className = 'timer-ring danger';
+    else if (timeLeft <= Math.floor(seconds * 0.5)) ring.className = 'timer-ring warn';
+
+    if (timeLeft <= 0) { stopTimer(); handleTimeout(); }
+  }, 1000);
+}
+
+function stopTimer() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+}
+
+// ════════════════════════════════════════════════════════════════
+// RESULTS
+// ════════════════════════════════════════════════════════════════
+function showResults() {
+  stopTimer();
+  const total = results.length;
+  const correct = results.filter(r => r.correct).length;
+  const wrong = results.filter(r => !r.correct && !r.timeout).length;
+  const timeout = results.filter(r => r.timeout).length;
+  const pct = Math.round((correct / total) * 100);
+
+  const attempts = parseInt(localStorage.getItem('cssbuddy-quiz-attempts') || '0') + 1;
+  localStorage.setItem('cssbuddy-quiz-attempts', attempts);
+  const key = currentCOC + '-' + currentMode;
+  if (!savedScores[currentCOC] || (savedScores[currentCOC].pct || 0) < pct) {
+    savedScores[currentCOC] = { pct, mode: currentMode };
+    localStorage.setItem('cssbuddy-quiz-scores', JSON.stringify(savedScores));
+  }
+  // BUG FIX: was using undefined AUTH object; fixed to CSS_BUDDY with correct signature
+  if (typeof CSS_BUDDY !== 'undefined' && CSS_BUDDY.isLoggedIn()) {
+    const cocKey = QUESTION_BANK[currentCOC] ? QUESTION_BANK[currentCOC].key || ('coc'+(currentCOC+1)) : 'coc'+(currentCOC+1);
+    CSS_BUDDY.saveQuizScore(cocKey, correct, total);
+  }
+
+  const hero = document.getElementById('resultsHero');
+  let grade, msg;
+  if (pct >= 90) { hero.className = 'results-hero excellent'; grade = '🏆'; msg = 'Outstanding! You\'re a CSS Expert!'; }
+  else if (pct >= 75) { hero.className = 'results-hero good'; grade = '🌟'; msg = 'Great Job! Almost there!'; }
+  else if (pct >= 55) { hero.className = 'results-hero okay'; grade = '💪'; msg = 'Good effort! Keep reviewing!'; }
+  else { hero.className = 'results-hero poor'; grade = '📖'; msg = 'Keep studying — you\'ll get there!'; }
+
+  document.getElementById('resultsGrade').textContent = grade;
+  document.getElementById('resultsScore').textContent = correct + '/' + total;
+  document.getElementById('resultsLabel').textContent = `${pct}% — Questions Correct`;
+  document.getElementById('resultsMsg').textContent = msg;
+  document.getElementById('rsCorrect').textContent = correct;
+  document.getElementById('rsWrong').textContent = wrong;
+  document.getElementById('rsTimeout').textContent = timeout;
+  document.getElementById('rsPoints').textContent = points;
+  document.getElementById('resultsNextCoc').textContent = '📖 ' + QUESTION_BANK[currentCOC].nextCoc.title;
+
+  const list = document.getElementById('breakdownList');
+  list.innerHTML = results.map(r => `
+    <div class="rb-item">
+      <div class="rb-icon ${r.timeout ? 't' : r.correct ? 'c' : 'w'}">
+        ${r.timeout ? '⏰' : r.correct ? '✅' : '❌'}
+      </div>
+      <div>
+        <div class="rb-q">${r.q}</div>
+        <div class="rb-a">✔ Correct: ${r.correctAns}</div>
+        ${!r.correct ? `<div class="rb-user">✘ Your answer: ${r.userAns}</div>` : ''}
+      </div>
+    </div>
+  `).join('');
+
+  showScreen('screen-results');
+  if (pct >= 90) launchConfetti();
+}
+
+function retryQuiz() { startQuiz(currentMode); }
+function confirmExit() {
+  if (confirm('Exit quiz? Your progress will be lost.')) { stopTimer(); showHub(); }
+}
+
+// ════════════════════════════════════════════════════════════════
+// UTILS
+// ════════════════════════════════════════════════════════════════
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function launchConfetti() {
+  const colors = ['#3B82F6','#22C55E','#F59E0B','#EF4444','#8B5CF6','#EC4899'];
+  for (let i = 0; i < 60; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.cssText = `
+        left:${Math.random()*100}vw;
+        top:-10px;
+        background:${colors[Math.floor(Math.random()*colors.length)]};
+        width:${6+Math.random()*10}px;
+        height:${6+Math.random()*10}px;
+        animation-delay:${Math.random()*1.5}s;
+        animation-duration:${2+Math.random()*2}s;
+        border-radius:${Math.random()>0.5?'50%':'2px'};
+      `;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 4000);
+    }, i * 30);
+  }
+}
+
+updateHubStats();
+</script>
+<script>
+// Hook into cssbuddy-shared.js login/logout
+window.onCBLogin = function(user, data) {
+  document.body.classList.remove('guest-mode');
+  var progress = (data && data.progress) ? data.progress : {};
+  // Update lock overlays for COC 2/3/4
+  var locks = [
+    { lockId:'quiz-lock-coc2', subId:'quiz-lock-sub-coc2', req:'coc1', reqNum:1, cocNum:2 },
+    { lockId:'quiz-lock-coc3', subId:'quiz-lock-sub-coc3', req:'coc2', reqNum:2, cocNum:3 },
+    { lockId:'quiz-lock-coc4', subId:'quiz-lock-sub-coc4', req:'coc3', reqNum:3, cocNum:4 },
+  ];
+  locks.forEach(function(l) {
+    var lockEl = document.getElementById(l.lockId);
+    if (!lockEl) return;
+    var reqPct = progress[l.req] || 0;
+    if (reqPct >= 100) {
+      lockEl.style.display = 'none'; // Unlocked
+    } else {
+      lockEl.style.display = 'flex'; // Locked
+      var subEl = document.getElementById(l.subId);
+      if (subEl) subEl.textContent = 'COC ' + l.reqNum + ' reviewer: ' + reqPct + '% / 100% — finish it first!';
+    }
+  });
+};
+window.onCBLogout = function() {
+  document.body.classList.add('guest-mode');
+  // Show all locks when logged out
+  ['coc2','coc3','coc4'].forEach(function(t) {
+    var lockEl = document.getElementById('quiz-lock-' + t);
+    if (lockEl) {
+      lockEl.style.display = 'flex';
+      var num = parseInt(t.replace('coc',''));
+      var subEl = document.getElementById('quiz-lock-sub-' + t);
+      if (subEl) subEl.textContent = 'Login and complete COC ' + (num-1) + ' reviewer (100%) first';
+    }
+  });
+};
+</script>
+<script src="cssbuddy-shared.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  if(typeof CSS_BUDDY !== 'undefined' && CSS_BUDDY.buildThemePanel) {
+    CSS_BUDDY.buildThemePanel("cb-theme-panel-container");
+  }
+});
+</script>
+
+<!-- ══ SITE FOOTER ══ -->
+<footer style="
+  background: #0b3d8d;
+  color: #fff;
+  text-align: center;
+  padding: 22px 24px 18px;
+  margin-top: auto;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.82rem;
+  letter-spacing: 0.01em;
+  line-height: 1.7;
+">
+  <div style="max-width:860px;margin:0 auto;">
+    <p style="margin:0 0 4px;font-weight:700;font-size:0.9rem;color:#93C5FD;letter-spacing:0.04em;text-transform:uppercase;">
+      CSS Buddy &mdash; Interactive Learning Platform
+    </p>
+    <p style="margin:0 0 6px;color:#CBD5E1;">
+      Developed by <strong style="color:#fff;">Group 2 &mdash; Matiyaga</strong> &middot;
+      Grade 12 CSS &middot;
+      <em>National College of Science and Technology &ndash; Institute of Industrial Research and Training (NCST-IIRT)</em>
+    </p>
+    <p style="margin:0 0 4px;color:#94A3B8;font-size:0.78rem;">
+      Learning content aligned with
+      <strong style="color:#93C5FD;">TESDA Training Regulation for Computer Systems Servicing (CSS) NC II</strong>
+    </p>
+    <p style="margin:6px 0 0;color:#64748B;font-size:0.76rem;">
+      &copy; 2025 Group 2 Matiyaga &middot; NCST-IIRT &middot; Dasma&ntilde;ari&ntilde;as City, Cavite &middot;
+      All rights reserved. Content used for academic and educational purposes.
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

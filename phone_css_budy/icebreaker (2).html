@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ice Breaker – CSS Buddy</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{--primary:#3B82F6;--primary-dark:#1D4ED8;--navy:#1E293B;--bg:#E8EDF5;--text:#1E293B;--text-muted:#64748B;--border:#E2E8F0;}
+  .theme-teal{--primary:#14B8A6;--primary-dark:#0D9488;}
+  .theme-green{--primary:#22C55E;--primary-dark:#16A34A;}
+  .theme-gray{--primary:#64748B;--primary-dark:#475569;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+  nav{background:var(--navy);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:68px;position:sticky;top:0;z-index:100;}
+  .logo{font-size:1.6rem;font-weight:800;color:#fff;text-decoration:none;}.logo span{color:var(--primary);}
+  .nav-links{display:flex;gap:4px;}
+  .nav-links a{color:#94A3B8;text-decoration:none;padding:8px 16px;border-radius:8px;font-weight:500;font-size:0.95rem;transition:all 0.2s;}
+  .nav-links a.active,.nav-links a:hover{color:#fff;background:rgba(255,255,255,0.08);}
+  .btn-login{background:transparent;border:1.5px solid #fff;color:#fff;padding:8px 20px;border-radius:20px;font-family:'Outfit',sans-serif;font-weight:600;cursor:pointer;font-size:0.9rem;}
+
+  .page-wrap{max-width:800px;margin:0 auto;padding:40px 24px;}
+  .page-header{text-align:center;margin-bottom:40px;}
+  .page-header h1{font-size:2rem;font-weight:800;margin-bottom:8px;}
+  .page-header p{color:var(--text-muted);}
+
+  /* BIG QUESTION */
+  .question-stage{
+    background:linear-gradient(135deg,var(--navy) 0%,#2D3F55 100%);
+    border-radius:28px;padding:48px 40px;text-align:center;margin-bottom:32px;
+    position:relative;overflow:hidden;
+  }
+  .question-stage::before{content:'🧊';font-size:5rem;position:absolute;top:-10px;right:20px;opacity:0.15;}
+  .ib-label{color:rgba(255,255,255,0.6);font-size:0.78rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;}
+  .ib-question{color:#fff;font-size:1.6rem;font-weight:800;line-height:1.5;margin-bottom:28px;min-height:80px;transition:opacity 0.3s;}
+  .ib-category-badge{display:inline-block;background:var(--primary);color:#fff;padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:700;margin-bottom:20px;}
+  .btn-next-q{background:#fff;color:var(--navy);border:none;padding:14px 32px;border-radius:20px;font-family:'Outfit',sans-serif;font-weight:800;font-size:1rem;cursor:pointer;transition:all 0.2s;}
+  .btn-next-q:hover{background:var(--primary);color:#fff;transform:scale(1.05);}
+
+  /* CATEGORIES */
+  .cat-row{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;justify-content:center;}
+  .cat-btn{padding:8px 18px;border-radius:20px;border:2px solid var(--border);background:#fff;cursor:pointer;font-family:'Outfit',sans-serif;font-weight:600;font-size:0.82rem;transition:all 0.2s;color:var(--text-muted);}
+  .cat-btn.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+  .cat-btn:hover:not(.active){border-color:var(--primary);color:var(--primary);}
+
+  /* ANSWER BOX */
+  .answer-section{background:#fff;border-radius:20px;padding:28px;box-shadow:0 2px 16px rgba(0,0,0,0.07);margin-bottom:24px;}
+  .answer-section h3{font-weight:800;margin-bottom:12px;font-size:1rem;}
+  .answer-input{width:100%;padding:14px 16px;border:2px solid var(--border);border-radius:12px;font-family:'Outfit',sans-serif;font-size:0.95rem;outline:none;resize:vertical;min-height:90px;transition:border-color 0.2s;}
+  .answer-input:focus{border-color:var(--primary);}
+  .btn-share{background:var(--primary);color:#fff;border:none;padding:11px 24px;border-radius:12px;font-family:'Outfit',sans-serif;font-weight:700;cursor:pointer;margin-top:12px;transition:all 0.2s;}
+  .btn-share:hover{background:var(--primary-dark);}
+
+  /* COMMUNITY ANSWERS */
+  .community-section{background:#fff;border-radius:20px;padding:28px;box-shadow:0 2px 16px rgba(0,0,0,0.07);}
+  .community-section h3{font-weight:800;margin-bottom:16px;font-size:1rem;}
+  .answer-bubble{background:var(--bg);border-radius:14px;padding:14px 18px;margin-bottom:10px;display:flex;gap:14px;align-items:flex-start;}
+  .avatar{width:36px;height:36px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.9rem;flex-shrink:0;}
+  .bubble-content .name{font-weight:700;font-size:0.85rem;margin-bottom:3px;}
+  .bubble-content .answer{font-size:0.9rem;color:var(--text-muted);line-height:1.5;}
+
+  /* ALL QUESTIONS LIST */
+  .all-q-section{margin-top:32px;}
+  .all-q-section h2{font-weight:800;font-size:1.2rem;margin-bottom:16px;}
+  .q-list{display:flex;flex-direction:column;gap:10px;}
+  .q-item{background:#fff;border-radius:14px;padding:16px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,0.05);transition:all 0.2s;}
+  .q-item:hover{background:var(--primary);color:#fff;transform:translateX(4px);}
+  .q-item .q-text{font-weight:600;font-size:0.9rem;}
+  .q-cat{font-size:0.75rem;opacity:0.65;font-weight:600;}
+
+  .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--navy);color:#fff;padding:12px 24px;border-radius:30px;font-weight:600;font-size:0.9rem;z-index:300;transition:transform 0.3s;}
+  .toast.show{transform:translateX(-50%) translateY(0);}
+  .page-lock{display:none;position:fixed;inset:0;z-index:9999;background:rgba(5,18,45,0.60);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);align-items:center;justify-content:center;}
+  body.guest-mode .page-lock{display:flex;}
+  .page-lock-box{background:#fff;border-radius:24px;padding:44px 52px;text-align:center;max-width:420px;width:90%;box-shadow:0 24px 80px rgba(0,0,0,0.3);}
+  .page-lock-box .lock-emoji{font-size:3.5rem;margin-bottom:14px;}
+  .page-lock-box h2{font-size:1.4rem;font-weight:800;color:var(--navy,#0b3d8d);margin-bottom:8px;}
+  .page-lock-box p{color:#64748b;font-size:0.9rem;line-height:1.65;margin-bottom:24px;}
+  .lock-divider{font-size:0.78rem;color:#94a3b8;margin:4px 0;}
+  .lock-btn-primary{width:100%;padding:13px 24px;background:var(--navy,#0b3d8d);color:#fff;border:none;border-radius:12px;font-family:'Outfit',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;transition:all .2s;margin-bottom:10px;display:block;}
+  .lock-btn-primary:hover{background:var(--primary,#3B82F6);}
+  .lock-btn-secondary{width:100%;padding:11px 24px;background:transparent;color:var(--navy,#0b3d8d);border:2px solid var(--navy,#0b3d8d);border-radius:12px;font-family:'Outfit',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;transition:all .2s;display:block;}
+  .lock-btn-secondary:hover{background:#EFF6FF;border-color:var(--primary,#3B82F6);color:var(--primary,#3B82F6);}
+
+  /* ── MOBILE RESPONSIVE ── */
+  @media(max-width:768px){
+    .page-wrap{padding:14px!important}
+    .page-header h1{font-size:1.5rem!important}
+    .page-wrap > *{max-width:100%!important}
+  }
+  @media(max-width:480px){
+    .page-header h1{font-size:1.3rem!important}
+  }
+</style>
+</head>
+<body class="guest-mode">
+
+<div class="page-lock" id="page-lock">
+  <div class="page-lock-box">
+    <div class="lock-emoji">🔒</div>
+    <h2>Login to Access Ice Breaker</h2>
+    <p>Create a free account or login to enjoy ice breaker activities, track your progress, and unlock all COC modules.</p>
+    <button class="lock-btn-primary" onclick="CSS_BUDDY.openModal('login')">Login to my account</button>
+    <div class="lock-divider">— or —</div>
+    <button class="lock-btn-secondary" onclick="CSS_BUDDY.openModal('register')">Create free account</button>
+  </div>
+</div>
+<nav>
+  <a href="index.html" class="logo"><span>CSS </span> Buddy</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="quiz.html">Quiz</a>
+    <a href="flashcards.html">Flashcards</a>
+    <a href="funfacts.html">Fun Facts</a>
+    <a href="icebreaker.html" class="active">Ice Breaker</a>
+    <a href="games.html">Games</a>
+  </div>
+  <div class="nav-right"></div>
+</nav>
+
+<div class="page-wrap">
+  <div id="ib-back"></div>
+  <div class="page-header">
+    <h1> Ice Breaker</h1>
+    <p>Fun tech discussion questions to spark conversation and critical thinking!</p>
+  </div>
+
+  <div class="question-stage">
+    <div class="ib-label"> Discussion Question</div>
+    <div class="ib-category-badge" id="ibCatBadge">Technology & Life</div>
+    <div class="ib-question" id="ibQuestion">What tech could you not live without?</div>
+    <button class="btn-next-q" onclick="nextQuestion()"> Next Question</button>
+  </div>
+
+  <div class="cat-row">
+    <button class="cat-btn active" onclick="setCat('all',this)">All</button>
+    <button class="cat-btn" onclick="setCat('life',this)"> Tech & Life</button>
+    <button class="cat-btn" onclick="setCat('future',this)"> Future Tech</button>
+    <button class="cat-btn" onclick="setCat('school',this)"> School & Learning</button>
+    <button class="cat-btn" onclick="setCat('debate',this)"> Debate</button>
+  </div>
+
+  <div class="answer-section">
+    <h3> Share Your Answer</h3>
+    <textarea class="answer-input" id="answerInput" placeholder="Type your thoughts here... There are no wrong answers!"></textarea>
+    <button class="btn-share" onclick="shareAnswer()"> Share Answer</button>
+  </div>
+
+  <div class="community-section">
+    <h3> Community Answers</h3>
+    <div id="communityAnswers">
+      <div class="answer-bubble">
+        <div class="avatar">A</div>
+        <div class="bubble-content">
+          <div class="name"> Jon Snow (Student)</div>
+          <div class="answer">My smartphone — I use it for notes, research, and staying connected with classmates 24/7!</div>
+        </div>
+      </div>
+      <div class="answer-bubble">
+        <div class="avatar" style="background:#14B8A6">R</div>
+        <div class="bubble-content">
+          <div class="name">Linda Walker (Student)</div>
+          <div class="answer">Wi-Fi! Without internet connectivity, all my devices would basically become paperweights for school.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="all-q-section">
+    <h2> All Ice Breaker Questions</h2>
+    <div class="q-list" id="qList"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+  const savedTheme = localStorage.getItem('cssbuddy-theme');
+  if (savedTheme && savedTheme !== 'blue') document.documentElement.className = `theme-${savedTheme}`;
+
+  const questions = [
+    {q:"What tech could you not live without?",cat:"life"},
+    {q:"If you could only use ONE app for a year, which would it be?",cat:"life"},
+    {q:"Is social media making us smarter or less smart?",cat:"debate"},
+    {q:"Would you rather have a robot best friend or a robot teacher?",cat:"future"},
+    {q:"What technology invented in your lifetime has changed the world the most?",cat:"life"},
+    {q:"If you could invent one app to solve a problem at your school, what would it do?",cat:"school"},
+    {q:"Should phones be allowed in classrooms? Why or why not?",cat:"debate"},
+    {q:"What will computers look like in 50 years?",cat:"future"},
+    {q:"If the internet shut down for one month, what would change in your life?",cat:"life"},
+    {q:"Which is better for studying: a laptop or a tablet? Defend your answer!",cat:"school"},
+    {q:"Will AI ever replace teachers? Should it?",cat:"debate"},
+    {q:"What's one technology you think is overrated?",cat:"debate"},
+    {q:"What gadget would make school so much better?",cat:"school"},
+    {q:"What superpower would you want to add to a computer?",cat:"future"},
+    {q:"Would you live in a fully automated 'smart home'? What would it look like?",cat:"future"},
+    {q:"What's the most impressive thing you've ever seen a computer do?",cat:"life"},
+    {q:"If tech companies could only solve ONE world problem, what should it be?",cat:"debate"},
+    {q:"What's the most underused technology in education today?",cat:"school"},
+    {q:"Would you rather have perfect internet or perfect storage? Why?",cat:"debate"},
+    {q:"How has technology changed the way you study compared to your parents?",cat:"school"},
+  ];
+
+  let currentCat = 'all';
+  let filteredQ = [...questions];
+  let currentIdx = 0;
+
+  function setCat(cat, el) {
+    currentCat = cat;
+    filteredQ = cat === 'all' ? [...questions] : questions.filter(q => q.cat === cat);
+    currentIdx = 0;
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    showQuestion(0);
+    renderList();
+  }
+
+  function showQuestion(idx) {
+    const q = filteredQ[idx];
+    document.getElementById('ibQuestion').textContent = q.q;
+    const cats = {life:' Tech & Life',future:' Future Tech',school:' School & Learning',debate:' Debate'};
+    document.getElementById('ibCatBadge').textContent = cats[q.cat];
+  }
+
+  function nextQuestion() {
+    currentIdx = (currentIdx + 1) % filteredQ.length;
+    const el = document.getElementById('ibQuestion');
+    el.style.opacity = 0;
+    setTimeout(() => { showQuestion(currentIdx); el.style.opacity = 1; }, 200);
+    document.getElementById('answerInput').value = '';
+  }
+
+  function shareAnswer() {
+    const ans = document.getElementById('answerInput').value.trim();
+    if (!ans) { showToast('Please type your answer first!'); return; }
+    const container = document.getElementById('communityAnswers');
+    const colors = ['#3B82F6','#14B8A6','#8B5CF6','#F59E0B','#22C55E','#EF4444'];
+    const color = colors[Math.floor(Math.random()*colors.length)];
+    const bubble = document.createElement('div');
+    bubble.className = 'answer-bubble';
+    bubble.innerHTML = `
+      <div class="avatar" style="background:${color}">Me</div>
+      <div class="bubble-content">
+        <div class="name">You (Just now)</div>
+        <div class="answer">${ans}</div>
+      </div>`;
+    container.appendChild(bubble);
+    document.getElementById('answerInput').value = '';
+    showToast(' Answer shared!');
+    bubble.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+
+  function renderList() {
+    const list = document.getElementById('qList');
+    list.innerHTML = '';
+    const cats = {life:' Tech & Life',future:' Future Tech',school:' School & Learning',debate:' Debate'};
+    filteredQ.forEach((q, i) => {
+      const item = document.createElement('div');
+      item.className = 'q-item';
+      item.onclick = () => { currentIdx = i; showQuestion(i); window.scrollTo({top:0,behavior:'smooth'}); };
+      item.innerHTML = `<span class="q-text">${q.q}</span><span class="q-cat">${cats[q.cat]}</span>`;
+      list.appendChild(item);
+    });
+  }
+
+  // Init
+  showQuestion(0);
+  renderList();
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  </script>
+
+<script>
+// ============================================================
+//  DATABASE HELPERS  (localStorage)
+// ============================================================
+function getDB() {
+  try { return JSON.parse(localStorage.getItem('cssBuddyDB') || '{"accounts":{}, "users":{}}'); }
+  catch { return { accounts: {}, users: {} }; }
+}
+function saveDB(db) { localStorage.setItem('cssBuddyDB', JSON.stringify(db)); }
+
+function getAccount(email) { return getDB().accounts[email] || null; }
+
+function createAccount(email, name, hash) {
+  const db = getDB();
+  db.accounts[email] = { name, hash };
+  db.users[email] = db.users[email] || {
+    progress: { coc1: 0, coc2: 0, coc3: 0, coc4: 0 },
+    bookmarks: [],
+    theme: 'blue',
+    streak: 0,
+    lastLogin: null
+  };
+  saveDB(db);
+}
+
+function getUserData(email) {
+  const db = getDB();
+  return db.users[email] || null;
+}
+
+function updateUserData(email, patch) {
+  const db = getDB();
+  if (!db.users[email]) db.users[email] = {};
+  Object.assign(db.users[email], patch);
+  saveDB(db);
+}
+
+function updatePassword(email, newHash) {
+  const db = getDB();
+  if (db.accounts[email]) db.accounts[email].hash = newHash;
+  saveDB(db);
+}
+
+// Simple hash (not cryptographic — fine for local localStorage auth)
+function hashPass(str) {
+  let h = 5381;
+  for (let i = 0; i < str.length; i++) h = (h * 33) ^ str.charCodeAt(i);
+  return (h >>> 0).toString(36);
+}
+
+// ============================================================
+//  CURRENT SESSION
+// ============================================================
+let currentUser = null; // { email, name }
+
+function restoreSession() {
+  try {
+    const saved = localStorage.getItem('cssBuddySession');
+    if (saved) {
+      const u = JSON.parse(saved);
+      // Verify account still exists
+      if (getAccount(u.email)) { loginUser(u.email, u.name, false); }
+      else { localStorage.removeItem('cssBuddySession'); }
+    }
+  } catch { localStorage.removeItem('cssBuddySession'); }
+}
+
+function loginUser(email, name, showWelcome = true) {
+  currentUser = { email, name };
+  localStorage.setItem('cssBuddySession', JSON.stringify(currentUser));
+
+  // Streak logic
+  const data = getUserData(email) || {};
+  const today = new Date().toDateString();
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+  let streak = data.streak || 0;
+  if (data.lastLogin === yesterday) streak++;
+  else if (data.lastLogin !== today) streak = data.lastLogin ? 1 : 1;
+  updateUserData(email, { lastLogin: today, streak });
+
+  // Update UI
+  document.getElementById('guest-nav').style.display = 'none';
+  document.getElementById('user-nav').style.display = 'block';
+  document.getElementById('nav-username').textContent = name.split(' ')[0];
+  document.getElementById('avatar-btn').textContent = name[0].toUpperCase();
+  document.getElementById('dd-name').textContent = name;
+  document.getElementById('dd-email').textContent = email;
+  document.getElementById('login-banner').style.display = 'none';
+
+  // Hero personalisation
+  document.getElementById('hero-section').innerHTML = `
+    <div class="hero-welcome">Welcome back, <span>${name.split(' ')[0]}</span>! 🎓</div>
+    <div class="hero-sub">Keep going — you're doing great. Review your progress below.</div>`;
+
+  // Load saved data
+  loadUserData(email);
+
+  if (showWelcome) showToast('success', `✓ Welcome back, ${name.split(' ')[0]}!`);
+}
+
+function loadUserData(email) {
+  const data = getUserData(email);
+  if (!data) return;
+
+  // Progress bars
+  const topics = ['coc1','coc2','coc3','coc4'];
+  topics.forEach(t => {
+    const pct = data.progress?.[t] || 0;
+    const fill = document.getElementById(`fill-${t}`);
+    const label = document.getElementById(`label-${t}`);
+    if (fill) fill.style.width = pct + '%';
+    if (label) label.textContent = `Progress: ${pct}%`;
+  });
+
+  // Dropdown stats
+  const totalPct = Math.round(topics.reduce((a, t) => a + (data.progress?.[t] || 0), 0) / topics.length);
+  document.getElementById('dd-progress').textContent = totalPct + '%';
+  document.getElementById('dd-bookmarks').textContent = (data.bookmarks || []).length;
+  document.getElementById('dd-streak').textContent = data.streak || 1;
+
+  // Theme
+  if (data.theme) {
+    const dot = document.querySelector(`.dot-${data.theme}`);
+    if (dot) setTheme(data.theme, dot);
+  }
+
+  // Bookmarks
+  renderBookmarks(data.bookmarks || []);
+}
+// ============================================================
+//  LOGIN
+// ============================================================
+function doLogin() {
+  clearErrors('login');
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-password').value;
+  let ok = true;
+
+  if (!email) { setErr('login-email-err', 'Email is required.'); ok = false; }
+  else if (!email.includes('@')) { setErr('login-email-err', 'Enter a valid email address.'); ok = false; }
+  if (!pass) { setErr('login-pass-err', 'Password is required.'); ok = false; }
+  if (!ok) return;
+
+  const account = getAccount(email);
+  if (!account) { setErr('login-general-err', '❌ No account found with that email.'); return; }
+  if (account.hash !== hashPass(pass)) { setErr('login-general-err', '❌ Incorrect password.'); return; }
+
+  closeModal('login');
+  loginUser(email, account.name);
+}
+
+// ============================================================
+//  REGISTER
+// ============================================================
+function doRegister() {
+  clearErrors('reg');
+  const name    = document.getElementById('reg-name').value.trim();
+  const email   = document.getElementById('reg-email').value.trim();
+  const pass    = document.getElementById('reg-password').value;
+  const confirm = document.getElementById('reg-confirm').value;
+  let ok = true;
+
+  if (!name) { setErr('reg-name-err', 'Full name is required.'); ok = false; }
+  if (!email) { setErr('reg-email-err', 'Email is required.'); ok = false; }
+  else if (!email.includes('@') || !email.includes('.')) { setErr('reg-email-err', 'Enter a valid email address.'); ok = false; }
+  if (!pass) { setErr('reg-pass-err', 'Password is required.'); ok = false; }
+  else if (pass.length < 6) { setErr('reg-pass-err', 'Password must be at least 6 characters.'); ok = false; }
+  if (pass !== confirm) { setErr('reg-confirm-err', 'Passwords do not match.'); ok = false; }
+  if (!ok) return;
+
+  if (getAccount(email)) { setErr('reg-email-err', '❌ An account with this email already exists.'); return; }
+
+  createAccount(email, name, hashPass(pass));
+  document.getElementById('reg-success').textContent = '✓ Account created! Logging you in...';
+
+  setTimeout(() => {
+    closeModal('register');
+    loginUser(email, name);
+    showToast('success', `🎉 Welcome to CSS Buddy, ${name.split(' ')[0]}!`);
+  }, 900);
+}
+
+// ============================================================
+//  CHANGE PASSWORD
+// ============================================================
+function doChangePassword() {
+  if (!currentUser) return;
+  clearErrors('cp');
+  const current  = document.getElementById('cp-current').value;
+  const newPass  = document.getElementById('cp-new').value;
+  const confirm  = document.getElementById('cp-confirm').value;
+  let ok = true;
+
+  if (!current) { setErr('cp-current-err', 'Current password is required.'); ok = false; }
+  if (!newPass) { setErr('cp-new-err', 'New password is required.'); ok = false; }
+  else if (newPass.length < 6) { setErr('cp-new-err', 'Password must be at least 6 characters.'); ok = false; }
+  if (newPass !== confirm) { setErr('cp-confirm-err', 'Passwords do not match.'); ok = false; }
+  if (!ok) return;
+
+  const account = getAccount(currentUser.email);
+  if (!account || account.hash !== hashPass(current)) {
+    setErr('cp-current-err', '❌ Current password is incorrect.'); return;
+  }
+
+  updatePassword(currentUser.email, hashPass(newPass));
+  document.getElementById('cp-success').textContent = '✓ Password changed successfully!';
+  document.getElementById('cp-current').value = '';
+  document.getElementById('cp-new').value = '';
+  document.getElementById('cp-confirm').value = '';
+  setTimeout(() => { closeModal('changepass'); showToast('success', '🔑 Password updated!'); }, 1000);
+}
+
+// ============================================================
+//  LOGOUT
+// ============================================================
+function doLogout() {
+  const name = currentUser?.name?.split(' ')[0] || 'there';
+  currentUser = null;
+  localStorage.removeItem('cssBuddySession');
+
+  // Reset UI to guest state
+  document.getElementById('guest-nav').style.display = 'flex';
+  document.getElementById('user-nav').style.display = 'none';
+  document.getElementById('user-dropdown').classList.remove('open');
+  document.getElementById('login-banner').style.display = 'block';
+  document.getElementById('hero-section').innerHTML = `
+    <h1>Your path to CSS mastery starts here! 🎓</h1>
+    <p>Easily study, excel, and achieve high grades.</p>`;
+
+  // Reset progress bars
+  ['coc1','coc2','coc3','coc4'].forEach(t => {
+    const fill = document.getElementById(`fill-${t}`);
+    const label = document.getElementById(`label-${t}`);
+    if (fill) fill.style.width = '0%';
+    if (label) label.textContent = 'Progress: 0%';
+  });
+
+  // Hide bookmarks
+  document.getElementById('bookmarks-section').classList.remove('visible');
+  document.getElementById('sidebar-bm-badge').textContent = '';
+
+  showToast('info', `👋 Logged out. See you soon, ${name}!`);
+}
+
+</script>
+<script src="cssbuddy-shared.js"></script>
+<script>
+window.onCBLogin = function(user, data) {
+  document.body.classList.remove('guest-mode');
+};
+window.onCBLogout = function() {
+  document.body.classList.add('guest-mode');
+};
+</script>
+
+<!-- ══ SITE FOOTER ══ -->
+<footer style="
+  background: #0b3d8d;
+  color: #fff;
+  text-align: center;
+  padding: 22px 24px 18px;
+  margin-top: auto;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.82rem;
+  letter-spacing: 0.01em;
+  line-height: 1.7;
+">
+  <div style="max-width:860px;margin:0 auto;">
+    <p style="margin:0 0 4px;font-weight:700;font-size:0.9rem;color:#93C5FD;letter-spacing:0.04em;text-transform:uppercase;">
+      CSS Buddy &mdash; Interactive Learning Platform
+    </p>
+    <p style="margin:0 0 6px;color:#CBD5E1;">
+      Developed by <strong style="color:#fff;">Group 2 &mdash; Matiyaga</strong> &middot;
+      Grade 12 CSS &middot;
+      <em>National College of Science and Technology &ndash; Institute of Industrial Research and Training (NCST-IIRT)</em>
+    </p>
+    <p style="margin:0 0 4px;color:#94A3B8;font-size:0.78rem;">
+      Learning content aligned with
+      <strong style="color:#93C5FD;">TESDA Training Regulation for Computer Systems Servicing (CSS) NC II</strong>
+    </p>
+    <p style="margin:6px 0 0;color:#64748B;font-size:0.76rem;">
+      &copy; 2025 Group 2 Matiyaga &middot; NCST-IIRT &middot; Dasma&ntilde;ari&ntilde;as City, Cavite &middot;
+      All rights reserved. Content used for academic and educational purposes.
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

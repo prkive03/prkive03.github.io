@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flashcards – CSS Buddy</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root { --primary:#3B82F6; --primary-dark:#1D4ED8; --navy:#1E293B; --bg:#E8EDF5; --text:#1E293B; --text-muted:#64748B; --border:#E2E8F0; }
+  .theme-teal{--primary:#14B8A6;--primary-dark:#0D9488;}
+  .theme-green{--primary:#22C55E;--primary-dark:#16A34A;}
+  .theme-gray{--primary:#64748B;--primary-dark:#475569;}
+.theme-purple{--primary:#8B5CF6;--primary-dark:#7C3AED;}
+.theme-orange{--primary:#F97316;--primary-dark:#EA580C;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+  nav{background:var(--navy);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:68px;position:sticky;top:0;z-index:100;}
+  .logo{font-size:1.6rem;font-weight:800;color:#fff;text-decoration:none;}.logo span{color:var(--primary);}
+  .nav-links{display:flex;gap:4px;}
+  .nav-links a{color:#94A3B8;text-decoration:none;padding:8px 16px;border-radius:8px;font-weight:500;font-size:0.95rem;transition:all 0.2s;}
+  .nav-links a.active,.nav-links a:hover{color:#fff;background:rgba(255,255,255,0.08);}
+  .btn-login{background:transparent;border:1.5px solid #fff;color:#fff;padding:8px 20px;border-radius:20px;font-family:'Outfit',sans-serif;font-weight:600;cursor:pointer;font-size:0.9rem;}
+
+  .page-wrap{max-width:860px;margin:0 auto;padding:40px 24px;}
+  .page-header{margin-bottom:32px;}
+  .page-header h1{font-size:1.8rem;font-weight:800;margin-bottom:8px;}
+  .page-header p{color:var(--text-muted);}
+
+  /* TOPIC TABS */
+  .topic-tabs{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;}
+  .tab-btn{padding:9px 18px;border-radius:20px;border:2px solid var(--border);background:#fff;cursor:pointer;font-family:'Outfit',sans-serif;font-weight:600;font-size:0.85rem;transition:all 0.2s;color:var(--text-muted);}
+  .tab-btn.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+  .tab-btn:hover:not(.active){border-color:var(--primary);color:var(--primary);}
+
+  /* FLASHCARD */
+  .card-area{display:flex;flex-direction:column;align-items:center;}
+  .card-counter{font-weight:700;color:var(--text-muted);margin-bottom:16px;font-size:0.9rem;}
+
+  .flashcard-scene{width:100%;max-width:580px;height:280px;perspective:1200px;cursor:pointer;margin-bottom:24px;}
+  .flashcard{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 0.6s cubic-bezier(0.4,0.2,0.2,1);}
+  .flashcard.flipped{transform:rotateY(180deg);}
+  .card-face{
+    position:absolute;inset:0;border-radius:24px;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;padding:36px;text-align:center;
+    backface-visibility:hidden;-webkit-backface-visibility:hidden;
+    box-shadow:0 8px 40px rgba(0,0,0,0.12);
+  }
+  .card-front{background:var(--primary);}
+  .card-back{background:#fff;transform:rotateY(180deg);border:2.5px solid var(--border);}
+  .card-tag{font-size:0.7rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:0.7;margin-bottom:10px;}
+  .card-front .card-tag{color:rgba(255,255,255,0.8);}
+  .card-back .card-tag{color:var(--primary);}
+  .card-front .card-text{color:#fff;font-size:1.15rem;font-weight:700;line-height:1.5;}
+  .card-back .card-text{color:var(--navy);font-size:1rem;font-weight:500;line-height:1.6;}
+  .flip-hint{font-size:0.75rem;opacity:0.6;margin-top:14px;}
+  .card-front .flip-hint{color:#fff;}
+
+  .card-nav{display:flex;gap:14px;align-items:center;margin-bottom:20px;}
+  .nav-btn{
+    width:48px;height:48px;border-radius:50%;border:2px solid var(--border);background:#fff;
+    font-size:1.3rem;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;
+  }
+  .nav-btn:hover{background:var(--primary);border-color:var(--primary);color:#fff;}
+  .card-pos-badge{background:var(--navy);color:#fff;padding:8px 20px;border-radius:20px;font-weight:700;font-size:0.9rem;}
+
+  .card-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+  .action-btn{
+    padding:10px 20px;border-radius:12px;border:none;font-family:'Outfit',sans-serif;
+    font-weight:600;font-size:0.85rem;cursor:pointer;transition:all 0.2s;
+  }
+  .btn-know{background:#DCFCE7;color:#15803D;}.btn-know:hover{background:#22C55E;color:#fff;}
+  .btn-unsure{background:#FEF9C3;color:#854D0E;}.btn-unsure:hover{background:#EAB308;color:#fff;}
+  .btn-bm{background:#EFF6FF;color:#1D4ED8;}.btn-bm:hover{background:var(--primary);color:#fff;}
+  .btn-shuffle{background:#F1F5F9;color:var(--navy);}.btn-shuffle:hover{background:var(--navy);color:#fff;}
+
+  /* PROGRESS */
+  .fc-progress{background:#fff;border-radius:16px;padding:20px 24px;margin-top:24px;box-shadow:0 2px 12px rgba(0,0,0,0.06);}
+  .fc-prog-title{font-weight:700;font-size:0.9rem;margin-bottom:12px;}
+  .prog-bars{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+  .prog-item{text-align:center;}
+  .prog-num{font-size:1.5rem;font-weight:800;color:var(--primary);}
+  .prog-label{font-size:0.75rem;color:var(--text-muted);}
+
+  .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--navy);color:#fff;padding:12px 24px;border-radius:30px;font-weight:600;font-size:0.9rem;z-index:300;transition:transform 0.3s;}
+  .toast.show{transform:translateX(-50%) translateY(0);}
+  .page-lock{display:none;position:fixed;inset:0;z-index:9999;background:rgba(5,18,45,0.60);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);align-items:center;justify-content:center;}
+  body.guest-mode .page-lock{display:flex;}
+  .page-lock-box{background:#fff;border-radius:24px;padding:44px 52px;text-align:center;max-width:420px;width:90%;box-shadow:0 24px 80px rgba(0,0,0,0.3);}
+  .page-lock-box .lock-emoji{font-size:3.5rem;margin-bottom:14px;}
+  .page-lock-box h2{font-size:1.4rem;font-weight:800;color:var(--navy,#0b3d8d);margin-bottom:8px;}
+  .page-lock-box p{color:#64748b;font-size:0.9rem;line-height:1.65;margin-bottom:24px;}
+  .lock-divider{font-size:0.78rem;color:#94a3b8;margin:4px 0;}
+  .lock-btn-primary{width:100%;padding:13px 24px;background:var(--navy,#0b3d8d);color:#fff;border:none;border-radius:12px;font-family:'Outfit',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;transition:all .2s;margin-bottom:10px;display:block;}
+  .lock-btn-primary:hover{background:var(--primary,#3B82F6);}
+  .lock-btn-secondary{width:100%;padding:11px 24px;background:transparent;color:var(--navy,#0b3d8d);border:2px solid var(--navy,#0b3d8d);border-radius:12px;font-family:'Outfit',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;transition:all .2s;display:block;}
+  .lock-btn-secondary:hover{background:#EFF6FF;border-color:var(--primary,#3B82F6);color:var(--primary,#3B82F6);}
+
+/* ── MOBILE RESPONSIVE ── */
+  @media(max-width:768px){
+    .page-wrap{padding:14px!important}
+    .page-header h1{font-size:1.5rem!important}
+    .flashcard-scene{height:200px!important;max-width:100%!important}
+    .card-face{padding:22px!important}
+    .card-front .card-term{font-size:1.2rem!important}
+    .card-back .card-def{font-size:0.88rem!important}
+    .topic-tabs{gap:6px}
+    .tab-btn{padding:7px 12px!important;font-size:0.8rem!important}
+    .fc-controls{gap:10px!important}
+    .fc-btn{padding:10px 18px!important;font-size:0.85rem!important}
+  }
+  @media(max-width:480px){
+    .flashcard-scene{height:175px!important}
+    .topic-tabs{gap:4px}
+    .tab-btn{font-size:0.75rem!important;padding:6px 10px!important}
+  }
+</style>
+</head>
+<body class="guest-mode">
+
+<div class="page-lock" id="page-lock">
+  <div class="page-lock-box">
+    <div class="lock-emoji">🔒</div>
+    <h2>Login to Access Flashcards</h2>
+    <p>Create a free account or login to study flashcards, track your progress, and unlock all COC modules.</p>
+    <button class="lock-btn-primary" onclick="CSS_BUDDY.openModal('login')">Login to my account</button>
+    <div class="lock-divider">— or —</div>
+    <button class="lock-btn-secondary" onclick="CSS_BUDDY.openModal('register')">Create free account</button>
+  </div>
+</div>
+<nav>
+  <a href="index.html" class="logo"><span>CSS</span> Buddy</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="quiz.html">Quiz</a>
+    <a href="flashcards.html" class="active">Flashcards</a>
+    <a href="funfacts.html">Fun Facts</a>
+    <a href="icebreaker.html">Ice Breaker</a>
+    <a href="games.html">Games</a>
+  </div>
+  <div class="nav-right"></div>
+</nav>
+
+<div class="page-wrap">
+  <div id="fc-back"></div>
+  <div class="page-header">
+    <h1> Flashcards</h1>
+  </div>
+
+  <div class="topic-tabs">
+    <button class="tab-btn active" onclick="loadTopic(0,this)">COC 1 — Computer Parts</button>
+    <button class="tab-btn" onclick="loadTopic(1,this)">COC 1.1 — Assembly & OHS</button>
+    <button class="tab-btn" onclick="loadTopic(2,this)">COC 2 — Set up Computer Network</button>
+    <button class="tab-btn" onclick="loadTopic(3,this)">COC 3 — Set up Computer Server</button>
+    <button class="tab-btn" onclick="loadTopic(4,this)">COC 4 — Maintain &amp; Repair</button>
+    <button class="tab-btn" onclick="loadBookmarks(this)"> Bookmarks</button>
+  </div>
+
+  <div class="card-area">
+    <div class="card-counter" id="cardCounter">Card 1 of 10</div>
+    <div class="flashcard-scene" onclick="flipCard()">
+      <div class="flashcard" id="flashcard">
+        <div class="card-face card-front">
+          <div class="card-tag">TERM / QUESTION</div>
+          <div class="card-text" id="cardFront">Loading...</div>
+          <div class="flip-hint"> Tap to flip</div>
+        </div>
+        <div class="card-face card-back">
+          <div class="card-tag">ANSWER / DEFINITION</div>
+          <div class="card-text" id="cardBack"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-nav">
+      <button class="nav-btn" onclick="prevCard()">←</button>
+      <div class="card-pos-badge" id="cardPosBadge">1 / 10</div>
+      <button class="nav-btn" onclick="nextCard()">→</button>
+    </div>
+
+    <div class="card-actions">
+      <button class="action-btn btn-know" onclick="markKnow()"> I Know This</button>
+      <button class="action-btn btn-unsure" onclick="markUnsure()"> Still Learning</button>
+      <button class="action-btn btn-bm" onclick="bookmarkCard()"> Bookmark</button>
+      <button class="action-btn btn-shuffle" onclick="shuffleCards()"> Shuffle</button>
+    </div>
+
+    <div class="fc-progress">
+      <div class="fc-prog-title"> Your Progress (This Session)</div>
+      <div class="prog-bars">
+        <div class="prog-item"><div class="prog-num" id="knowCount">0</div><div class="prog-label"> Know</div></div>
+        <div class="prog-item"><div class="prog-num" id="unsureCount" style="color:#EAB308">0</div><div class="prog-label">Learning</div></div>
+        <div class="prog-item"><div class="prog-num" id="unseenCount" style="color:#94A3B8">10</div><div class="prog-label"> Unseen</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+  const SAVE_KEY = 'cssbuddy-fc-progress-v2';
+  const FC_TOTAL_KEY = 'cssbuddy-fc-total';
+
+  // ── ALL FLASHCARD DATA ──
+  const allCards = {
+    // COC 1 — Computer Parts
+    0: [
+      {q:"What is a System Case / Computer Case?", a:"The enclosure that houses and protects all internal computer components. It provides structure and mounting points for all parts."},
+      {q:"What is a Motherboard?", a:"The main circuit board that connects all computer components. It contains the CPU socket, RAM slots, PCIe slots, and I/O ports."},
+      {q:"What is a PSU (Power Supply Unit)?", a:"Converts AC power from the wall outlet into DC power that the computer components can use."},
+      {q:"What is a CPU (Central Processing Unit)?", a:"The 'brain' of the computer. It processes instructions and performs calculations. Measured in GHz and cores. Brands: Intel Core, AMD Ryzen."},
+      {q:"What is RAM (Random Access Memory)?", a:"Temporary working memory that holds data currently being used by the CPU. Volatile — data is lost when power is off."},
+      {q:"What is an HDD (Hard Disk Drive)?", a:"A mechanical storage device that uses spinning magnetic platters to read/write data. Slower but cheaper than SSD."},
+      {q:"What is an SSD (Solid State Drive)?", a:"Flash-based storage with no moving parts. Much faster than HDD (500MB/s–7GB/s for NVMe). Silent and more durable."},
+      {q:"What is a CPU Cooler / Heat Sink & Fan (HSF)?", a:"An active cooling solution for the CPU. The heatsink absorbs heat; the fan blows it away. Thermal paste is applied between CPU and heatsink."},
+      {q:"What is a GPU (Graphics Card / Video Card)?", a:"Handles all graphical processing and rendering. Connects via PCIe slot. Top brands: NVIDIA GeForce and AMD Radeon."},
+      {q:"What are Peripherals?", a:"External input and output devices. Input: keyboard, mouse. Output: monitor, speakers, printer."},
+      {q:"What is a Wireless Network Card (Wi-Fi Adapter)?", a:"Allows the computer to connect to Wi-Fi networks. Available as PCIe card or USB adapter. Supports Wi-Fi 5, 6, 6E."},
+      {q:"What is Peopleware?", a:"The human element in computing — the users, technicians, and IT professionals who operate and maintain computer systems."},
+      {q:"What is PCIe (PCI Express)?", a:"A high-speed interface/slot used to connect expansion cards like GPUs and Wi-Fi cards to the motherboard."},
+      {q:"What is ESD (Electrostatic Discharge)?", a:"Static electricity that can permanently damage sensitive computer components. Prevent it by grounding yourself before touching parts."},
+      {q:"What is thermal paste?", a:"A compound applied between the CPU and its cooler to fill microscopic gaps and improve heat transfer efficiency."},
+      {q:"What is POST (Power-On Self Test)?", a:"A system diagnostic that runs automatically when you power on the PC. A single beep = success. Multiple beeps = hardware error."},
+    ],
+    // COC 1.1 — Assembly & OHS
+    1: [
+      {q:"What is OHS (Occupational Health and Safety)?", a:"A set of standards and practices that ensure the safety and well-being of workers while performing tasks such as computer servicing."},
+      {q:"OHS Rule: What should you do before working on a computer?", a:"Always power off the computer and unplug it from the power source before opening it or touching internal components."},
+      {q:"OHS Rule: Why should you not work alone on a computer?", a:"So someone is available to assist you in case of an emergency or accident."},
+      {q:"OHS Rule: What should you keep away from your work area?", a:"Any liquids — to avoid electrocution or accidentally damaging computer parts."},
+      {q:"OHS Rule: How should you handle computer components?", a:"Hold components on the edges and avoid touching the Integrated Circuit (IC) parts to prevent ESD damage."},
+      {q:"What PPE is used in computer servicing?", a:"Anti-static wrist strap, anti-static mat, and ESD-safe gloves. These prevent Electrostatic Discharge (ESD) from damaging components."},
+      {q:"What is the 5S Method?", a:"A Japanese workplace organization method: Seiri (Sort), Seiton (Set in Order), Seiso (Shine/Clean), Seiketsu (Standardize), Shitsuke (Sustain)."},
+      {q:"What does 'Seiri' (Sort) mean in 5S?", a:"Remove unnecessary items from the workspace — keep only what is needed for the task at hand."},
+      {q:"What does 'Seiton' (Set in Order) mean in 5S?", a:"Organize and arrange tools and items so they are easy to find and use efficiently."},
+      {q:"What does 'Seiso' (Shine) mean in 5S?", a:"Clean and inspect the workplace regularly to maintain a tidy and safe environment."},
+      {q:"What are the steps for PC Assembly?", a:"1) Open case 2) Install PSU 3) Install CPU, thermal paste, HSF, RAM on motherboard 4) Mount motherboard 5) Install storage 6) Connect cables 7) Power on 8) Connect peripherals 9) Boot & POST."},
+      {q:"What are motherboard standoffs?", a:"Metal spacers installed in the case before mounting the motherboard. They raise the PCB off the case to prevent short circuits."},
+      {q:"What is the ATX 24-pin connector?", a:"The main power connector from PSU to motherboard. There is also a 4-pin or 8-pin EPS connector near the top that powers the CPU."},
+      {q:"What tool is most commonly used for PC assembly?", a:"A Phillips head (cross-head) screwdriver — used for most screws in PC assembly and disassembly."},
+      {q:"What is Step 1 of the computer assembly procedure?", a:"Prepare the computer case — install power supply, I/O shield, and spacers."},
+      {q:"What is Step 2 of the computer assembly procedure?", a:"Install drives — DVD, Floppy, and HDD."},
+      {q:"What is Step 3 of the computer assembly procedure?", a:"Install the CPU, fan, heat sink, and memory module on the motherboard."},
+      {q:"What is Step 4 of the computer assembly procedure?", a:"Install the motherboard into the casing and install expansion cards."},
+      {q:"What is Step 5 of the computer assembly procedure?", a:"Install the cablings — Power connectors, FDD Connector, IDE/SATA Connector, USB headers, and system panel header."},
+      {q:"What is Step 6 of the computer assembly procedure?", a:"Attach the monitor, keyboard, and mouse, then plug into a power source."},
+      {q:"What is Step 7 of the computer assembly procedure?", a:"Troubleshoot if necessary."},
+      {q:"What is Step 8 of the computer assembly procedure?", a:"Assemble and install network connection."},
+      {q:"What must you do before touching any computer part?", a:"Always ground or discharge yourself before touching any part of the computer to prevent ESD damage."},
+      {q:"What should you do with cables when disconnecting connectors?", a:"Always pull the cable connector by the handle, not on the cable itself, to avoid damage."},
+      {q:"What does ATX stand for?", a:"Advanced Technology Extended — the standard motherboard form factor and power supply specification."},
+      {q:"What does SDRAM stand for?", a:"Synchronous Dynamic Random Access Memory — RAM that synchronizes with the system bus clock speed."},
+      {q:"What does DRAM stand for?", a:"Dynamic Random Access Memory — a type of memory that must be continuously refreshed to retain data."},
+      {q:"What does USB stand for?", a:"Universal Serial Bus — a standard interface for connecting peripherals such as keyboards, mice, and storage devices."},
+      {q:"What does PCI stand for?", a:"Peripheral Component Interconnect — a bus standard for connecting expansion cards to the motherboard."},
+      {q:"What does IDE stand for?", a:"Integrated Drive Electronics — a standard interface for connecting hard drives and optical drives (also called ATA/PATA)."},
+      {q:"What does DDR stand for?", a:"Double Data Rate — RAM that transfers data on both the rising and falling edges of the clock cycle, doubling the data rate."},
+    ],
+    // COC 2 — Set up Computer Network
+    2: [
+      {q:"What are the two types of network cables used in COC 2?", a:"Straight-through cable (connects different devices, e.g., PC to switch) and Crossover cable (connects same-type devices, e.g., PC to PC)."},
+      {q:"What is a straight-through cable used for?", a:"Connecting different types of devices — e.g., a computer to a switch or router. Both ends use the same wiring standard (T568A–T568A or T568B–T568B)."},
+      {q:"What is a crossover cable used for?", a:"Connecting same-type devices directly — e.g., PC to PC or switch to switch. One end uses T568A and the other uses T568B."},
+      {q:"What is the T568B wiring order?", a:"Orange-White, Orange, Green-White, Blue, Blue-White, Green, Brown-White, Brown. (Pins 1–8)"},
+      {q:"What is the T568A wiring order?", a:"Green-White, Green, Orange-White, Blue, Blue-White, Orange, Brown-White, Brown. (Pins 1–8)"},
+      {q:"What tool is used to crimp an RJ-45 connector onto a cable?", a:"A crimping tool — it secures the RJ-45 connector onto the twisted-pair cable by pressing the pins into the wire conductors."},
+      {q:"What tool is used to test a network cable after termination?", a:"A cable tester — it checks that all 8 wires are correctly connected and that there are no shorts, opens, or miswires."},
+      {q:"What does UTP stand for?", a:"Unshielded Twisted Pair — the most common type of network cable, containing 4 pairs of twisted copper wires with no shielding."},
+      {q:"What is a NIC?", a:"Network Interface Card — the hardware component that connects a computer to a network and handles sending/receiving data."},
+      {q:"What is an IP Address?", a:"A unique numerical label (e.g., 192.168.1.10) assigned to each device on a network to identify it and allow communication."},
+      {q:"What is a Subnet Mask?", a:"A number (e.g., 255.255.255.0) that defines which portion of an IP address identifies the network and which identifies the device."},
+      {q:"What is a Default Gateway?", a:"The IP address of the router that a device uses to send data to devices outside its local network."},
+      {q:"What is the difference between a static and dynamic IP address?", a:"A static IP is manually assigned and never changes. A dynamic IP is automatically assigned by a DHCP server and may change each connection."},
+      {q:"What is a Router?", a:"A network device that connects different networks together and routes data packets between them. Also assigns IP addresses via DHCP."},
+      {q:"What is a Wireless Access Point (WAP)?", a:"A device that creates a wireless (Wi-Fi) network by connecting to a wired router or switch."},
+      {q:"What is an SSID?", a:"Service Set Identifier — the name of a Wi-Fi network that appears when devices scan for available wireless networks."},
+      {q:"What security protocols are used for Wi-Fi?", a:"WEP (outdated/weak), WPA, WPA2 (most common), WPA3 (latest/strongest). WPA2-AES is the recommended standard."},
+      {q:"What command is used to test network connectivity?", a:"The 'ping' command — sends packets to a target IP and reports whether it received a response, confirming connectivity."},
+      {q:"What does 'ipconfig' do?", a:"A Windows command that displays current network configuration: IP address, subnet mask, and default gateway."},
+      {q:"What is a LAN (Local Area Network)?", a:"A network that connects computers within a small geographic area such as a house, school, or office building."},
+      {q:"What is a WAN (Wide Area Network)?", a:"A network that connects computers over large distances — cities, countries. The Internet is the biggest WAN."},
+      {q:"What is a Firewall?", a:"A device or software that controls access to a network by checking data and allowing safe traffic while blocking dangerous traffic."},
+      {q:"What is DHCP and what does it do?", a:"Dynamic Host Configuration Protocol — automatically assigns IP addresses to devices when they connect to the network."},
+      {q:"What are Inbound Rules in Windows Firewall?", a:"Rules that apply to traffic coming FROM the network/internet INTO your computer."},
+      {q:"What are Outbound Rules in Windows Firewall?", a:"Rules that apply to traffic LEAVING your computer to the network/internet."},
+    ],
+    // COC 3 — Set up Computer Server
+    3: [
+      {q:"What is a Server?", a:"A computer that provides services, resources, or data to other computers (clients) over a network."},
+      {q:"What is a Client-Server network?", a:"A network design where a central server provides resources/services and client computers access them over the network."},
+      {q:"What is a Static IP Address?", a:"A fixed, manually assigned IP address that does not change — used for servers so clients can always find them at the same address."},
+      {q:"What is the 'oobe' command used for?", a:"It opens the Initial Configuration Task window in Windows Server, used to Add Roles and configure the server."},
+      {q:"What are the 4 initial server roles installed in COC 3?", a:"1) Active Directory Domain Services (AD DS), 2) DNS Server, 3) DHCP Server, 4) File Services."},
+      {q:"What is AD DS (Active Directory Domain Services)?", a:"A server role that stores information about users, computers, and resources. It authenticates and authorizes users to log in."},
+      {q:"What is DNS (Domain Name System) Server?", a:"Translates domain names (e.g., server1.local) into IP addresses so computers can locate each other on the network."},
+      {q:"What command is used to set up DNS after installing AD DS?", a:"Type 'dcpromo' in the Run dialog to launch the Active Directory Domain Services Installation Wizard, which also sets up DNS."},
+      {q:"What Forest Functional Level is selected in COC 3?", a:"Windows Server 2008 R2 — selected during DNS/AD DS setup to define the minimum version of Windows Server in the forest."},
+      {q:"What is DHCP (Dynamic Host Configuration Protocol) Server?", a:"Automatically assigns IP addresses and network settings (subnet mask, default gateway, DNS) to client computers on the network."},
+      {q:"What is a DHCP Scope?", a:"A defined range of IP addresses that the DHCP server can assign to client computers."},
+      {q:"What is DHCPv6 and what do you do with it in COC 3?", a:"DHCP for IPv6 addresses. In COC 3, you select 'Disable DHCPv6' throughout because IPv4 is used."},
+      {q:"What is File Services and what partition is used?", a:"A server role that provides shared file storage. During setup, you check 'File Resource Manager' and select Local Disk D:."},
+      {q:"What is Folder Redirection via Group Policy?", a:"A Group Policy setting that redirects user personal folders (like Documents) from their local PC to a shared folder on the server."},
+      {q:"What is an Organizational Unit (OU) in Active Directory?", a:"A container within Active Directory used to organize users and computers. Named the same as the shared folder."},
+      {q:"What is File Screening?", a:"A File Server Resource Manager feature that blocks certain file extensions from being saved to the server using *.FileExtension patterns."},
+      {q:"How do you share a folder on the server?", a:"Right-click folder → Sharing tab → Share → check 'Share this folder' → add Everyone with Read/Write → check Advanced Sharing for full control."},
+      {q:"What is Remote Desktop?", a:"A feature that allows a user to connect to and control a computer remotely over a network."},
+      {q:"What must NOT be done before all 4 initial roles are installed?", a:"Do NOT create Users or Organizational Units until AD DS, DNS, DHCP, and File Services are all fully installed."},
+    ],
+    // COC 4 — Maintain & Repair Computer Systems and Networks
+    4: [
+      {q:"What is Preventive Maintenance (PM) for computers?", a:"Scheduled, routine tasks to keep a computer in good working condition and prevent hardware failures — includes cleaning, updating software, checking components, and testing backups."},
+      {q:"What are the main steps of a computer preventive maintenance procedure?", a:"1) Power off & unplug. 2) Clean case exterior. 3) Clean interior with compressed air. 4) Inspect cables & connectors. 5) Reseat RAM & expansion cards. 6) Update OS & drivers. 7) Run disk cleanup & defrag. 8) Test UPS. 9) Document findings."},
+      {q:"What tools are used for physical cleaning during PM?", a:"Compressed air/blower (dust removal), lint-free cloth, isopropyl alcohol (70%+), anti-static brush, cotton swabs, and an electronics-safe vacuum."},
+      {q:"Why is thermal paste replaced during maintenance?", a:"Old thermal paste dries out and loses conductivity, causing the CPU to overheat. Replacing it restores efficient heat transfer between CPU and heatsink."},
+      {q:"What is a UPS and why is it important for maintenance?", a:"Uninterruptible Power Supply — provides battery backup during outages. During PM, you test it to ensure it protects the system from power surges and sudden shutdowns."},
+      {q:"What is the first step in diagnosing any computer problem?", a:"Identify and document the symptoms — ask what changed, when it started, and reproduce the problem if possible. Then narrow down the cause by process of elimination."},
+      {q:"What do POST beep codes mean?", a:"The BIOS performs a Power-On Self Test. 1 beep = OK; 2 beeps = POST error; 3 beeps = RAM error; continuous beeping = RAM or power issue. Codes vary by BIOS (AMI, Award, Phoenix)."},
+      {q:"What are symptoms of a failing RAM module?", a:"Blue Screen of Death (BSOD), random crashes/restarts, system won't POST, corrupted files, and applications freezing. Test using MemTest86."},
+      {q:"What are symptoms of a failing HDD?", a:"Clicking/grinding sounds (head crash), slow file access, frequent freezes, corrupted files, BSOD with disk errors, and S.M.A.R.T. warnings."},
+      {q:"What are symptoms of an overheating CPU?", a:"System shuts down suddenly under load, throttled performance, very loud fans, high temps in BIOS/HWMonitor. Fix: clean heatsink, replace thermal paste, improve airflow."},
+      {q:"What is the Blue Screen of Death (BSOD)?", a:"A critical Windows system error screen with an error code (e.g., MEMORY_MANAGEMENT). Indicates serious hardware or driver failure. Note the error code to diagnose."},
+      {q:"What does Device Manager show and how do you open it?", a:"Shows all installed hardware. Yellow (!) = driver problem; Red (X) = disabled. Open via: Right-click Computer → Manage → Device Manager, or type 'devmgmt.msc'."},
+      {q:"What is S.M.A.R.T. (for hard drives)?", a:"Self-Monitoring, Analysis and Reporting Technology — a built-in HDD/SSD system that tracks health indicators (reallocated sectors, read errors, temperature) and warns of failure."},
+      {q:"What diagnostic tool checks RAM for errors?", a:"MemTest86 — a standalone bootable memory tester that runs outside Windows. Also Windows Memory Diagnostic (mdsched.exe) for a quick in-Windows test."},
+      {q:"What is Safe Mode and when do you use it?", a:"A Windows boot option that loads only essential drivers and services. If the problem disappears in Safe Mode, a non-essential driver or startup program is the cause."},
+      {q:"How do you boot into Safe Mode in Windows?", a:"Press F8 during startup (Windows 7) or Shift+Restart → Troubleshoot → Advanced → Startup Settings → F4 (Windows 8/10/11)."},
+      {q:"What is System Restore and when do you use it?", a:"Reverts system files and settings to a previous restore point without affecting personal files. Used after a bad driver install, update, or malware infection causes instability."},
+      {q:"What is chkdsk and what does it do?", a:"Check Disk — command 'chkdsk C: /f /r' scans the drive for file system errors and bad sectors and attempts to repair them. Run as Administrator."},
+      {q:"What is sfc /scannow?", a:"System File Checker — scans and repairs corrupted or missing Windows system files. Run as Administrator in Command Prompt."},
+      {q:"What command repairs the Windows boot record?", a:"'bootrec /fixmbr' repairs the Master Boot Record; 'bootrec /fixboot' writes a new boot sector; 'bootrec /rebuildbcd' rebuilds boot data. Run from Windows Recovery Environment."},
+      {q:"What is the procedure for replacing a faulty RAM module?", a:"1) Power off & unplug. 2) Ground yourself. 3) Press outward on retention clips to eject RAM. 4) Insert new RAM aligned to notch, press until clips click. 5) Boot and verify in BIOS."},
+      {q:"What is the procedure for replacing a faulty HDD?", a:"1) Back up data first. 2) Power off & unplug. 3) Disconnect SATA data and power cables. 4) Remove screws. 5) Install new drive. 6) Reconnect cables. 7) Boot from OS installation media."},
+      {q:"How do you test if a PSU is faulty without a multimeter?", a:"Use the paper clip test — short the green wire (PS_ON) to any black wire (COM) on the 24-pin connector. If the PSU fan spins, it works. If not, it is faulty."},
+      {q:"What are common causes of no network connectivity?", a:"Unplugged/damaged cable, wrong IP settings, disabled NIC, incorrect DNS, firewall blocking, faulty switch/router, or missing/corrupt network adapter driver."},
+      {q:"What is the troubleshooting order for network problems?", a:"1) Check physical cables/Wi-Fi. 2) Verify NIC is enabled. 3) Run 'ipconfig'. 4) Ping 127.0.0.1 (loopback). 5) Ping default gateway. 6) Ping 8.8.8.8. 7) Ping a domain name. 8) Check DNS settings."},
+      {q:"What does 'ping 127.0.0.1' test?", a:"The loopback address — tests if TCP/IP stack on the local computer is working. If this fails, the network adapter or TCP/IP installation is faulty."},
+      {q:"What does 'ipconfig /release' and 'ipconfig /renew' do?", a:"'/release' drops the DHCP-assigned IP; '/renew' requests a new IP from the DHCP server. Used to fix IP conflicts or when DHCP assignment fails."},
+      {q:"What does 'ipconfig /flushdns' do?", a:"Clears the DNS resolver cache — removes outdated or incorrect DNS entries, forcing the computer to look up fresh DNS records."},
+      {q:"What is an APIPA address (169.254.x.x)?", a:"Automatic Private IP Addressing — Windows assigns this when it cannot reach a DHCP server. The device has no valid IP. Fix: check DHCP server or assign a static IP."},
+      {q:"What command traces the route packets take to a destination?", a:"'tracert [destination]' (Windows) — shows each router hop between source and destination with round-trip times. Used to find where packets are being dropped."},
+      {q:"What is the procedure for replacing a faulty NIC?", a:"1) Power off & unplug. 2) Remove old NIC from PCIe slot. 3) Insert new NIC and secure. 4) Boot, install drivers. 5) Configure IP settings. 6) Test with ping."},
+      {q:"How do you repair a network cable with a damaged connector?", a:"1) Cut off damaged RJ-45. 2) Strip 1.5 inches of outer sheath. 3) Arrange wires in T568A or T568B order. 4) Trim evenly. 5) Insert into new RJ-45. 6) Crimp firmly. 7) Test with cable tester."},
+      {q:"Why is documentation important in computer maintenance?", a:"Creates a service history to identify recurring problems, track replaced components, ensure warranty compliance, and provide reference for future technicians."},
+      {q:"What should a maintenance report include?", a:"Date of service, technician name, system/user info, problem reported, diagnostic steps, parts replaced, actions performed, test results, and follow-up recommendations."},
+      {q:"What is the purpose of a service/job order form in CSS?", a:"A formal document recording the client's complaint, authorizing repairs, listing parts and labor, and serving as a receipt and legal record of the work performed."},
+    ],
+  };
+
+  // ── STATE ──
+  let cards         = [...allCards[0]];
+  let currentIdx    = 0;
+  let currentTopicKey = 'topic_0';
+  let knowSet       = new Set();
+  let unsureSet     = new Set();
+  let seenSet       = new Set();   // cards flipped/reviewed this session (no double-counting)
+  let isFlipped     = false;
+
+  const savedTheme = localStorage.getItem('cssbuddy-theme');
+  if (savedTheme && savedTheme !== 'blue') document.documentElement.className = `theme-${savedTheme}`;
+
+  // ── SAVE / LOAD PROGRESS ──
+  function _saveProgress() {
+    try {
+      const all = JSON.parse(localStorage.getItem(SAVE_KEY) || '{}');
+      all[currentTopicKey] = {
+        know:  Array.from(knowSet),
+        unsure: Array.from(unsureSet),
+        idx:   currentIdx
+      };
+      localStorage.setItem(SAVE_KEY, JSON.stringify(all));
+    } catch(e) {}
+  }
+
+  function _loadProgress(key, count) {
+    try {
+      const saved = (JSON.parse(localStorage.getItem(SAVE_KEY) || '{}'))[key];
+      if (!saved) return false;
+      knowSet   = new Set((saved.know   || []).filter(i => i < count));
+      unsureSet = new Set((saved.unsure || []).filter(i => i < count));
+      currentIdx = Math.min(saved.idx || 0, count - 1);
+      return true;
+    } catch(e) { return false; }
+  }
+
+  // ── COUNT A CARD AS "DONE" (once per card per session) ──
+  function _countCard(idx) {
+    if (seenSet.has(idx)) return;           // already counted this session
+    seenSet.add(idx);
+    // 1. Logged-in users: persist via CSS_BUDDY
+    if (typeof CSS_BUDDY !== 'undefined' && CSS_BUDDY.isLoggedIn && CSS_BUDDY.isLoggedIn()) {
+      CSS_BUDDY.incrementFlashcards();
+    }
+    // 2. All users: also update the shared localStorage counter for the home page
+    try {
+      const n = parseInt(localStorage.getItem(FC_TOTAL_KEY) || '0') + 1;
+      localStorage.setItem(FC_TOTAL_KEY, String(n));
+    } catch(e) {}
+  }
+
+  // ── TOPIC LOADING ──
+  function loadTopic(idx, el) {
+    _saveProgress();
+    cards = [...allCards[idx]];
+    currentTopicKey = 'topic_' + idx;
+    knowSet.clear(); unsureSet.clear(); seenSet.clear();
+    isFlipped = false;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    _loadProgress(currentTopicKey, cards.length);
+    updateCard(); updateStats();
+    const r = knowSet.size + unsureSet.size;
+    if (r > 0) showToast('📂 Progress restored! (' + r + ' cards reviewed)');
+  }
+
+  function loadBookmarks(el) {
+    const bm = JSON.parse(localStorage.getItem('cssbuddy-bookmarks-fc') || '[]');
+    if (bm.length === 0) { showToast('No bookmarks yet!'); return; }
+    _saveProgress();
+    cards = [...bm]; currentIdx = 0;
+    currentTopicKey = 'bookmarks';
+    knowSet.clear(); unsureSet.clear(); seenSet.clear(); isFlipped = false;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    updateCard(); updateStats();
+  }
+
+  function resetProgress() {
+    knowSet.clear(); unsureSet.clear(); seenSet.clear();
+    currentIdx = 0;
+    _saveProgress(); updateCard(); updateStats();
+    showToast('🔄 Progress reset!');
+  }
+
+  // ── CARD DISPLAY ──
+  function updateCard() {
+    const card = cards[currentIdx];
+    document.getElementById('cardFront').textContent = card.q;
+    document.getElementById('cardBack').textContent  = card.a;
+    document.getElementById('cardCounter').textContent   = 'Card ' + (currentIdx + 1) + ' of ' + cards.length;
+    document.getElementById('cardPosBadge').textContent  = (currentIdx + 1) + ' / ' + cards.length;
+    const fc = document.getElementById('flashcard');
+    fc.classList.remove('flipped');
+    isFlipped = false;
+    // colour outline based on review state
+    fc.style.outline      = knowSet.has(currentIdx)   ? '3px solid #22C55E'
+                          : unsureSet.has(currentIdx) ? '3px solid #EAB308' : 'none';
+    fc.style.borderRadius = '24px';
+  }
+
+  // ── FLIP (counts as 1 card done the first time you see the answer) ──
+  function flipCard() {
+    const fc = document.getElementById('flashcard');
+    fc.classList.toggle('flipped');
+    isFlipped = !isFlipped;
+    if (isFlipped) _countCard(currentIdx);   // answer revealed → count it
+  }
+
+  function nextCard() {
+    if (currentIdx < cards.length - 1) { currentIdx++; updateCard(); }
+    else { currentIdx = 0; updateCard(); showToast('↩ Starting from the beginning!'); }
+  }
+
+  function prevCard() {
+    if (currentIdx > 0) { currentIdx--; updateCard(); }
+  }
+
+  // ── MARK BUTTONS ──
+  function markKnow() {
+    _countCard(currentIdx);
+    knowSet.add(currentIdx); unsureSet.delete(currentIdx);
+    _saveProgress(); updateStats();
+    showToast('✅ Great! Marked as known.'); nextCard();
+  }
+
+  function markUnsure() {
+    _countCard(currentIdx);
+    unsureSet.add(currentIdx); knowSet.delete(currentIdx);
+    _saveProgress(); updateStats();
+    showToast('📖 Keep reviewing this one!'); nextCard();
+  }
+
+  // ── BOOKMARK ──
+  function bookmarkCard() {
+    const card = cards[currentIdx];
+    const bm = JSON.parse(localStorage.getItem('cssbuddy-bookmarks-fc') || '[]');
+    if (!bm.find(b => b.q === card.q)) {
+      bm.push(card);
+      localStorage.setItem('cssbuddy-bookmarks-fc', JSON.stringify(bm));
+      if (typeof CSS_BUDDY !== 'undefined' && CSS_BUDDY.isLoggedIn && CSS_BUDDY.isLoggedIn()) {
+        CSS_BUDDY.addBookmark(card.q + (card.a ? ' — ' + card.a : ''), 'flashcard');
+      }
+      showToast('🔖 Bookmarked!');
+    } else { showToast('Already bookmarked!'); }
+  }
+
+  // ── SHUFFLE ──
+  function shuffleCards() {
+    const mapped = cards.map((c,i) => ({
+      card:c, know:knowSet.has(i), unsure:unsureSet.has(i), seen:seenSet.has(i)
+    }));
+    for (let i = mapped.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [mapped[i], mapped[j]] = [mapped[j], mapped[i]];
+    }
+    cards     = mapped.map(o => o.card);
+    knowSet   = new Set(mapped.map((o,i) => o.know   ? i : -1).filter(i => i >= 0));
+    unsureSet = new Set(mapped.map((o,i) => o.unsure ? i : -1).filter(i => i >= 0));
+    seenSet   = new Set(mapped.map((o,i) => o.seen   ? i : -1).filter(i => i >= 0));
+    currentIdx = 0; updateCard(); updateStats(); showToast('🔀 Cards shuffled!');
+  }
+
+  // ── SESSION STATS ──
+  function updateStats() {
+    document.getElementById('knowCount').textContent   = knowSet.size;
+    document.getElementById('unsureCount').textContent = unsureSet.size;
+    document.getElementById('unseenCount').textContent = cards.length - knowSet.size - unsureSet.size;
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  // ── INIT ──
+  _loadProgress('topic_0', cards.length);
+  updateCard(); updateStats();
+  if (knowSet.size + unsureSet.size > 0)
+    showToast('📂 Progress restored! (' + (knowSet.size + unsureSet.size) + ' cards reviewed)');
+</script>
+<script src="cssbuddy-shared.js"></script>
+<script>
+window.onCBLogin = function(user, data) {
+  document.body.classList.remove('guest-mode');
+};
+window.onCBLogout = function() {
+  document.body.classList.add('guest-mode');
+};
+</script>
+
+
+
+<!-- ══ SITE FOOTER ══ -->
+<footer style="
+  background: #0b3d8d;
+  color: #fff;
+  text-align: center;
+  padding: 22px 24px 18px;
+  margin-top: auto;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.82rem;
+  letter-spacing: 0.01em;
+  line-height: 1.7;
+">
+  <div style="max-width:860px;margin:0 auto;">
+    <p style="margin:0 0 4px;font-weight:700;font-size:0.9rem;color:#93C5FD;letter-spacing:0.04em;text-transform:uppercase;">
+      CSS Buddy &mdash; Interactive Learning Platform
+    </p>
+    <p style="margin:0 0 6px;color:#CBD5E1;">
+      Developed by <strong style="color:#fff;">Group 2 &mdash; Matiyaga</strong> &middot;
+      Grade 12 CSS &middot;
+      <em>National College of Science and Technology &ndash; Institute of Industrial Research and Training (NCST-IIRT)</em>
+    </p>
+    <p style="margin:0 0 4px;color:#94A3B8;font-size:0.78rem;">
+      Learning content aligned with
+      <strong style="color:#93C5FD;">TESDA Training Regulation for Computer Systems Servicing (CSS) NC II</strong>
+    </p>
+    <p style="margin:6px 0 0;color:#64748B;font-size:0.76rem;">
+      &copy; 2025 Group 2 Matiyaga &middot; NCST-IIRT &middot; Dasma&ntilde;ari&ntilde;as City, Cavite &middot;
+      All rights reserved. Content used for academic and educational purposes.
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
